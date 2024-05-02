@@ -64,7 +64,7 @@ export class FbosMissedOrdersGridComponent implements OnInit {
     }
 
     get isCsr() {
-        return this.sharedService.currentUser.role === UserRole.CSR;
+        return this.sharedService.isCsr;
     }
 
     private refreshMissedOrdersDataSource() {

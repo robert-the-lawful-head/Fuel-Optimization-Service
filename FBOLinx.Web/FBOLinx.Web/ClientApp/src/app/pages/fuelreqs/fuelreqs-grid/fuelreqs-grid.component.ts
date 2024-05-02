@@ -2,6 +2,7 @@ import { trigger, state, style } from '@angular/animations';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     ElementRef,
     EventEmitter,
@@ -17,7 +18,7 @@ import {
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatRow, MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -41,8 +42,6 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import * as moment from 'moment';
-import { FuelreqsNotesComponent } from '../fuelreqs-notes/fuelreqs-notes.component';
-import { element } from 'protractor';
 
 const initialColumns: ColumnType[] = [
     {
@@ -170,7 +169,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         private snackBarService: SnackBarService,
         private newServiceOrderDialog: MatDialog,
         private serviceOrderService: ServiceOrderService,
-        private templateDialog: MatDialog
+        private templateDialog: MatDialog,
+        private ref: ChangeDetectorRef
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -473,6 +473,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             dialogRef.afterClosed().subscribe((result) => {
                 if (!result) {
                     fuelReq.archived = false;
+                    this.ref.detectChanges();
                     return;
                 }
 
@@ -496,6 +497,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
                     fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
                 });
+                this.ref.detectChanges();
             });
         }
         else {
@@ -519,6 +521,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
                 fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
             });
+            this.ref.detectChanges();
         }
     }
 
@@ -577,7 +580,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         }
 
         this.updateChanges(changes);
-        
+
         if (this.isDrawerManuallyClicked) {
             //await this.sleep(10);
             this.toggleOpenNotesDrawer();
@@ -634,7 +637,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         //                this.test = sidebarNav;
         //                this.toggleOpenNotesDrawer();
         //            });
-                    
+
         //        }
         //    }
         //}
