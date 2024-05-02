@@ -141,9 +141,7 @@ export class FlightWatchMapComponent
             :  this.icao;
     }
     ngOnInit(): void {
-        if(this.center == null) return;
         this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
-        this.loadMap();
     }
 
     ngAfterViewInit() {
