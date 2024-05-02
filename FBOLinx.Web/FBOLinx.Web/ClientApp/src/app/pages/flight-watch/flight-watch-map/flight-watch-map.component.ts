@@ -139,11 +139,10 @@ export class FlightWatchMapComponent
         this.icao = (this.icao == null) ?
             this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao)
             :  this.icao;
-        this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
     }
     ngOnInit(): void {
         if(this.center == null) return;
-        this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
+        this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
         this.loadMap();
     }
 
@@ -202,7 +201,8 @@ export class FlightWatchMapComponent
             await this.loadMapIcons();
             await this.loadMapDataAsync();
             this.isMapDataLoading = false;
-            this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
+            this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
+            console.log("finishing rendering map data");
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
@@ -472,7 +472,7 @@ export class FlightWatchMapComponent
             self.animationFrameIds.push(callbackFrameId);
         }else{
             self.aicraftDataFeatures = null;
-            self.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
+            self.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
             self.cancelExistingAnimationFames();
         }
     }

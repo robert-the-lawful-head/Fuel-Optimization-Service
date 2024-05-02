@@ -151,7 +151,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     get favoriteNotificationVisible() {
         return (
-            this.sharedService.currentUser.fboId > 0 &&
+            this.sharedService.currentUser?.fboId > 0 &&
             !this.isLobbyViewPage
             );
     }
@@ -188,7 +188,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
                     this.loadAirportWatchData();
                 }
-                if(message == SharedEvents.fetchFlighWatchDataEvent){
+                if(message === SharedEvents.flightWatchDataEvent){
                     this.loadAirportWatchData();
                 }
             }
