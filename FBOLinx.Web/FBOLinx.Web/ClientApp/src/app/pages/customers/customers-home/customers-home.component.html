@@ -1,8 +1,8 @@
 <section>
-    <mat-tab-group style="background: white;" [selectedIndex]="selectedTabIndex">
+    <mat-tab-group style="background: white" [selectedIndex]="selectedTabIndex">
         <mat-tab>
             <ng-template mat-tab-label>
-                Customers ({{customersData?.length}})
+                Customers ({{ customersData?.length }})
             </ng-template>
             <div class="table-container customers-grid-container">
                 <div *ngIf="customersData && pricingTemplatesData">
@@ -15,19 +15,23 @@
                         [customersData]="customersData"
                         [pricingTemplatesData]="pricingTemplatesData"
                         [fuelVendors]="fuelVendors"
-                        [tags] = "tags"
+                        [tags]="tags"
                         (customerPriceClicked)="customerPriceClicked($event)"
                         (refreshAircrafts)="refreshAircrafts()"
                     ></app-customers-grid>
                 </div>
-                <div *ngIf="!customersData || !pricingTemplatesData">
-                    <mat-spinner></mat-spinner>
-                </div>
+                <ngx-ui-loader
+                    [loaderId]="charNameCustomer"
+                    bgsColor="rgb(100, 181, 246)"
+                    bgsPosition="center-center"
+                    bgsType="ball-spin"
+                    overlayColor="rgba(0, 0, 0, 0.1)"
+                ></ngx-ui-loader>
             </div>
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
-                Aircraft ({{aircraftData?.length}})
+                Aircraft ({{ aircraftData?.length }})
             </ng-template>
             <div class="table-container aircrafts-grid">
                 <div *ngIf="pricingTemplatesData && aircraftData">
@@ -37,9 +41,13 @@
                         (refreshAircrafts)="refreshAircrafts()"
                     ></app-aircrafts-grid>
                 </div>
-                <div *ngIf="!pricingTemplatesData || !aircraftData">
-                    <mat-spinner></mat-spinner>
-                </div>
+                <ngx-ui-loader
+                    [loaderId]="charNameAircraft"
+                    bgsColor="rgb(100, 181, 246)"
+                    bgsPosition="center-center"
+                    bgsType="ball-spin"
+                    overlayColor="rgba(0, 0, 0, 0.1)"
+                ></ngx-ui-loader>
             </div>
         </mat-tab>
     </mat-tab-group>

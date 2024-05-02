@@ -15,6 +15,7 @@ import { CustomerGridState } from '../../../store/reducers/customer';
 import { getCustomerGridState } from '../../../store/selectors';
 import { MatTableDataSource } from '@angular/material/table';
 import { AircraftsGridComponent } from '../../aircrafts/aircrafts-grid/aircrafts-grid.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-customers-home',
@@ -41,6 +42,10 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     public id:               string;
     selectedTabIndex: number = 0;
 
+    charNameCustomer = 'CustomersCustomer';
+    charNameAircraft = 'CustomersAicraft';
+    charNamePricingTemplate = 'pricingTempates';
+
     constructor(
         private store: Store<State>,
         private router: Router,
@@ -51,7 +56,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         private customerAircraftService: CustomeraircraftsService,
         private tagService: TagsService,
         private route: ActivatedRoute,
-
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.loadCustomers();
@@ -132,6 +137,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     }
     // Private Methods
     private loadCustomers() {
+        this.ngxLoader.startLoader(this.charNameCustomer);
         this.customersData = null;
         this.customerInfoByGroupService
             .getByGroupAndFbo(
@@ -146,10 +152,13 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                         value: fv,
                     })),
                 }));
+                this.ngxLoader.stopLoader(this.charNameCustomer);
             });
     }
 
     private loadPricingTemplates() {
+        this.ngxLoader.startLoader(this.charNamePricingTemplate);
+
         this.pricingTemplatesData = null;
         this.pricingTemplatesService
             .getByFbo(
@@ -159,9 +168,12 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
             .subscribe((data: any) => {
 
                 this.pricingTemplatesData = data;
+                this.ngxLoader.stopLoader(this.charNamePricingTemplate);
             });
     }
     private loadCustomerAircraft() {
+        this.ngxLoader.startLoader(this.charNameAircraft);
+
         this.aircraftData = null;
         this.customerAircraftService
             .getCustomerAircraftsByGroupAndFbo(
@@ -175,6 +187,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                         result.pricingTemplateId = null;
                     }
                 });
+                this.ngxLoader.stopLoader(this.charNameAircraft);
             });
     }
 
