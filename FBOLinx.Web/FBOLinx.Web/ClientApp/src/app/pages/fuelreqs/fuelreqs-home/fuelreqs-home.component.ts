@@ -41,8 +41,6 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterEndDate = new Date(
             moment().add(30, 'd').format('MM/DD/YYYY')
         );
-
-        this.startFuelReqDataServe();
     }
 
     ngOnDestroy() {
@@ -59,10 +57,12 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
                 });
             });
         });
-
-
         this.servicesAndFees.sort((a, b) => a.service.localeCompare(b.service));
-        this.loadFuelReqs();
+
+        this.ngxLoader.startLoader(this.chartName);
+        await this.loadFuelReqs();
+        this.ngxLoader.stopLoader(this.chartName);
+        this.startFuelReqDataServe();
     }
 
     public startFuelReqDataServe() {
@@ -82,27 +82,23 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         }
     }
 
-    public dateFilterChanged(event) {
+    public async dateFilterChanged(event): Promise<void>{
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
         this.fuelreqsData = null;
-        this.loadFuelReqs();
+        await this.loadFuelReqs();
     }
 
     // PRIVATE METHODS
-    private loadFuelReqs() {
-        this.ngxLoader.startLoader(this.chartName);
-         this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                this.filterStartDate,
-                this.filterEndDate
-            )
-            .subscribe((data: any) => {
-                this.fuelreqsData = data;
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+    private async loadFuelReqs(): Promise<void>{
+        let data = await this.fuelReqService
+        .getForGroupFboAndDateRange(
+            this.sharedService.currentUser.groupId,
+            this.sharedService.currentUser.fboId,
+            this.filterStartDate,
+            this.filterEndDate
+        ).toPromise();
+        this.fuelreqsData = data as any;
     }
 }
