@@ -231,7 +231,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
     generateTooltips(serviceAndFees: ServiceOrderItem[]){
 
-        serviceAndFees.forEach(element => {
+        serviceAndFees?.forEach(element => {
             element.toolTipText = this.getInfoTooltipText(element);
         });
     }
