@@ -123,6 +123,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             id: 'percentOfVisits',
             name: 'Percent of Visits',
         },
+        {
+            id: 'originated',
+            name: 'Origin ICAO',
+        }
     ];
 
     csvFileOptions: csvFileOptions = {
@@ -427,24 +431,22 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.refreshData();
     }
     private setColumns() {
-        this.columns =
-            this.icao == this.sharedService.currentUser.icao
-                ? this.initialColumns.filter((column) => {
-                    return column.id != 'originated';
-                })
-                : this.filteredColumns;
+        this.columns = this.filteredColumns;
     }
     get filteredColumns() {
         var filteredColumns = this.initialColumns;
-        if (!filteredColumns.find((column) => column.id === 'originated')) {
-            filteredColumns.push({
-                id: 'originated',
-                name: 'Origin ICAO',
-            });
-        };
+        //if (!filteredColumns.find((column) => column.id === 'originated')) {
+        //    filteredColumns.push({
+        //        id: 'originated',
+        //        name: 'Origin ICAO',
+        //    });
+        //};
 
-        return filteredColumns.filter((column) => {
-            return !this.hiddenColumns.includes(column.id);
-        });
+        if (this.icao != this.sharedService.currentUser.icao)
+            return filteredColumns.filter((column) => {
+                return !this.hiddenColumns.includes(column.id);
+            });
+        else
+            return filteredColumns;
     }
 }
