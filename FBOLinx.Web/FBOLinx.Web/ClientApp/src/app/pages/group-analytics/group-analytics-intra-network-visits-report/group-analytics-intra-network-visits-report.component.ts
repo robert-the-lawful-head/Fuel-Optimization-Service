@@ -152,11 +152,9 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     filterChanged(value: any = null) {
-        console.log("🚀 ~ filterChanged ~ value:", value)
         if(typeof value == "boolean")
             this.isCommercialInvisible = value;
 
-        console.log("🚀 ~ filterChanged ~ filterChanged:")
         this.filtersChanged.next();
     }
 

@@ -268,7 +268,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     refreshDataSource() {
         this.ngxLoader.startLoader(this.chartName);
-        console.log("🚀 ~ refreshDataSource ~ refreshDataSource:")
         const data = this.data.filter(
             (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.aircraftTypeCode)}
         ).map((x) => ({
@@ -276,7 +275,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
         }));
-        console.log("🚀 ~ refreshDataSource ~ data:", data)
 
         this.setVirtualScrollVariables(this.paginator, this.sort, data);
 
@@ -301,11 +299,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     filterChanged(value: any = null) {
-        console.log("🚀 ~ filterChanged ~ value:", value)
         if(typeof value == "boolean")
             this.isCommercialInvisible = value;
 
-        console.log("🚀 ~ filterChanged ~ filterChanged:")
         this.filtersChanged.next();
     }
 
