@@ -53,7 +53,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     };
 
     selectedDateFilter: SelectedDateFilter;
-    hiddenFilters: ReportFilterItems[] = [ReportFilterItems.icaoDropDown]
+    hiddenFilters: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.isCommercialAircraft];
 
     constructor(
         private fuelreqsService: FuelreqsService,

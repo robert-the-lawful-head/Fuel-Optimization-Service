@@ -54,7 +54,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     icao: string;
     selectedDateFilter: SelectedDateFilter;
 
-    isCommercialInvisible = true;
+    isCommercialInvisible = false;
 
     data: FlightWatchHistorical[];
 
@@ -267,11 +267,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     refreshDataSource() {
-        const data = this.data.map((x) => ({
+        this.ngxLoader.startLoader(this.chartName);
+        console.log("🚀 ~ refreshDataSource ~ refreshDataSource:")
+        const data = this.data.filter(
+            (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.aircraftTypeCode)}
+        ).map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
         }));
+        console.log("🚀 ~ refreshDataSource ~ data:", data)
 
         this.setVirtualScrollVariables(this.paginator, this.sort, data);
 
@@ -292,9 +297,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         ].map((tailNumber) =>
             this.data.find((x) => x.tailNumber === tailNumber)
         );
+        this.ngxLoader.stopAllLoader(this.chartName);
     }
 
-    filterChanged() {
+    filterChanged(value: any = null) {
+        console.log("🚀 ~ filterChanged ~ value:", value)
+        if(typeof value == "boolean")
+            this.isCommercialInvisible = value;
+
+        console.log("🚀 ~ filterChanged ~ filterChanged:")
         this.filtersChanged.next();
     }
 
@@ -338,7 +349,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     clearAllFilters() {
-        this.isCommercialInvisible = true;
+        this.isCommercialInvisible = false;
 
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {

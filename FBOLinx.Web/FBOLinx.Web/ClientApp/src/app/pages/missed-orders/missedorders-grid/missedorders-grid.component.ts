@@ -86,7 +86,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     resetMissedOrdersSubscription: any;
 
     csvFileOptions: csvFileOptions = { fileName: 'Missed Orders', sheetName: 'Missed Orders' };
-    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown];
+    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.isCommercialAircraft];
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,

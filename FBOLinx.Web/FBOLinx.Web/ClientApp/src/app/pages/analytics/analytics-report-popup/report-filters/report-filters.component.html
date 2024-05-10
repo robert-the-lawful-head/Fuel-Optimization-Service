@@ -1,18 +1,26 @@
-<div class="d-inline-block mr-2 ml-2" style="width: 130px" *ngIf="!isFilterHidden(reportFilterItems.icaoDropDown)">
-    <app-flight-watch-filters
-        [icaoList]="airportsICAO"
-        [icao]="icao"
-        [isSearchAicraftHidden]="true"
-        (icaoChanged)="changeIcaoFilter($event)"
-    ></app-flight-watch-filters>
-</div>
-<div class="d-inline-block mr-2 ml-2" *ngIf="dataSource">
+<div class="filter-container"  *ngIf="dataSource">
     <app-table-global-search
         [hideSearchInput]="isFilterHidden(reportFilterItems.searchInput)"
         [matDataSource]="dataSource"
         placeholder="Search by Company"
         (clearFilters)="clearFilters()"
     >
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px; order: -1;" *ngIf="!isFilterHidden(reportFilterItems.icaoDropDown)">
+            <app-flight-watch-filters
+                [icaoList]="airportsICAO"
+                [icao]="icao"
+                [isSearchAicraftHidden]="true"
+                (icaoChanged)="changeIcaoFilter($event)"
+            ></app-flight-watch-filters>
+        </div>
+        <div class="d-inline-block mr-2 ml-2" *ngIf="!isFilterHidden(reportFilterItems.isCommercialAircraft)">
+            <mat-slide-toggle
+                color="primary"
+                (change)="commercialAicraftToogleChange($event)"
+            >
+                Hide Commercial Flights
+            </mat-slide-toggle>
+        </div>
         <div class="d-inline-block mr-2 ml-2">
             <app-preset-date-filter
                 [defaultFilter]="selectedDateFilter.selectedFilter"
