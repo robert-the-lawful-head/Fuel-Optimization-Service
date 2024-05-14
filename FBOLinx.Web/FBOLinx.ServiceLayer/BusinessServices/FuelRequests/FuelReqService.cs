@@ -354,7 +354,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             IsConfirmed = orderConfirmations.Any(x => x.SourceId == item.FuelerLinxTransactionId),
                             PaymentMethod = transactionOrderDetails == null ? "" : transactionOrderDetails.PaymentMethod,
                             ServiceOrder = item,
-                            ShowConfirmationButton = transactionOrderDetails == null ? false : transactionOrderDetails.IsOkToEmail.GetValueOrDefault()
+                            ShowConfirmationButton = transactionOrderDetails == null ? false : transactionOrderDetails.IsOkToEmail.GetValueOrDefault(),
+                            Fboid = fboId
                         };
                         serviceOrdersList.Add(fuelreq);
                     }
@@ -392,7 +393,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             FuelOn = string.Empty,
                             IsConfirmed = orderConfirmations.Any(x => x.SourceId == item.FuelerLinxTransactionId),
                             PaymentMethod = orderDetails.Where(o => o.FuelerLinxTransactionId == item.FuelerLinxTransactionId).Select(d => d.PaymentMethod).FirstOrDefault(),
-                            ShowConfirmationButton = false
+                            ShowConfirmationButton = false,
+                            Fboid = fboId
                         };
                         result.Add(fuelreq);
                     }
