@@ -26,6 +26,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public AirportWatchHistoricalParkingDto AirportWatchHistoricalParking { get; set; }
+        public long? SwimFlightLegId { get; set; }
 
         public string AircraftStatusDescription
         {
@@ -36,5 +37,6 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
                 return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AircraftStatus);
             }
         }
+
     }
 }

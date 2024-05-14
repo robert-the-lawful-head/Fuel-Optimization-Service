@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using Fuelerlinx.SDK;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 {
     public class SWIMFlightLegEntityService : Repository<SWIMFlightLeg, DegaContext>
     {
-        public SWIMFlightLegEntityService(DegaContext context) : base(context)
+        private FboLinxContext _fboLinxContext;
+        public SWIMFlightLegEntityService(DegaContext context, FboLinxContext fboLinxContext) : base(context)
         {
+            _fboLinxContext = fboLinxContext;
         }
 
         public async Task<long> GetMaximumOID()
@@ -38,6 +41,23 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
             return await query.ToListAsync();
         }
 
+        public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> tailNumbersList, List<string> atdsList)
+        {
+            var query = (from swim in context.SWIMFlightLegs
+                         join tailNumbers in context.AsTable(tailNumbersList) on swim.AircraftIdentification equals tailNumbers.Value
+                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = Convert.ToInt64(tailNumbers.Id.ToString()) } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
+                         select swim);
+            return query;
+        }
+
+        public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsByIdsQueryable(List<string> idsList)
+        {
+            var query = (from swim in context.SWIMFlightLegs
+                         join id in context.AsTable(idsList) on swim.Oid equals Convert.ToInt64(id.Value)
+                         select swim);
+            return query;
+        }
+
         private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> gufiList)
         {
             var query = (from swim in context.SWIMFlightLegs
@@ -45,6 +65,7 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
                 select swim);
             return query;
         }
+
         private Expression<Func<SWIMFlightLeg, bool>> ArrivalsAndDeparturesQuerylogic(int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdateThreshold)
         {
             var atdDateTimeThreshold = DateTime.UtcNow.AddMinutes(-atdTimeMinutesThreshold);
@@ -65,15 +86,6 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
             var departures = query.Where(swim => swim.DepartureICAO == icao);
 
             return await arrivals.Concat(departures).ToListAsync();
-        }
-
-        public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> tailNumbersList, List<string> atdsList)
-        {
-            var query = (from swim in context.SWIMFlightLegs
-                         join tailNumbers in context.AsTable(tailNumbersList) on swim.AircraftIdentification equals tailNumbers.Value
-                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = Convert.ToInt64(tailNumbers.Id.ToString()) } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
-                         select swim);
-            return query;
         }
 
         private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
