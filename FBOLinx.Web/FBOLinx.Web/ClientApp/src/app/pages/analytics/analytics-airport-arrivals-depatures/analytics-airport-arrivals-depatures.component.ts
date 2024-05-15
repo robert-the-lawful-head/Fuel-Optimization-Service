@@ -269,7 +269,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     refreshDataSource() {
         this.ngxLoader.startLoader(this.chartName);
         const data = this.data.filter(
-            (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.aircraftTypeCode)}
+            (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber)}
         ).map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
@@ -285,12 +285,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.tailNumbers = [
             ...new Set(
                 this.data
-                    .filter(
-                        (x) =>
-                            !this.isCommercialInvisible ||
-                            !isCommercialAircraft(x.aircraftTypeCode)
-                    )
-                    .map((x) => x.tailNumber)
+                .filter(
+                    (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber)}
+                ).map((x) => x.tailNumber)
             ),
         ].map((tailNumber) =>
             this.data.find((x) => x.tailNumber === tailNumber)
