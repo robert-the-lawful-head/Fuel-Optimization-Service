@@ -66,7 +66,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     }
 
     public startFuelReqDataServe() {
-        this.timer = interval(30000).subscribe(() => {
+        this.timer = interval(60000).subscribe(() => {
             this.loadFuelReqs();
         });
     }
@@ -87,7 +87,9 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
         this.fuelreqsData = null;
+        this.ngxLoader.startLoader(this.chartName);
         await this.loadFuelReqs();
+        this.ngxLoader.stopLoader(this.chartName);
     }
 
     // PRIVATE METHODS

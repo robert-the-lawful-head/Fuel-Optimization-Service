@@ -526,12 +526,15 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
 
     completedServicesChanged(fuelReq: FuelReq, changes: any) {
-        if (fuelReq.serviceOrder.numberOfTotalServices == changes.value)
-            fuelReq.serviceOrder.numberOfCompletedItems = changes.value;
+        let value =  changes?.value ?? changes;
+        if (fuelReq.serviceOrder.numberOfTotalServices == value){
+            fuelReq.serviceOrder.numberOfCompletedItems = value;
+            fuelReq.archived = true;
+        }
         else {
-            if (changes.value > 0)
+            if (value> 0)
                 fuelReq.serviceOrder.numberOfCompletedItems++;
-            else if (changes.value < 0)
+            else if (value < 0)
                 fuelReq.serviceOrder.numberOfCompletedItems--;
             else {
                 fuelReq.serviceOrder.numberOfCompletedItems = 0;
@@ -541,22 +544,31 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         if (fuelReq.serviceOrder.numberOfCompletedItems == 0) {
             fuelReq.serviceOrder.isActive = false;
             fuelReq.serviceOrder.isCompleted = false;
+            fuelReq.archived = false;
         }
         else if (fuelReq.serviceOrder.numberOfCompletedItems == 1 && fuelReq.serviceOrder.numberOfTotalServices > 1) {
             fuelReq.serviceOrder.isActive = true;
             fuelReq.serviceOrder.isCompleted = false;
+            fuelReq.archived = false;
         }
         else if (fuelReq.serviceOrder.numberOfCompletedItems == fuelReq.serviceOrder.numberOfTotalServices) {
             fuelReq.serviceOrder.isCompleted = true;
             fuelReq.serviceOrder.isActive = false;
+            fuelReq.archived = true;
+
         }
         else {
             fuelReq.serviceOrder.isCompleted = false;
             fuelReq.serviceOrder.isActive = true;
+            fuelReq.archived = false;
+
         }
 
         if (changes.fuelreqsServicesAndFeesGridDisplay != null)
             fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
+
+        this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
+        });
     }
 
     totalServicesChanged(fuelReq: FuelReq, changes: any) {
