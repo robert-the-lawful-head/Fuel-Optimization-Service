@@ -1,15 +1,14 @@
 <div class="chart-container">
     <div class="flex mb-2 position-relative">
-        <div class="d-inline-block mr-2 ml-2">
-            <app-report-filters
-                [icao]="icao"
-                [dataSource]="dataSource"
-                [selectedDateFilter]="selectedDateFilter"
-                (onChangeIcaoFilter)="changeIcaoFilter($event)"
-                (onDateChange)="applyPresetDateFilter($event)"
-            >
-            </app-report-filters>
-        </div>
+        <app-report-filters
+            [icao]="icao"
+            [dataSource]="dataSource"
+            [selectedDateFilter]="selectedDateFilter"
+            (onChangeIcaoFilter)="changeIcaoFilter($event)"
+            (onDateChange)="applyPresetDateFilter($event)"
+            (commercialAicraftToogle)="filterChanged($event)"
+        >
+        </app-report-filters>
         <div class="actions">
             <button [matMenuTriggerFor]="gridActions" mat-icon-button>
                 <mat-icon

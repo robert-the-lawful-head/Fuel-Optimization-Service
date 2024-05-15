@@ -98,9 +98,15 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
 
-    isLobbyViewPage: boolean = false;
+
     routeSubscription: Subscription;
 
+    get isLobbyViewPage(): boolean {
+        return (this.router.url == '/public-layout/lobby-view') ? true : false;
+    }
+    get isMapVisible(): boolean {
+        return (this.router.url == '/default-layout/flight-watch' || this.router.url == '/default-layout/dashboard-fbo-updated' || this.isLobbyViewPage) ? true : false;
+    }
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -146,9 +152,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     get favoriteNotificationVisible() {
         return (
             this.sharedService.currentUser?.fboId > 0 &&
-            !this.isLobbyViewPage &&
-            this.router.url != '/public-layout/lobby-view'
-        );
+            !this.isLobbyViewPage
+            );
     }
 
     get favoriteAircraftIconBadgeText(): string {
@@ -194,6 +199,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         );
 
         this.mapLoadSubscription = timer(0,  environment.flightWatch.apiCallInterval).subscribe(() =>{
+            if(this.isMapVisible) return;
             if(this.selectedICAO)
                 this.loadAirportWatchData();
         });
@@ -203,11 +209,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.dismissedFavoriteAircrafts = JSON.parse(localStorage.getItem(localStorageAccessConstant.dismissedFavoriteAircrafts)) ?? [];
 
-        this.routeSubscription = this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.isLobbyViewPage = (event.url == '/public-layout/lobby-view')? true : false;
-            }
-        });
     }
 
     ngOnDestroy() {

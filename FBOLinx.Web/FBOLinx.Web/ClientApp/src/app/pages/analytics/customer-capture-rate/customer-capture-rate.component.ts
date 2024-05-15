@@ -25,7 +25,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
     fboId: number;
     fbo: string;
     icao: string;
-    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown];
+    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.isCommercialAircraft];
     tableLocalStorageKey: string;
 
     chartName = 'customer-capture-rate-table';

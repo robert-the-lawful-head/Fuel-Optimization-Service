@@ -39,7 +39,7 @@ namespace FBOLinx.Web.Services
         
         public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
-            FBOLinx.DB.Models.User user = await _Context.User.Include(x => x.Fbo.FboAirport).FirstOrDefaultAsync(x => x.Username == username);
+            FBOLinx.DB.Models.User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
 
             if (user == null)
             {

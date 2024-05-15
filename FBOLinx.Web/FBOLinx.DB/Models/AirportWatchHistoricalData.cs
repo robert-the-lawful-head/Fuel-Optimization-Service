@@ -28,6 +28,8 @@ namespace FBOLinx.DB.Models
         [StringLength(255)]
         [Column(TypeName = "varchar")]
         public string AirportICAO { get; set; }
+        [NotMapped]
+        public long? SwimFlightLegId { get; set; }
 
         #region Relationships
         [InverseProperty("AirportWatchHistoricalData")]

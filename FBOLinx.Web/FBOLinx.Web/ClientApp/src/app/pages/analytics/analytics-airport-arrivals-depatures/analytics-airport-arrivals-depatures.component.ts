@@ -54,7 +54,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     icao: string;
     selectedDateFilter: SelectedDateFilter;
 
-    isCommercialInvisible = true;
+    isCommercialInvisible = false;
 
     data: FlightWatchHistorical[];
 
@@ -123,6 +123,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             id: 'percentOfVisits',
             name: 'Percent of Visits',
         },
+        {
+            id: 'originated',
+            name: 'Origin ICAO',
+        }
     ];
 
     csvFileOptions: csvFileOptions = {
@@ -267,7 +271,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     refreshDataSource() {
-        const data = this.data.map((x) => ({
+        this.ngxLoader.startLoader(this.chartName);
+        const data = this.data.filter(
+            (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber)}
+        ).map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
@@ -282,19 +289,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.tailNumbers = [
             ...new Set(
                 this.data
-                    .filter(
-                        (x) =>
-                            !this.isCommercialInvisible ||
-                            !isCommercialAircraft(x.aircraftTypeCode)
-                    )
-                    .map((x) => x.tailNumber)
+                .filter(
+                    (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber)}
+                ).map((x) => x.tailNumber)
             ),
         ].map((tailNumber) =>
             this.data.find((x) => x.tailNumber === tailNumber)
         );
+        this.ngxLoader.stopAllLoader(this.chartName);
     }
 
-    filterChanged() {
+    filterChanged(value: any = null) {
+        if(typeof value == "boolean")
+            this.isCommercialInvisible = value;
+
         this.filtersChanged.next();
     }
 
@@ -338,7 +346,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     clearAllFilters() {
-        this.isCommercialInvisible = true;
+        this.isCommercialInvisible = false;
 
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {
@@ -428,24 +436,22 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.refreshData();
     }
     private setColumns() {
-        this.columns =
-            this.icao == this.sharedService.currentUser.icao
-                ? this.initialColumns.filter((column) => {
-                    return column.id != 'originated';
-                })
-                : this.filteredColumns;
+        this.columns = this.filteredColumns;
     }
     get filteredColumns() {
         var filteredColumns = this.initialColumns;
-        if (!filteredColumns.find((column) => column.id === 'originated')) {
-            filteredColumns.push({
-                id: 'originated',
-                name: 'Origin ICAO',
-            });
-        };
+        //if (!filteredColumns.find((column) => column.id === 'originated')) {
+        //    filteredColumns.push({
+        //        id: 'originated',
+        //        name: 'Origin ICAO',
+        //    });
+        //};
 
-        return filteredColumns.filter((column) => {
-            return !this.hiddenColumns.includes(column.id);
-        });
+        if (this.icao != this.sharedService.currentUser.icao)
+            return filteredColumns.filter((column) => {
+                return !this.hiddenColumns.includes(column.id);
+            });
+        else
+            return filteredColumns;
     }
 }

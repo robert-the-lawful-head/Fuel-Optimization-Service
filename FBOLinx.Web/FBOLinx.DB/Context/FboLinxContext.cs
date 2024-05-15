@@ -173,6 +173,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
         public virtual DbSet<FboFavoriteAircraft> FboFavoriteAircraft { get; set; }
         public virtual DbSet<FboFavoriteCompany> FboFavoriteCompanies { get; set; }
+        public virtual DbSet<HistoricalAirportWatchSwimFlightLeg> HistoricalAirportWatchSwimFlightLeg { get; set; }
         public virtual DbSet<OrderNote> OrderNotes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

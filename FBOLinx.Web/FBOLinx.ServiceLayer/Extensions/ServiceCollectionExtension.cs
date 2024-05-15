@@ -134,6 +134,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IRefreshTokensService, RefreshTokensService>();
             services.AddTransient<IOrderNotesService, OrderNotesService>();
             services.AddTransient<IUserEntityService, UserEntityService>();
+            services.AddTransient<IHistoricalAirportWatchSwimFlightLegEntityService, HistoricalAirportWatchSwimFlightLegEntityService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 

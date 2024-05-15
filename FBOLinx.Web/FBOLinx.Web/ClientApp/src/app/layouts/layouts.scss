@@ -5,7 +5,7 @@
         position: relative;
         padding: $navbar-height 0 $footer-height 0;
         // border: 1px solid #f00;
-        height: 100%;
+        height: calc(100vh);
 
         .main-content {
             height: 100%;

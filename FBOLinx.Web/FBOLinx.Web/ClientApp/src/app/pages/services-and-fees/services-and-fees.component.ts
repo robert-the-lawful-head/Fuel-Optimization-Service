@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
 import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { AccountType } from 'src/app/enums/user-role';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -25,6 +26,7 @@ interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
 export class ServicesAndFeesComponent implements OnInit {
     @Input() public fboId: number|null = null;
     servicesAndFeesGridDisplay: FbosServicesAndFeesResponse[];
+    chartName = "servicesAndFees";
 
     constructor(
         private servicesAndFeesService: ServicesAndFeesService,
@@ -32,11 +34,14 @@ export class ServicesAndFeesComponent implements OnInit {
         private sharedService: SharedService,
         private dialog: MatDialog,
         private snackBar: SnackBarService,
-        private datePipe : DatePipe
+        private datePipe : DatePipe,
+        private ngxLoader: NgxUiLoaderService
         ) { }
 
     async ngOnInit() {
+        this.ngxLoader.startLoader(this.chartName);
         this.servicesAndFeesGridDisplay = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
+        this.ngxLoader.stopLoader(this.chartName);
     }
 
     createNewItem(serviceType: ServiceTypeResponse): void {

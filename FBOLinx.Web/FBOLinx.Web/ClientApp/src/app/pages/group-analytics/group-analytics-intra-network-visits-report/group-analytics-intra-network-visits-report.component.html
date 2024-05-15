@@ -8,6 +8,7 @@
                 [selectedDateFilter]="selectedDateFilter"
                 (onChangeIcaoFilter)="changeIcaoFilter($event)"
                 (onDateChange)="applyPresetDateFilter($event)"
+                (commercialAicraftToogle)="filterChanged($event)"
             >
             </app-report-filters>
         </div>
