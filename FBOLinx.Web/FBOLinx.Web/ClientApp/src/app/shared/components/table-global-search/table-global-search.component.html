@@ -1,25 +1,29 @@
-
 <div class="container-fluid flex">
-        <div class="flex">
-            <mat-form-field *ngIf="!hideSearchInput">
-                <input
-                    (keyup)="applyFilter($event.target.value)"
-                    [(ngModel)]="userTypedFilter"
-                    [placeholder]="placeholder"
-                    matInput
-                />
-                <span matPrefix><i class="fa fa-search"></i></span>
-            </mat-form-field>
-            <ng-content></ng-content>
-        </div>
-        <div *ngIf="showClearButton">
+    <div class="flex" style="flex-wrap: wrap">
+        <mat-form-field
+            *ngIf="!hideSearchInput"
+            class="d-inline-block mr-2 ml-2"
+            style="max-width: 200px"
+        >
+            <input
+                (keyup)="applyFilter($event.target.value)"
+                [(ngModel)]="userTypedFilter"
+                [placeholder]="placeholder"
+                matInput
+            />
+            <span matPrefix><i class="fa fa-search"></i></span>
+        </mat-form-field>
+        <ng-content></ng-content>
+        <div class="d-inline-block mr-2 ml-2" *ngIf="showClearButton">
             <button
                 (click)="clearAllFilters(); $event.stopPropagation()"
                 [view]="'error'"
                 ni-button
-                size="small">
+                size="small"
+            >
                 <span class="d-none d-md-block">Clear All Filters</span>
                 <span class="d-block d-md-none">Clear</span>
             </button>
         </div>
+    </div>
 </div>

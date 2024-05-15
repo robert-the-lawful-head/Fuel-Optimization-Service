@@ -36,7 +36,7 @@ import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { Subscription } from 'rxjs';
 import { AirportWatchService } from 'src/app/services/airportwatch.service';
-import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+import { FlightLegStatus, coordinatesSource } from 'src/app/enums/flight-watch.enum';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
 
@@ -170,8 +170,13 @@ export class FlightWatchMapComponent
             this.startTime = Date.now();
             this.popupUpdatesTracking = {};
             this.previousFlightData = {};
+
             if(changes.data.previousValue){
                 for (let key in changes.data.previousValue) {
+                    if(changes.data.previousValue[key].sourceOfCoordinates == coordinatesSource.Antenna &&
+                        changes.data.currentValue[key].sourceOfCoordinates == coordinatesSource.Swim &&
+                    (changes.data.currentValue[key].status == FlightLegStatus.Landing || changes.data.currentValue[key].status == FlightLegStatus.Arrived))
+                        continue;
                     this.previousFlightData[key] = changes.data.previousValue[key];
                 }
             }

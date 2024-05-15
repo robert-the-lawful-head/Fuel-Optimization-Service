@@ -29,6 +29,7 @@ import { IntraNetworkVisitsReportItem } from 'src/app/models/intra-network-visit
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
+import { isCommercialAircraftInFlightNumbers } from 'src/utils/aircraft';
 
 @Component({
     selector: 'app-group-analytics-intra-network-visits-report',
@@ -69,6 +70,8 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     icao:string;
     reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.searchInput];
 
+    isCommercialInvisible = false;
+
     constructor(private airportWatchSerice: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
@@ -108,7 +111,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     public clearAllFilters() {
         this.selectedFbos = [];
-
+        this.isCommercialInvisible = false;
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {
             if (filter.isGlobal) {
@@ -148,7 +151,10 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             });
     }
 
-    public filterChanged() {
+    filterChanged(value: any = null) {
+        if(typeof value == "boolean")
+            this.isCommercialInvisible = value;
+
         this.filtersChanged.next();
     }
 
@@ -213,7 +219,11 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     private refreshDataSource() {
         var dataSource = [];
 
-        for (let item of this.data) {
+        var filteredData = this.data.filter(
+            (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraftInFlightNumbers(x.flightNumbers)}
+        );
+
+        for (let item of filteredData) {
 
             var newRow = {
                 company: item.company,

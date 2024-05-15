@@ -54,7 +54,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     icao: string;
     selectedDateFilter: SelectedDateFilter;
 
-    isCommercialInvisible = true;
+    isCommercialInvisible = false;
 
     data: FlightWatchHistorical[];
 
@@ -271,7 +271,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     refreshDataSource() {
-        const data = this.data.map((x) => ({
+        this.ngxLoader.startLoader(this.chartName);
+        const data = this.data.filter(
+            (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber)}
+        ).map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
@@ -286,19 +289,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.tailNumbers = [
             ...new Set(
                 this.data
-                    .filter(
-                        (x) =>
-                            !this.isCommercialInvisible ||
-                            !isCommercialAircraft(x.aircraftTypeCode)
-                    )
-                    .map((x) => x.tailNumber)
+                .filter(
+                    (x) => { return (!this.isCommercialInvisible)? true:  !isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber)}
+                ).map((x) => x.tailNumber)
             ),
         ].map((tailNumber) =>
             this.data.find((x) => x.tailNumber === tailNumber)
         );
+        this.ngxLoader.stopAllLoader(this.chartName);
     }
 
-    filterChanged() {
+    filterChanged(value: any = null) {
+        if(typeof value == "boolean")
+            this.isCommercialInvisible = value;
+
         this.filtersChanged.next();
     }
 
@@ -342,7 +346,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     clearAllFilters() {
-        this.isCommercialInvisible = true;
+        this.isCommercialInvisible = false;
 
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {
