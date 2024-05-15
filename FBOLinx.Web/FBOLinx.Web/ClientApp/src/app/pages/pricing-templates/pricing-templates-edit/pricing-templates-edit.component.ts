@@ -348,6 +348,35 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
         this.isSaveQueued = false;
         this.isSaving = true;
+
+        var isMarginLessThanZero = false;
+        isMarginLessThanZero = this.checkMarginLessThanZero();
+        if (isMarginLessThanZero) {
+            const dialogRef = this.marginLessThanOneDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    autoFocus: false,
+                    data: {
+                        buttonText: 'Yes',
+                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
+                    },
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    this.isSaving = false;
+                    return;
+                }
+                this.continueSavingTemplate();
+            });
+        }
+        else {
+            this.continueSavingTemplate();
+        }
+    }
+
+    continueSavingTemplate() {
         this.hasSaved = false;
         const removedCustomerMargins = differenceBy(
             this.pricingTemplate.customerMargins,
@@ -426,9 +455,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         });
     }
 
-    cancelPricingTemplateEdit() {
+    checkMarginLessThanZero(): boolean {
         var isMarginLessThanZero = false;
-
         if (this.pricingTemplateForm.value
             .marginType == 0) {
             this.customerMarginsFormArray.value.every(
@@ -442,39 +470,18 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         else {
             this.customerMarginsFormArray.value.every(
                 (customerMargin: any) => {
-                    if (customerMargin.itp <= 0) {
+                    if (customerMargin.amount <= 0) {
                         isMarginLessThanZero = true;
                         return false;
                     }
                 });
         }
+        return isMarginLessThanZero;
+    }
 
-        if (!isMarginLessThanZero) {
+    cancelPricingTemplateEdit() {
             this.router
                 .navigate(['/default-layout/pricing-templates/'])
-                .then(() => { });
-        }
-        else {
-            const dialogRef = this.marginLessThanOneDialog.open(
-                ProceedConfirmationComponent,
-                {
-                    autoFocus: false,
-                    data: {
-                        buttonText: 'Yes',
-                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
-                    },
-                }
-            );
-
-            dialogRef.afterClosed().subscribe((result) => {
-                if (!result) {
-                    return;
-                }
-                this.router
-                    .navigate(['/default-layout/pricing-templates/'])
-                    .then(() => { });
-            });
-        }
     }
 
     deleteCustomerMargin(index: number) {

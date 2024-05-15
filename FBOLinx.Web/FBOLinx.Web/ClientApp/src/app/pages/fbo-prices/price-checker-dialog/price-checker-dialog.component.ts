@@ -29,7 +29,7 @@ export class PriceCheckerDialogComponent {
         if (this.getScreenWidth <= 543)
             return true;
         else
-            return this.sharedService.currentUser.role === 5;
+            return this.sharedService.isCsr;
     }
 
     public onCancelClick(): void {

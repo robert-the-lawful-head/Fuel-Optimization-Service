@@ -348,9 +348,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             TailNumber = customerAircrafts.Where(c => c.Oid == item.CustomerAircraftId).Select(a => a.TailNumber).FirstOrDefault(),
                             FboName = string.Empty,
                             Email = string.Empty,
-                            PhoneNumber = item.CustomerInfoByGroup?.MainPhone,
+                            PhoneNumber = customers.Where(c => c.Oid == item.CustomerInfoByGroupId)?.FirstOrDefault().MainPhone,
                             FuelOn = string.Empty,
-                            CustomerName = item.CustomerInfoByGroup?.Company,
+                            CustomerName = customers.Where(c => c.Oid == item.CustomerInfoByGroupId)?.FirstOrDefault().Company,
                             IsConfirmed = orderConfirmations.Any(x => x.SourceId == item.FuelerLinxTransactionId),
                             PaymentMethod = transactionOrderDetails == null ? "" : transactionOrderDetails.PaymentMethod,
                             ServiceOrder = item,
@@ -832,6 +832,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             // Get order details
             List<OrderDetailsDto> orderDetailsList = await _orderDetailsService.GetListbySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault()));
             var orderDetails = orderDetailsList.Where(o => o.FboHandlerId == fuelerlinxTransaction.FboHandlerId).FirstOrDefault();
+            if (orderDetails == null)
+                return;
+
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
             if (fbo == null)
                 return;
@@ -851,12 +854,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     fuelReq.Cancelled = true;
                     await UpdateAsync(fuelReq);
                 }
-
-                if (orderDetails != null)
-                {
                     orderDetails.IsCancelled = true;
                     await _orderDetailsService.UpdateAsync(orderDetails);
-                }
 
                 sendEmail = true;
                 requestStatus = "cancelled";

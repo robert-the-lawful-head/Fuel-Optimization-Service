@@ -38,6 +38,7 @@ import { Subscription } from 'rxjs';
 import { AirportWatchService } from 'src/app/services/airportwatch.service';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
+import * as SharedEvents from 'src/app/constants/sharedEvents';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -142,30 +143,8 @@ export class FlightWatchMapComponent
             :  this.icao;
     }
     ngOnInit(): void {
-        if(this.center == null) return;
-        this.loadMap();
+        this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
     }
-
- playBeep(): void {
-  // Create an oscillator node (sound generator)
-  const oscillator = this.audioContext.createOscillator();
-
-  // Connect the oscillator to the audio context's destination (speakers)
-  oscillator.connect(this.audioContext.destination);
-
-  // Set the oscillator properties (frequency and type of sound)
-  oscillator.type = 'sine'; // Set the type of sound (sine wave)
-  oscillator.frequency.setValueAtTime(1000, this.audioContext.currentTime); // Set the frequency (1000 Hz)
-
-  // Start the oscillator to play the sound
-  oscillator.start();
-
-  // Stop the oscillator after a short duration (e.g., 0.5 seconds)
-  setTimeout(() => {
-    oscillator.stop();
-  }, 100); // Stop after 0.5 seconds (adjust duration as needed)
-}
-
 
     ngAfterViewInit() {
         this.aircraftPopupContainer.getCustomersList(
@@ -178,9 +157,15 @@ export class FlightWatchMapComponent
         if(this.subscription) this.subscription.unsubscribe();
     }
     ngOnChanges(changes: SimpleChanges): void {
-        if(this.center && !this.map && this.isMapDataLoading)
+        if(this.center && !this.map && !this.isMapDataLoading){
             this.loadMap();
+            return;
+        }
+
         if(!this.map) return;
+
+        if(changes.center)
+            this.flyTo(this.center);
 
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
@@ -201,9 +186,6 @@ export class FlightWatchMapComponent
             this.updateFlightOnMap(this.mapMarkers.flights);
         }
 
-        if(changes.center)
-            this.flyTo(this.center);
-
         if(changes.selectedPopUp)
             this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
@@ -214,11 +196,14 @@ export class FlightWatchMapComponent
             this.styleLoaded = true;
         })
         .onLoad(async () => {
+            console.log("start redering map data");
             this.isMapDataLoading = true;
             this.resizeMap();
             await this.loadMapIcons();
             await this.loadMapDataAsync();
             this.isMapDataLoading = false;
+            this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
+            console.log("finishing rendering map data")
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
@@ -400,9 +385,9 @@ export class FlightWatchMapComponent
         this.applyMouseFunctions(marker.layerId);
     }
     updateFlightOnMap(marker: MapMarkerInfo) {
-        if (!this.map || this.isMapDataLoading) return;
-
         const source = this.getSource(marker.sourceId);
+
+        if(!source) return;
 
         const dataFeatures = this.getFlightSourcerFeatureMarkers(marker.data);
 
@@ -449,7 +434,6 @@ export class FlightWatchMapComponent
                     let isBackwards = !this.IsBackwardsBearing(previousiveBearing,liveBearing);
 
                     if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
-                        //this.playBeep();
                         this.data[pointSource.properties.id].liveBearing = liveBearing;
                         this.data[pointSource.properties.id].currentCoordinates = currentCoordinates;
                         this.data[pointSource.properties.id].targetCoordinates = targetCoordinates;
@@ -520,10 +504,10 @@ export class FlightWatchMapComponent
             }
     }
     private cancelExistingAnimationFames(): void {
-        for(let prop in this.backwardLogs) {
-            this.airportWatchService.logBackwards(this.backwardLogs[prop]).subscribe((response: any) => {
-            });
-        }
+        // for(let prop in this.backwardLogs) {
+        //     this.airportWatchService.logBackwards(this.backwardLogs[prop]).subscribe((response: any) => {
+        //     });
+        // }
         this.backwardLogs = {};
         for (const id of this.animationFrameIds) {
             cancelAnimationFrame(id);

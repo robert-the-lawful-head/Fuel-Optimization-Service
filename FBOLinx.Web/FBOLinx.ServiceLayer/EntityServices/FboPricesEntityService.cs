@@ -39,5 +39,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var result = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
             return result.HasValue ? result.Value : 0;
         }
+
+
     }
 }

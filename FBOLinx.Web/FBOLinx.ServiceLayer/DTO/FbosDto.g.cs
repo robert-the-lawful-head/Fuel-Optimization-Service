@@ -56,6 +56,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public DateTime? ExpirationDate { get; set; }
         public string SenderAddress { get; set; }
         public string ReplyTo { get; set; }
+        public string AntennaName { get; set; }
         public AccountTypes AccountType { get; set; }
         public GroupDTO Group { get; set; }
         public FboairportsDto FboAirport { get; set; }

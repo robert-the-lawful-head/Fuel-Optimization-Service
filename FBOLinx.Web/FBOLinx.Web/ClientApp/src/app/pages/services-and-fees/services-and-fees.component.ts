@@ -234,7 +234,7 @@ export class ServicesAndFeesComponent implements OnInit {
     }
     getInfoTooltipText(serviceAndFees: ServicesAndFeesResponse): string{
         if (!serviceAndFees.isCustom)
-            return   `Source: Acukwik`;
+            return   `Source: FuelerLinx Database`;
         else
             return  `Source: ${serviceAndFees.createdByUser} - ${this.datePipe.transform(serviceAndFees.createdDate,'MM/dd/yyyy')}`;
     }
