@@ -675,23 +675,17 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            try
+            var orderDetails = new OrderDetailsDto();
+            if (fuelReq.SourceId > 0)
             {
-                var orderDetails = new OrderDetailsDto();
-                if (fuelReq.SourceId > 0)
-                {
-                    var fbo = await _fboService.GetFbo(fuelReq.Fboid.GetValueOrDefault());
-                    orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.AcukwikFBOHandlerId.GetValueOrDefault()));
-                }
-                else
-                    orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByAssociatedFuelOrderIdSpecification(fuelReq.Oid));
+                var fbo = await _fboService.GetFbo(fuelReq.Fboid.GetValueOrDefault());
+                orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.AcukwikFBOHandlerId.GetValueOrDefault()));
+            }
+            else
+                orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByAssociatedFuelOrderIdSpecification(fuelReq.Oid));
 
-                orderDetails.IsArchived = fuelReq.Archived;
-                await _orderDetailsService.UpdateAsync(orderDetails);
-            }
-            catch (Exception ex)
-            {
-            }
+            orderDetails.IsArchived = fuelReq.Archived;
+            await _orderDetailsService.UpdateAsync(orderDetails);
 
             return Ok(fuelReq);
         }
