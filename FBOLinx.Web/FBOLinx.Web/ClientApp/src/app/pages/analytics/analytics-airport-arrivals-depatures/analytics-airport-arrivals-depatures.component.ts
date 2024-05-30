@@ -279,7 +279,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
         }));
-        console.log("🚀 ~ refreshDataSource ~ data:", data)
 
         this.setVirtualScrollVariables(this.paginator, this.sort, data);
 

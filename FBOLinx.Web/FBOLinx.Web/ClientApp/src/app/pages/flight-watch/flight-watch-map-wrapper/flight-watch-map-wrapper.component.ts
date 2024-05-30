@@ -50,7 +50,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
     public flightWatchDictionary: Dictionary<FlightWatchModelResponse>;
-    public dataQueue: FlightWatchModelResponse[][] = [];
+    public lastUpdatedData: FlightWatchModelResponse[];
     public selectedPopUp: FlightWatchModelResponse;
 
     public chartName = 'map-wrapper';
@@ -73,13 +73,14 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (!changes.data)
+        if (!changes.data && !changes.data.currentValue)
             return;
 
         if(!changes.data.firstChange){
             this.processFlightWatchData(changes.data.currentValue,changes.data.previousValue);
         }
-        this.dataQueue.push(changes.data.currentValue);
+        this.lastUpdatedData = changes.data.currentValue;
+
         this.ngxLoader.stopLoader(this.chartName);
     }
     private processFlightWatchData(currentFlights: FlightWatchModelResponse [], previousFlights: FlightWatchModelResponse [] = []):void {
@@ -96,9 +97,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         }
     }
     getLatestData($event: any = null){
-        let data = this.dataQueue[this.dataQueue.length - 1];
-        this.flightWatchDictionary = this.getFilteredData(data);
-        this.dataQueue = [];
+        this.flightWatchDictionary = this.getFilteredData(this.lastUpdatedData);
     }
     getFilteredData(
         data: FlightWatchModelResponse[]
