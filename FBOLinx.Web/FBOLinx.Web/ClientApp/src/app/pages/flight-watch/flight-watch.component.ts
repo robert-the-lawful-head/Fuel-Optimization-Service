@@ -74,8 +74,11 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     ngAfterContentChecked() {
         this.cdref.detectChanges();
-    }
 
+    }
+    ngAfterViewInit() {
+        this.toggleSettingsDrawer();
+    }
     async ngOnInit() {
         if(this.center == null)
             this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
