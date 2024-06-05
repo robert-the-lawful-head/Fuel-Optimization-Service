@@ -485,9 +485,12 @@ export class FlightWatchMapComponent
             self.aicraftDataFeatures = null;
             self.cancelExistingAnimationFames();
             this.getLatestData.emit();
+            this.isNextCallEnqueued = false;
+            return;
         }
-        if(elapsedTime > (environment.flightWatch.apiCallInterval - 1500) ){
+        if(elapsedTime > (environment.flightWatch.apiCallInterval - 1000) && !this.isNextCallEnqueued){
             self.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
+            this.isNextCallEnqueued = true;
         }
     }
     private animateAircrafts(): void {
