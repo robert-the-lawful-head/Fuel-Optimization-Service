@@ -1,0 +1,99 @@
+<div width="100%" class="jetnet-container">
+    <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div *ngIf="!isLoading">
+        <div class="row">
+            <div class="row-header col-6 align-content-start"><img src="../.../../../../../assets/img/jetnet-logo.png" style="max-width:200px;" /></div>
+            <div class="col-6 text-right"><button class="info-values" beforeIcon="fa fa-times" ni-button [view]="'blank'" size="large"></button></div>
+        </div>
+
+        <div class="row-header"><hr class="info-values" /></div>
+
+        <div class="row info-values">
+            <div class="col-4">
+                <h5 class="header">{{jetNetInformation.aircraftresult.companyrelationships[0].companyname}}</h5>
+                <div>
+                    <div>{{jetNetInformation.aircraftresult.companyrelationships[0].companyaddress1}}</div>
+                    <div>{{jetNetInformation.aircraftresult.companyrelationships[0].companyaddress2}}</div>
+                    <div>{{jetNetInformation.aircraftresult.companyrelationships[0].companycity}}, {{jetNetInformation.aircraftresult.companyrelationships[0].companystateabbr}} {{jetNetInformation.aircraftresult.companyrelationships[0].companypostcode}}</div>
+                </div>
+                <div>Office: {{jetNetInformation.aircraftresult.companyrelationships[0].companyofficephone}}</div>
+            </div>
+            <div class="col-4">
+                <h5 class="header">Business Type(s)</h5>
+                <div>
+                    <ng-container *ngFor="let businessType of companyBusinessTypes">
+                        <div>{{businessType}}</div>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="col-4">
+                <h5 class="header">Contacts</h5>
+                <div>
+                    <ng-container *ngFor="let contact of companyContacts">
+                        <div>{{contact}}</div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <h4 class="ml-3">Company Relationships</h4>
+        </div>
+
+        <div class="row-header"><hr class="info-values" /></div>
+
+        <div class="row">
+            <div class="col-4">
+                <h5 class="row-header">Relationship</h5>
+            </div>
+            <div class="col-4">
+                <h5 class="row-header">Company</h5>
+            </div>
+            <div class="col-4">
+                <h5 class="row-header">Contact</h5>
+            </div>
+        </div>
+
+        <div class="row info-values">
+            <ng-container *ngFor="let contact of jetNetInformation.aircraftresult.companyrelationships">
+                <div class="col-4 row-header" style="font-weight:bold;">
+                    {{contact.companyrelation}}
+                </div>
+
+                <div class="col-4 row-header">
+                    <div>{{contact.companyname}}</div>
+                    <div>{{contact.companyaddress1}}</div>
+                    <div>{{contact.companyaddress2}}</div>
+                    <div>{{contact.companycity}}, {{contact.companystateabbr}} {{contact.companypostcode}} {{contact.companycountry == 'United States' ? 'USA' : contact.companycountry}}</div>
+                </div>
+
+                <div class="col-4 row-header">
+                    <div>{{contact.contactfirstname}} {{contact.contactlastname}}</div>
+                    <div>{{contact.contacttitle == null ? "" : "(" + contact.contacttitle + ")"}}</div>
+                </div>
+
+                <div class="row-header col-12" *ngIf="contact.contactid != jetNetInformation.aircraftresult.companyrelationships.length"><hr class="info-values" /></div>
+            </ng-container>
+        </div>
+
+        <div class="row">
+                <div class="col-10 text-right pr-0">
+                    <button (click)="onClickCloseJetNetModal()"
+                            [view]="'blank'"
+                            ni-button>
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-1">
+                    <button (click)="addCustomer()"
+                            [view]="'accent'"
+                            ni-button>
+                        Add to CRM
+                    </button>
+            </div>
+        </div>
+    </div>
+</div>

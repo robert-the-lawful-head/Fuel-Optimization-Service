@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -27,6 +27,7 @@ import { PriceBreakdownComponent } from 'src/app/shared/components/price-breakdo
 
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 import { FormValidationHelperService } from 'src/app/helpers/forms/formValidationHelper.service';
+import { AircraftResult, JetNet } from '../../../models/jetnet-information';
 
 enum WizardStep {
     COMPANY_INFO,
@@ -43,7 +44,6 @@ enum WizardStep {
 export class CustomersDialogNewCustomerComponent implements OnInit {
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
-
     customerForm: FormGroup;
     companyInfoDetailOpenState = false;
     certificateTypes: CertificateType[] = [];
@@ -56,6 +56,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
     submitting = false;
 
     constructor(
+        @Inject(MAT_DIALOG_DATA) public data: AircraftResult,
         public dialogRef: MatDialogRef<CustomersDialogNewCustomerComponent>,
         public closeConfirmationDialog: MatDialog,
         private customerInfoByGroupService: CustomerinfobygroupService,
@@ -109,6 +110,62 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 this.feesAndTaxes = feesAndTaxes;
                 this.recalculatePriceBreakdown();
             });
+
+        if (this.data != null) {
+            this.companyFormGroup.get('company').setValue(this.data.companyrelationships[0].companyname);
+            this.companyFormGroup.get('address').setValue(this.data.companyrelationships[0].companyaddress1);
+            this.companyFormGroup.get('city').setValue(this.data.companyrelationships[0].companycity);
+            this.companyFormGroup.get('country').setValue(this.data.companyrelationships[0].companycountry);
+            this.companyFormGroup.get('mainPhone').setValue(this.data.companyrelationships[0].companyofficephone);
+            this.companyFormGroup.get('state').setValue(this.data.companyrelationships[0].companystateabbr);
+            this.companyFormGroup.get('zipCode').setValue(this.data.companyrelationships[0].companypostcode);
+
+            this.aircraftFormArray.controls[0].get("tailNumber").setValue(this.data.regnbr);
+            this.aircraftFormArray.controls[0].get("aircraft").setValue(this.data.make.toUpperCase() + " " + this.data.model.toUpperCase());
+
+            this.contactFormArray.controls[0].get("firstName").setValue(this.data.companyrelationships[0].contactfirstname);
+            this.contactFormArray.controls[0].get("lastName").setValue(this.data.companyrelationships[0].contactlastname);
+            this.contactFormArray.controls[0].get("email").setValue(this.data.companyrelationships[0].contactemail);
+            this.contactFormArray.controls[0].get("mobile").setValue(this.data.companyrelationships[0].contactmobilephone);
+            this.contactFormArray.controls[0].get("phone").setValue(this.data.companyrelationships[0].contactofficephone);
+            this.contactFormArray.controls[0].get("title").setValue(this.data.companyrelationships[0].contacttitle);
+
+            if (this.data.companyrelationships.length > 1) {
+                for (var i = 1; i < this.data.companyrelationships.length; i++)
+                {
+                    if (this.data.companyrelationships[i].contactfirstname != null) {
+                        this.contactFormArray.push(
+                            new FormGroup({
+                                address: new FormControl(),
+                                city: new FormControl(),
+                                copyAlerts: new FormControl(true),
+                                country: new FormControl(),
+                                email: new FormControl('', [
+                                    Validators.required,
+                                    Validators.email,
+                                ]),
+                                extension: new FormControl(),
+                                fax: new FormControl(),
+                                firstName: new FormControl(),
+                                lastName: new FormControl(),
+                                mobile: new FormControl(),
+                                phone: new FormControl(),
+                                primary: new FormControl(),
+                                state: new FormControl(),
+                                title: new FormControl(),
+                            })
+                        );
+
+                        this.contactFormArray.controls[i].get("firstName").setValue(this.data.companyrelationships[i].contactfirstname);
+                        this.contactFormArray.controls[i].get("lastName").setValue(this.data.companyrelationships[i].contactlastname);
+                        this.contactFormArray.controls[i].get("email").setValue(this.data.companyrelationships[i].contactemail);
+                        this.contactFormArray.controls[i].get("mobile").setValue(this.data.companyrelationships[i].contactmobilephone);
+                        this.contactFormArray.controls[i].get("phone").setValue(this.data.companyrelationships[i].contactofficephone);
+                        this.contactFormArray.controls[i].get("title").setValue(this.data.companyrelationships[i].contacttitle);
+                    }
+                }
+            }
+        }
     }
     get companyFormGroup() {
         return this.customerForm.controls.company as FormGroup;

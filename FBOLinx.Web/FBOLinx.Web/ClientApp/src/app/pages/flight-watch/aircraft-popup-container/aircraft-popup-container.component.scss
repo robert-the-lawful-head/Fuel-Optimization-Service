@@ -1,21 +1,23 @@
 
+@import "../../../../assets/sass/variable";
+
 .dialog-title {
     display: flex;
     justify-content: center;
 }
 .info-labels{
-    text-align: end;
-    text-decoration: underline;
-    padding: 0 10px 0 0;
+    font-weight: bold;
+    padding-left: 30px;
 }
 .info-values{
     text-align: start;
-    padding: 0 0 0 10px;
     word-wrap: break-word;
+    color: gray;
 }
-.row-container {
+/*.row-container {
     display: flex;
-  }
+    padding: 0 0 10px 20px;
+  }*/
 .column-container {
     flex: 50%;
 }
@@ -26,8 +28,16 @@ button{
 
 }
 .mapboxgl-popup{
-    width: 330px;
+    width: 450px;
 }
 .actions{
     padding-top: 10px;
+}
+.aircraft-popup-container {
+    min-height: 525px;
+    padding: 20px;
+}
+hr.info-values {
+    color: gray;
+    opacity: 0.2;
 }

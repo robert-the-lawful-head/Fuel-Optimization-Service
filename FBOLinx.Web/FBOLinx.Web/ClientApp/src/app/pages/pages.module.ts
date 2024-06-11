@@ -240,6 +240,7 @@ import { CustomerCaptureRateComponent } from './analytics/customer-capture-rate/
 import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
+import { JetNetInformationComponent } from '../shared/components/jetnet-information/jetnet-information.component';
 
 @NgModule({
     declarations: [
@@ -408,7 +409,8 @@ import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes
         RampFeesCategoryComponent,
         ItemInputComponent,
         FuelreqsGridServicesComponent,
-        FuelreqsNotesComponent
+        FuelreqsNotesComponent,
+        JetNetInformationComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

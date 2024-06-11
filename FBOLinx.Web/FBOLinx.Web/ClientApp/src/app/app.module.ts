@@ -116,6 +116,7 @@ import { FavoritesService } from './services/favorites.service';
 import { FormValidationHelperService } from './helpers/forms/formValidationHelper.service';
 import { FlightWatchMapSharedService } from './pages/flight-watch/services/flight-watch-map-shared.service';
 import { ManageFboGroupsService } from './services/managefbo.service';
+import {JetNetService} from './services/jetnet.service';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -246,7 +247,8 @@ import { ManageFboGroupsService } from './services/managefbo.service';
         FavoritesService,
         FormValidationHelperService,
         FlightWatchMapSharedService,
-        ManageFboGroupsService
+        ManageFboGroupsService,
+        JetNetService
     ],
 })
 export class AppModule { }

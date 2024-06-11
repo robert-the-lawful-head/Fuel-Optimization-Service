@@ -48,6 +48,7 @@
 	  <Generated Remove="DTO\OrderNoteDto.g.cs" />
 	  <Generated Remove="DTO\ServiceOrderDto.g.cs" />
 	  <Generated Remove="DTO\ServiceOrderItemDto.g.cs" />
+	  <Generated Remove="DTO\UseCaseModels\JetNet\JetNetDto.g.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

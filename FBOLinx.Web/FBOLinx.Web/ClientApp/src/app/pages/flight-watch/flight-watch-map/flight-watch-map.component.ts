@@ -363,7 +363,8 @@ export class FlightWatchMapComponent
             aircraftICAO: selectedPopUp.icaoAircraftCode,
             faaRegisteredOwner: selectedPopUp.faaRegisteredOwner,
             origin: selectedPopUp.departureICAO,
-            destination: selectedPopUp.arrivalICAO
+            destination: selectedPopUp.arrivalICAO,
+            isJetNetEnabled: false
         };
 
         this.popupData = Object.assign({}, obj);

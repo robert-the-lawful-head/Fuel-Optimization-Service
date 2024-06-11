@@ -15,6 +15,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations.JetNet;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -134,6 +135,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IRefreshTokensService, RefreshTokensService>();
             services.AddTransient<IOrderNotesService, OrderNotesService>();
             services.AddTransient<IUserEntityService, UserEntityService>();
+            services.AddTransient<IJetNetService, JetNetService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
