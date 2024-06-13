@@ -168,6 +168,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                     mailMessage.To.Add(email);
             }
 
+            mailMessage.CC.Add("donotreply@fuelerlinx.com");
+
             mailMessage.SendGridOrderConfirmationTemplateData = dynamicTemplateData;
 
             //Send email
