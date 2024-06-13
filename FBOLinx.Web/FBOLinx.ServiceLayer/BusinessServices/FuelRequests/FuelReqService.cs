@@ -1085,6 +1085,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         mailMessage.To.Add(fboEmail);
                 }
 
+                mailMessage.CC.Add("donotreply@fuelerlinx.com");
+
                 if (dynamicAutomatedFuelOrderNotificationTemplateData != null)
                     mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicAutomatedFuelOrderNotificationTemplateData;
                 else if (dynamicFuelOrderCancellationTemplateDate != null)
