@@ -39,7 +39,7 @@
         <div class="row info-values">
             <ng-container *ngFor="let contact of jetNetInformation.aircraftresult.companyrelationships">
                 <div class="col-4 row-header" style="font-weight:bold;">
-                    <span style="padding-right:10px;" *ngIf="contact.contactfirstname">
+                    <span style="padding-right:10px;" *ngIf="contact.contactfirstname || contact.contactbestphone || contact.contactemail">
                         <mat-checkbox [(ngModel)]="contact.add">
                         </mat-checkbox>
                     </span>

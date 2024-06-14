@@ -54,6 +54,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
     aircraftSizes: AircraftSize[];
     step: WizardStep = WizardStep.COMPANY_INFO;
     submitting = false;
+    aircraftType: AircraftType;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: AircraftResult,
@@ -250,6 +251,8 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 this.pricingTemplates = pricingTemplates;
                 this.aircraftTypes = aircraftTypes;
                 this.aircraftSizes = aircraftSizes;
+
+                this.aircraftType = this.aircraftTypes.find(a => a.make == this.data.make.toUpperCase() && a.model == this.data.model.toUpperCase());
             }
         );
     }
