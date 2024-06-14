@@ -30,21 +30,24 @@ export class JetNetInformationComponent implements OnInit {
             this.jetNetService.getJetNetInformationByTailNumber(this.data).subscribe((response: JetNet) => {
                 this.jetNetInformation = response;
 
-                var i = 1;
-                this.companyBusinessTypes = new Array<string>();
-                this.companyContacts= new Array<string>();
                 this.jetNetInformation.aircraftresult.companyrelationships.forEach((company) => {
-                    if (this.companyBusinessTypes.includes(company.companybusinesstype) == false) {
-                        this.companyBusinessTypes.push(company.companybusinesstype);
-                    }
-
-                    if (this.companyContacts.includes(company.contactfirstname + " " + company.contactlastname) == false) {
-                        this.companyContacts.push(company.contactfirstname + " " + company.contactlastname);
-                    };
-
-                    company.contactid = i;
-                    i++;
+                    company.add = true;
                 });
+                //var i = 1;
+                //this.companyBusinessTypes = new Array<string>();
+                //this.companyContacts= new Array<string>();
+                //this.jetNetInformation.aircraftresult.companyrelationships.forEach((company) => {
+                //    if (this.companyBusinessTypes.includes(company.companybusinesstype) == false) {
+                //        this.companyBusinessTypes.push(company.companybusinesstype);
+                //    }
+
+                //    if (company.contactfirstname !=null && this.companyContacts.includes(company.contactfirstname + " " + company.contactlastname) == false) {
+                //        this.companyContacts.push(company.contactfirstname + " " + company.contactlastname);
+                //    };
+
+                //    company.contactid = i;
+                //    i++;
+                //});
                 this.isLoading = false;
             });
         }

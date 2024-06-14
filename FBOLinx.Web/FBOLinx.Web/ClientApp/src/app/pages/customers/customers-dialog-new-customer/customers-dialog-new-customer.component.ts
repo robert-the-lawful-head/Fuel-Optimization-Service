@@ -123,45 +123,62 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
             this.aircraftFormArray.controls[0].get("tailNumber").setValue(this.data.regnbr);
             this.aircraftFormArray.controls[0].get("aircraft").setValue(this.data.make.toUpperCase() + " " + this.data.model.toUpperCase());
 
-            this.contactFormArray.controls[0].get("firstName").setValue(this.data.companyrelationships[0].contactfirstname);
-            this.contactFormArray.controls[0].get("lastName").setValue(this.data.companyrelationships[0].contactlastname);
-            this.contactFormArray.controls[0].get("email").setValue(this.data.companyrelationships[0].contactemail);
-            this.contactFormArray.controls[0].get("mobile").setValue(this.data.companyrelationships[0].contactmobilephone);
-            this.contactFormArray.controls[0].get("phone").setValue(this.data.companyrelationships[0].contactofficephone);
-            this.contactFormArray.controls[0].get("title").setValue(this.data.companyrelationships[0].contacttitle);
+            if (this.data.companyrelationships.length > 0) {
+                var contactNumber = 1;
 
-            if (this.data.companyrelationships.length > 1) {
-                for (var i = 1; i < this.data.companyrelationships.length; i++)
+                for (var i = 0; i <= this.data.companyrelationships.length - 1; i++)
                 {
-                    if (this.data.companyrelationships[i].contactfirstname != null) {
-                        this.contactFormArray.push(
-                            new FormGroup({
-                                address: new FormControl(),
-                                city: new FormControl(),
-                                copyAlerts: new FormControl(true),
-                                country: new FormControl(),
-                                email: new FormControl('', [
-                                    Validators.required,
-                                    Validators.email,
-                                ]),
-                                extension: new FormControl(),
-                                fax: new FormControl(),
-                                firstName: new FormControl(),
-                                lastName: new FormControl(),
-                                mobile: new FormControl(),
-                                phone: new FormControl(),
-                                primary: new FormControl(),
-                                state: new FormControl(),
-                                title: new FormControl(),
-                            })
-                        );
+                    if (this.data.companyrelationships[i].add && this.data.companyrelationships[i].contactfirstname != null) {
+                        if (contactNumber == 1) {
+                            this.contactFormArray.controls[contactNumber - 1].get("firstName").setValue(this.data.companyrelationships[i].contactfirstname);
+                            this.contactFormArray.controls[contactNumber - 1].get("lastName").setValue(this.data.companyrelationships[i].contactlastname);
+                            this.contactFormArray.controls[contactNumber - 1].get("email").setValue(this.data.companyrelationships[i].contactemail);
+                            this.contactFormArray.controls[contactNumber - 1].get("mobile").setValue(this.data.companyrelationships[i].contactmobilephone);
+                            this.contactFormArray.controls[contactNumber - 1].get("phone").setValue(this.data.companyrelationships[i].contactbestphone);
+                            this.contactFormArray.controls[contactNumber - 1].get("title").setValue(this.data.companyrelationships[i].contacttitle);
+                            this.contactFormArray.controls[contactNumber - 1].get("address").setValue(this.data.companyrelationships[i].companyaddress1);
+                            this.contactFormArray.controls[contactNumber - 1].get("city").setValue(this.data.companyrelationships[i].companycity);
+                            this.contactFormArray.controls[contactNumber - 1].get("state").setValue(this.data.companyrelationships[i].companystateabbr);
+                            this.contactFormArray.controls[contactNumber - 1].get("country").setValue(this.data.companyrelationships[i].companycountry);
 
-                        this.contactFormArray.controls[i].get("firstName").setValue(this.data.companyrelationships[i].contactfirstname);
-                        this.contactFormArray.controls[i].get("lastName").setValue(this.data.companyrelationships[i].contactlastname);
-                        this.contactFormArray.controls[i].get("email").setValue(this.data.companyrelationships[i].contactemail);
-                        this.contactFormArray.controls[i].get("mobile").setValue(this.data.companyrelationships[i].contactmobilephone);
-                        this.contactFormArray.controls[i].get("phone").setValue(this.data.companyrelationships[i].contactofficephone);
-                        this.contactFormArray.controls[i].get("title").setValue(this.data.companyrelationships[i].contacttitle);
+                            contactNumber++;
+                        }
+                        else {
+                            this.contactFormArray.push(
+                                new FormGroup({
+                                    address: new FormControl(),
+                                    city: new FormControl(),
+                                    copyAlerts: new FormControl(true),
+                                    country: new FormControl(),
+                                    email: new FormControl('', [
+                                        Validators.required,
+                                        Validators.email,
+                                    ]),
+                                    extension: new FormControl(),
+                                    fax: new FormControl(),
+                                    firstName: new FormControl(),
+                                    lastName: new FormControl(),
+                                    mobile: new FormControl(),
+                                    phone: new FormControl(),
+                                    primary: new FormControl(),
+                                    state: new FormControl(),
+                                    title: new FormControl(),
+                                })
+                            );
+
+                            this.contactFormArray.controls[contactNumber - 1].get("firstName").setValue(this.data.companyrelationships[i].contactfirstname);
+                            this.contactFormArray.controls[contactNumber - 1].get("lastName").setValue(this.data.companyrelationships[i].contactlastname);
+                            this.contactFormArray.controls[contactNumber - 1].get("email").setValue(this.data.companyrelationships[i].contactemail);
+                            this.contactFormArray.controls[contactNumber - 1].get("mobile").setValue(this.data.companyrelationships[i].contactmobilephone);
+                            this.contactFormArray.controls[contactNumber - 1].get("phone").setValue(this.data.companyrelationships[i].contactbestphone);
+                            this.contactFormArray.controls[contactNumber - 1].get("title").setValue(this.data.companyrelationships[i].contacttitle);
+                            this.contactFormArray.controls[contactNumber - 1].get("address").setValue(this.data.companyrelationships[i].companyaddress1);
+                            this.contactFormArray.controls[contactNumber - 1].get("city").setValue(this.data.companyrelationships[i].companycity);
+                            this.contactFormArray.controls[contactNumber - 1].get("state").setValue(this.data.companyrelationships[i].companystateabbr);
+                            this.contactFormArray.controls[contactNumber - 1].get("country").setValue(this.data.companyrelationships[i].companycountry);
+
+                            contactNumber++;
+                        }
                     }
                 }
             }

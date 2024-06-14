@@ -54,4 +54,5 @@ export type CompanyRelationship = {
     contactbestphone: string;
     contactofficephone: string;
     contactmobilephone: string;
+    add: boolean;
 };

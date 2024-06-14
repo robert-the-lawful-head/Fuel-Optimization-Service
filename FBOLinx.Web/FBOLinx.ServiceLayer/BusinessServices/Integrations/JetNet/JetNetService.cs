@@ -42,13 +42,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations.JetNet
             //{
                 var jetNetUser = new JetNetUser() { emailaddress = _jetNetApiSettings.Username, password = _jetNetApiSettings.Password };
                 var token = await api.GetJetNetToken(jetNetUser);
-                //var cacheEntryOptions =
-                //    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(100));
-                //if (token != null && !string.IsNullOrEmpty(token.bearerToken))
-                //    _MemoryCache.Set("JetNet", token, cacheEntryOptions);
+            //var cacheEntryOptions =
+            //    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(100));
+            //if (token != null && !string.IsNullOrEmpty(token.bearerToken))
+            //    _MemoryCache.Set("JetNet", token, cacheEntryOptions);
             //}
 
-            return await api.GetJetNetData(tailNumber, token);
+            try
+            {
+                return await api.GetJetNetData(tailNumber, token);
+            }
+            catch(Exception ex)
+            {
+                return new JetNetDto();
+            }
         }
 
         private JetNetApiClient GetJetNetApiClient()

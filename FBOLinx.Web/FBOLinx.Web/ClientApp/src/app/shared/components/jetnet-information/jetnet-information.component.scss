@@ -23,9 +23,10 @@ h5 {
     margin-bottom:20px;
 }
 
-.jetnet-container{
-    min-height:500px;
-    padding:20px;
+.jetnet-container {
+    height: 550px;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 div.info-values{

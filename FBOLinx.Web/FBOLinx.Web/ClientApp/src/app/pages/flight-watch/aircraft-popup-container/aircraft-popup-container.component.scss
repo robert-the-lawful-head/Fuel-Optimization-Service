@@ -28,9 +28,14 @@ button{
 
 }
 .mapboxgl-popup{
-    width: 450px;
+    min-height:525px;
 }
-.actions{
+.mapboxgl-popup-content
+{
+    min-height:525px;
+    min-width:525px;
+}
+.actions {
     padding-top: 10px;
 }
 .aircraft-popup-container {

@@ -1,10 +1,10 @@
-<div width="100%" class="aircraft-popup">
+<div style="min-width:360px; min-height: 330px;" width="100%" class="aircraft-popup">
 <div *ngIf="isLoading" class="loading-spinner">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
 <div *ngIf="!isLoading">
       <div class="row pb-2">
-      <div class="col-12 pl-4 pb-2" style="font-size:24px;"><i class="fa fa-plane"></i>&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</div>
+      <div class="col-12 pl-4 pb-2" style="font-size:24px;"><img src="../../../../assets/img/plane.png" />&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</div>
       </div>
       <div class="row pb-2">
           <div class="col-12"><hr class="info-values" /></div>
@@ -78,7 +78,7 @@
               <button ni-button [view]="'gray'" class="customer-manager-button" [disabled]="isCustomerManagerButtonDisabled" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
           </div>
           <div class="col-6" *ngIf="isJetNetIntegrationEnabled">
-              <button ni-button [view]="'accent'" [disabled]="!aircraftWatch?.tailNumber.startsWith('N')" (click)="openJetNetInformation()">Access JETNET</button>
+              <button ni-button [view]="'accent'" [disabled]="!aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation" (click)="openJetNetInformation()">Access JETNET</button>
           </div>
     </div>
 </div>
