@@ -209,19 +209,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             if (swimFlightLegsWithNoGufi.Count > 0)
                 aircraftIdentifiers.AddRange(swimFlightLegsWithNoGufi);
             
-            var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
+            //var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegDTOs)
             {
                 try
                 {
                     var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
 
-                    if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
-                    {
-                        var equivalentLegForAircraftAndDeparture = swimFlightLegsWithNoOrNonMatchingGufi.FirstOrDefault(x => x.Oid == swimFlightLegDto.Oid);
-                        if (equivalentLegForAircraftAndDeparture != null)
-                            existingLeg = equivalentLegForAircraftAndDeparture;
-                    }
+                    // if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
+                    // {
+                    //     var equivalentLegForAircraftAndDeparture = swimFlightLegsWithNoOrNonMatchingGufi.FirstOrDefault(x => x.Oid == swimFlightLegDto.Oid);
+                    //     if (equivalentLegForAircraftAndDeparture != null)
+                    //         existingLeg = equivalentLegForAircraftAndDeparture;
+                    // }
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {
