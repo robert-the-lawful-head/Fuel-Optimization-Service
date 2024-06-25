@@ -17,4 +17,5 @@ export class User {
     isSingleSourceFbo: boolean;
     isNetworkFbo: boolean;
     accountType?: AccountType;
+    decimalPrecision: number;
 }

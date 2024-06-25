@@ -26,6 +26,7 @@ import { FbosService } from '../../../services/fbos.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbopreferencesService } from '../../../services/fbopreferences.service';
 import { UserService } from '../../../services/user.service';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 export interface AccountProfileDialogData {
     oid: number;
@@ -235,7 +236,14 @@ export class AccountProfileComponent {
             console.log(error);
         });
     }
-
+    onDecimalPrecisionchange() {
+        this.fboPreferencesService.update(this.fboPreferencesData).subscribe((data: any) => {
+            console.log(data);
+            this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.decimalPrecision, this.fboPreferencesData.decimalPrecision);
+        }, (error: any) => {
+            console.log(error);
+        });
+    }
     public newRecord(e: any) {
         e.preventDefault();
 
@@ -347,6 +355,8 @@ export class AccountProfileComponent {
             .getForFbo(this.sharedService.currentUser.fboId)
             .subscribe((fboPreferencesData: any) => {
                 this.fboPreferencesData = fboPreferencesData;
+                this.fboPreferencesData.decimalPrecision = fboPreferencesData.decimalPrecision ?? 4;
+
                 this.productsForm.setValue({
                     enableJetA: this.fboPreferencesData.enableJetA,
                     enableSaf: this.fboPreferencesData.enableSaf
