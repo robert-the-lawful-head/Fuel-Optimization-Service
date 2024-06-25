@@ -27,6 +27,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { FbopreferencesService } from '../../../services/fbopreferences.service';
 import { UserService } from '../../../services/user.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 export interface AccountProfileDialogData {
     oid: number;
@@ -72,6 +73,7 @@ export class AccountProfileComponent {
     contactsDataSource: MatTableDataSource<any> = null;
     public copyAllAlerts = false;
     public copyAllOrders = false;
+    public isDecimalPrecisionInRange: boolean = true;
 
     constructor(
         public dialogRef: MatDialogRef<AccountProfileComponent>,
@@ -84,7 +86,8 @@ export class AccountProfileComponent {
         private fboPricesService: FbopricesService,
         private usersService: UserService,
         private formBuilder: FormBuilder,
-        public newContactDialog: MatDialog
+        public newContactDialog: MatDialog,
+        private snackBarService: SnackBarService
     ) {
         this.systemContactsForm = this.formBuilder.group({
             fuelDeskEmail: new FormControl('', [
@@ -237,11 +240,18 @@ export class AccountProfileComponent {
         });
     }
     onDecimalPrecisionchange() {
+        this.isDecimalPrecisionInRange = this.fboPreferencesData.decimalPrecision > 0 && this.fboPreferencesData.decimalPrecision <= 12;
+
+        if(!this.isDecimalPrecisionInRange)
+            return;
+
         this.fboPreferencesService.update(this.fboPreferencesData).subscribe((data: any) => {
             console.log(data);
             this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.decimalPrecision, this.fboPreferencesData.decimalPrecision);
+            this.snackBarService.showSuccessSnackBar(`Changes Saved`);
         }, (error: any) => {
             console.log(error);
+            this.snackBarService.showErrorSnackBar(`Error saving changes, try again`);
         });
     }
     public newRecord(e: any) {

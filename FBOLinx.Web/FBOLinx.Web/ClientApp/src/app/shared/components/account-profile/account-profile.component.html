@@ -287,20 +287,17 @@
                                         [(ngModel)]="this.fboPreferencesData.decimalPrecision"
                                         #numberInputModel="ngModel"
                                         required
-                                        minlength="1"
-                                        maxlength="12"
+                                        min="1"
+                                        max="12"
                                         pattern="^[0-9]*$"
-                                        (input)="onDecimalPrecisionchange()">
-                                        <mat-error *ngIf="numberInputModel.errors?.minlength || numberInputModel.errors?.maxlength">
-                                            Decimal Precision must be between 1 and 12
-                                        </mat-error>
-                                        <mat-error *ngIf="numberInputModel.errors?.pattern || numberInputModel.errors?.required">
-                                            Decimal precision number is <strong>required</strong>
-                                        </mat-error>
+                                        (input)="onDecimalPrecisionchange()"/>
                                     </mat-form-field>
-
                                 </div>
                             </div>
+                        </div>
+                        <div *ngIf="!isDecimalPrecisionInRange" class="text-center"
+                                style="color: red">
+                            Decimal Precision must be between 1 and 12
                         </div>
                     </div>
                 </form>
