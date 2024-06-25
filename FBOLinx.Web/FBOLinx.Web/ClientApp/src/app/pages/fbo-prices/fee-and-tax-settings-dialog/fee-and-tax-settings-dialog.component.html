@@ -170,7 +170,7 @@
                                             }"
                                             [ngModel]="
                                                 feeAndTax.value
-                                                    | number
+                                                    | decimalPrecision
                                                         : (feeAndTax.calculationType ==
                                                           0
                                                               ? '1.4-4'

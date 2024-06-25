@@ -184,12 +184,12 @@
                                     <div *ngIf="priceLookupInfo?.rampFee" class="col-12 col-md-4">
                                         ${{
                                     priceLookupInfo?.rampFee.price
-                                        | number: "1.2-4"
+                                        | decimalPrecision
                                         }}
                                         waived at
                                         {{
                                     priceLookupInfo.rampFee.waived
-                                        | number: "1.0"
+                                        | decimalPrecision
                                         }}
                                         gal.
                                     </div>

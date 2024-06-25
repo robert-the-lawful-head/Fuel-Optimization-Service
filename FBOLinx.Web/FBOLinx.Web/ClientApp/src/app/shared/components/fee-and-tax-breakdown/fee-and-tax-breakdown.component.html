@@ -21,7 +21,7 @@
                 {{ marginType == 0 ? "Cost" : "Retail" }}
             </div>
             <div class="col"></div>
-            <div class="col text-right">${{ fboPrice | number: "1.4-4" }}</div>
+            <div class="col text-right">${{ fboPrice | decimalPrecision }}</div>
         </div>
 
         <!--Above the line taxes - Display mode 0 and 1-->
@@ -57,7 +57,7 @@
                         ) == -1
                 }"
                  class="col text-right">
-                <span *ngIf="aboveLineTax.calculationType == 1">{{ aboveLineTax.value | number }}%</span>
+                <span *ngIf="aboveLineTax.calculationType == 1">{{ aboveLineTax.value | decimalPrecision }}%</span>
             </div>
             <div [ngClass]="{
                     'strike-through':
@@ -92,7 +92,7 @@
             <div class="col ml-4" *ngIf="marginType == 1">Discount</div>
             <div class="col"></div>
             <div class="col text-right">
-                <span *ngIf="marginType == 1">-</span>${{ marginITP | number: "1.4-4" }}
+                <span *ngIf="marginType == 1">-</span>${{ marginITP | decimalPrecision }}
             </div>
         </div>
 
@@ -145,7 +145,7 @@
                         ) == -1
                 }"
                  class="col text-right">
-                <span *ngIf="belowLineTax.calculationType == 1">{{ belowLineTax.value | number }}%</span>
+                <span *ngIf="belowLineTax.calculationType == 1">{{ belowLineTax.value | decimalPrecision }}%</span>
             </div>
             <div [ngClass]="{
                     'strike-through':
@@ -177,7 +177,7 @@
         <div *ngIf="displayMode == 2" class="row font-weight-bold">
             <div class="col-6 label-tax-fees">
                 <div class="">
-                    ${{ fboPrice | number: "1.4-4" }}
+                    ${{ fboPrice | decimalPrecision }}
                 </div>
             </div>
             <div class="col-6 label-tax-fees">
@@ -206,7 +206,7 @@
                     </div>
                     <div *ngIf="marginType == 0">
                         <div *ngIf="aboveLineTax.calculationType == 1">
-                            {{ aboveLineTax.value | number }}%
+                            {{ aboveLineTax.value | decimalPrecision }}%
                         </div>
                         <div *ngIf="
                                 aboveLineTax.calculationType == 0 &&
@@ -257,13 +257,13 @@
                     }"
                      class="">
                     <div *ngIf="belowLineTax.calculationType == 1">
-                        {{ belowLineTax.value | number }}%
+                        {{ belowLineTax.value | decimalPrecision }}%
                     </div>
                     <div *ngIf="
                             belowLineTax.calculationType == 0 &&
                             belowLineTax.amount
                         ">
-                        {{ belowLineTax.amount | number: "1.4-4" }}
+                        {{ belowLineTax.amount | decimalPrecision }}
                     </div>
                 </div>
             </div>
