@@ -33,6 +33,9 @@ using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.OrderDetails;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.DB.Specifications.CustomerInfoByFbo;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -53,9 +56,11 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboService _fboService;
         private readonly ICustomerAircraftService _customerAircraftService;
         private readonly ICustomerService _customerService;
+        private readonly ICustomerInfoByFboEntityService _customerInfoByFboEntityService;
+        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, IFboPricesService fbopricesService, ILoggingService logger,
-                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService, ICustomerAircraftService customerAircraftService, ICustomerService customerService) : base(logger)
+                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService, ICustomerAircraftService customerAircraftService, ICustomerService customerService, ICustomerInfoByFboEntityService customerInfoByFboEntityService, ICustomerInfoByGroupService customerInfoByGroupService) : base(logger)
         {
             _IntegrationStatusService = integrationStatusService;
             _httpContextAccessor = httpContextAccessor;
@@ -69,6 +74,8 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _customerAircraftService = customerAircraftService;
             _customerService = customerService;
+            _customerInfoByFboEntityService = customerInfoByFboEntityService;
+            _customerInfoByGroupService = customerInfoByGroupService;
         }
 
 
@@ -139,8 +146,18 @@ namespace FBOLinx.Web.Controllers
             orderDetails.IsOkToEmail = request.IsOktoSendEmail.GetValueOrDefault();
 
             var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
+            var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(customer.Oid));
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
             var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber == request.TailNumber).FirstOrDefault();
+            var customerInfoByFbo = await _customerInfoByFboEntityService.GetSingleBySpec(new CustomerInfoByFboByCustomerInfoByGroupIdFboIdSpecification(customerInfoByGroup.Oid, fbo.Oid));
+
+            if (customerInfoByFbo == null)
+                customerInfoByFbo = new CustomerInfoByFbo();
+
+            customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
+            customerInfoByFbo.FboId = fbo.Oid;
+            customerInfoByFbo.CustomFboEmail = request.FboEmail;
+            await _customerInfoByFboEntityService.UpdateAsync(customerInfoByFbo);
 
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;

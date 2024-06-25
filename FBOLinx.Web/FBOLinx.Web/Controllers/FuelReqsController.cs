@@ -49,6 +49,7 @@ using FBOLinx.DB.Specifications.OrderNotes;
 using FBOLinx.DB.Specifications.ServiceOrderItem;
 using FBOLinx.ServiceLayer.DTO.Responses.ServiceOrder;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.DB.Specifications.CustomerInfoByFbo;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -81,6 +82,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IOrderNotesService _orderNotesService;
         private readonly ICustomerService _customerService;
         private readonly IAuthService _authService;
+        private readonly ICustomerInfoByFboService _customerInfoByFboService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -91,7 +93,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService, IOrderNotesService orderNotesService, ICustomerService customerService, IAuthService authService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService, IOrderNotesService orderNotesService, ICustomerService customerService, IAuthService authService, ICustomerInfoByFboService customerInfoByFboService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -117,6 +119,7 @@ namespace FBOLinx.Web.Controllers
             _orderNotesService = orderNotesService;
             _customerService = customerService;
             _authService = authService;
+            _customerInfoByFboService = customerInfoByFboService;
         }
 
         // GET: api/FuelReqs/5
@@ -362,6 +365,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.IsOkToEmail = request.IsOkToSendEmail;
 
             var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
+            var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(customer.Oid));
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
             var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber.Replace("-", "") == request.TailNumber.Replace("-","")).FirstOrDefault();
 
@@ -547,6 +551,19 @@ namespace FBOLinx.Web.Controllers
                         await _orderDetailsService.AddAsync(orderDetails);
                     }
 
+                    if (customerInfoByGroup != null)
+                    {
+                        var customerInfoByFbo = await _customerInfoByFboService.GetSingleBySpec(new CustomerInfoByFboByCustomerInfoByGroupIdFboIdSpecification(customerInfoByGroup.Oid, fbo.Oid));
+
+                        if (customerInfoByFbo == null)
+                            customerInfoByFbo = new CustomerInfoByFboDto();
+
+                        customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
+                        customerInfoByFbo.FboId = fbo.Oid;
+                        customerInfoByFbo.CustomFboEmail = request.FboEmail;
+                        await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
+                    }
+
                     return Ok(new List<FuelReqDto>() { fuelReq });
                 }
                 else       // CONTRACT ORDERS
@@ -559,7 +576,7 @@ namespace FBOLinx.Web.Controllers
 
                     if (customerAircraft != null)
                     {
-                        var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
+                        customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
                         customerInfoByGroupId = customerInfoByGroup.Oid;
                     }
 
@@ -600,6 +617,16 @@ namespace FBOLinx.Web.Controllers
                     fuelServiceOrderItem.ServiceName = "Fuel: " + fuelReqGallons + " gal" + (fuelReqGallons > 1 ? "s" : "");
                     fuelServiceOrderItem.IsCompleted = false;
                     await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
+
+                    var customerInfoByFbo = await _customerInfoByFboService.GetSingleBySpec(new CustomerInfoByFboByCustomerInfoByGroupIdFboIdSpecification(customerInfoByGroup.Oid, fbo.Oid));
+
+                    if (customerInfoByFbo == null)
+                        customerInfoByFbo = new CustomerInfoByFboDto();
+
+                    customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
+                    customerInfoByFbo.FboId = fbo.Oid;
+                    customerInfoByFbo.CustomFboEmail = request.FboEmail;
+                    await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
 
                     return Ok();
                 }
