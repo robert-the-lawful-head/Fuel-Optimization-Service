@@ -157,7 +157,10 @@ namespace FBOLinx.Web.Controllers
             customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
             customerInfoByFbo.FboId = fbo.Oid;
             customerInfoByFbo.CustomFboEmail = request.FboEmail;
-            await _customerInfoByFboEntityService.UpdateAsync(customerInfoByFbo);
+            if (customerInfoByFbo.Oid == 0)
+                await _customerInfoByFboEntityService.AddAsync(customerInfoByFbo);
+            else
+                await _customerInfoByFboEntityService.UpdateAsync(customerInfoByFbo);
 
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;
