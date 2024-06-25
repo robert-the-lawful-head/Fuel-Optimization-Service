@@ -307,6 +307,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             if (transactionOrderDetails.IsOkToEmail != null)
                                 fuelRequest.ShowConfirmationButton = transactionOrderDetails.IsOkToEmail.GetValueOrDefault();
                         }
+                        else
+                            fuelRequest.Archived = false;
                         var customer = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault();
                         fuelRequest.CustomerId = customer == null ? 0 : customer.CustomerId;
                         result.Add(fuelRequest);
