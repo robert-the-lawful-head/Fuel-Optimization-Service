@@ -700,7 +700,7 @@ namespace FBOLinx.Web.Services
             return $"{{0:C{decimalPrecision}}}";
         }
     
-        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDto> customers, int? fboId)
+        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDto> customers)
         {
 
             await GetEmailContent();
