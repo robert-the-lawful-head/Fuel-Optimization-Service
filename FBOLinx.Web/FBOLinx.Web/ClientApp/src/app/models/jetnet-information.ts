@@ -23,8 +23,14 @@ export type AircraftResult = {
     ownership: string;
     usage: string;
     maintained: string;
+    companies: Company[];
     companyrelationships: CompanyRelationship[];
 };
+
+export type Company = {
+    company: string;
+    companyrelationships: CompanyRelationship[];
+}
 
 export type CompanyRelationship = {
     companyid: number;

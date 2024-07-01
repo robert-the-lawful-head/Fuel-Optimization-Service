@@ -16,6 +16,7 @@ export class JetNetInformationComponent implements OnInit {
     public isLoading: boolean;
     public companyBusinessTypes: string[];
     public companyContacts: string[];
+    public companyDetailOpenState: boolean = false;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -30,24 +31,17 @@ export class JetNetInformationComponent implements OnInit {
             this.jetNetService.getJetNetInformationByTailNumber(this.data).subscribe((response: JetNet) => {
                 this.jetNetInformation = response;
 
-                this.jetNetInformation.aircraftresult.companyrelationships.forEach((company) => {
-                    company.add = true;
+                this.jetNetInformation.aircraftresult.companyrelationships.forEach((contact) => {
+                    if (contact.contactemail)
+                        contact.add = true;
                 });
-                //var i = 1;
-                //this.companyBusinessTypes = new Array<string>();
-                //this.companyContacts= new Array<string>();
-                //this.jetNetInformation.aircraftresult.companyrelationships.forEach((company) => {
-                //    if (this.companyBusinessTypes.includes(company.companybusinesstype) == false) {
-                //        this.companyBusinessTypes.push(company.companybusinesstype);
-                //    }
 
-                //    if (company.contactfirstname !=null && this.companyContacts.includes(company.contactfirstname + " " + company.contactlastname) == false) {
-                //        this.companyContacts.push(company.contactfirstname + " " + company.contactlastname);
-                //    };
-
-                //    company.contactid = i;
-                //    i++;
-                //});
+                this.jetNetInformation.aircraftresult.companies.forEach((company) => {
+                    company.companyrelationships.forEach((contact) => {
+                        if (contact.contactemail)
+                            contact.add = true;
+                    });
+                });
                 this.isLoading = false;
             });
         }
@@ -63,7 +57,7 @@ export class JetNetInformationComponent implements OnInit {
         const dialogRef = this.newCustomerDialog.open(
             CustomersDialogNewCustomerComponent,
             {
-                height: '500px',
+                height: '600px',
                 width: '1140px',
                 data: this.jetNetInformation?.aircraftresult,
             },

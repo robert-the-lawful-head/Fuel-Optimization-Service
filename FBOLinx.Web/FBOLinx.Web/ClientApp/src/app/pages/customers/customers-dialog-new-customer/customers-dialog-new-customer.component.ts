@@ -117,7 +117,6 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
             this.companyFormGroup.get('address').setValue(this.data.companyrelationships[0].companyaddress1);
             this.companyFormGroup.get('city').setValue(this.data.companyrelationships[0].companycity);
             this.companyFormGroup.get('country').setValue(this.data.companyrelationships[0].companycountry);
-            this.companyFormGroup.get('mainPhone').setValue(this.data.companyrelationships[0].companyofficephone);
             this.companyFormGroup.get('state').setValue(this.data.companyrelationships[0].companystateabbr);
             this.companyFormGroup.get('zipCode').setValue(this.data.companyrelationships[0].companypostcode);
 
@@ -137,10 +136,6 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                             this.contactFormArray.controls[contactNumber - 1].get("mobile").setValue(this.data.companyrelationships[i].contactmobilephone);
                             this.contactFormArray.controls[contactNumber - 1].get("phone").setValue(this.data.companyrelationships[i].contactbestphone);
                             this.contactFormArray.controls[contactNumber - 1].get("title").setValue(this.data.companyrelationships[i].contacttitle);
-                            this.contactFormArray.controls[contactNumber - 1].get("address").setValue(this.data.companyrelationships[i].companyaddress1);
-                            this.contactFormArray.controls[contactNumber - 1].get("city").setValue(this.data.companyrelationships[i].companycity);
-                            this.contactFormArray.controls[contactNumber - 1].get("state").setValue(this.data.companyrelationships[i].companystateabbr);
-                            this.contactFormArray.controls[contactNumber - 1].get("country").setValue(this.data.companyrelationships[i].companycountry);
 
                             contactNumber++;
                         }
@@ -173,10 +168,6 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                             this.contactFormArray.controls[contactNumber - 1].get("mobile").setValue(this.data.companyrelationships[i].contactmobilephone);
                             this.contactFormArray.controls[contactNumber - 1].get("phone").setValue(this.data.companyrelationships[i].contactbestphone);
                             this.contactFormArray.controls[contactNumber - 1].get("title").setValue(this.data.companyrelationships[i].contacttitle);
-                            this.contactFormArray.controls[contactNumber - 1].get("address").setValue(this.data.companyrelationships[i].companyaddress1);
-                            this.contactFormArray.controls[contactNumber - 1].get("city").setValue(this.data.companyrelationships[i].companycity);
-                            this.contactFormArray.controls[contactNumber - 1].get("state").setValue(this.data.companyrelationships[i].companystateabbr);
-                            this.contactFormArray.controls[contactNumber - 1].get("country").setValue(this.data.companyrelationships[i].companycountry);
 
                             contactNumber++;
                         }
@@ -252,7 +243,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 this.aircraftTypes = aircraftTypes;
                 this.aircraftSizes = aircraftSizes;
 
-                this.aircraftType = this.aircraftTypes.find(a => a.make == this.data.make.toUpperCase() && a.model == this.data.model.toUpperCase());
+                this.aircraftType = this.aircraftTypes.find(a => a.make.trim() == this.data.make.toUpperCase().trim() && a.model.trim() == this.data.model.toUpperCase().trim());
             }
         );
     }

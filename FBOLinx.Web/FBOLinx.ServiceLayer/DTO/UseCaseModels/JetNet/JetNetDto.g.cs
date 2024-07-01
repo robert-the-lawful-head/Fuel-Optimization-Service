@@ -23,6 +23,13 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.JetNet
         public string ownership { get; set; }
         public string usage { get; set; }
         public string maintained { get; set; }
+        public List<Company> companies { get; set; }
+        public List<CompanyRelationship> companyrelationships { get; set; }
+    }
+
+    public class Company
+    {
+        public string company { get; set; }
         public List<CompanyRelationship> companyrelationships { get; set; }
     }
 
