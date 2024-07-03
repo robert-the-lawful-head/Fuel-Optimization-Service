@@ -728,8 +728,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var userContacts = await GetUserContacts(fbo);
 
                     var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
+                    var distinctFboEmails = "";
+                    foreach (string email in fboEmails.Split(';'))
+                    {
+                        if (!distinctFboEmails.Contains(email))
+                            distinctFboEmails += email + ";";
+                    }
 
-                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, dynamicTemplateData.airportICAO != null ? dynamicTemplateData : null, dynamicCancellationTemplateData.airportICAO != null ? dynamicCancellationTemplateData : null);
+                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, distinctFboEmails, dynamicTemplateData.airportICAO != null ? dynamicTemplateData : null, dynamicCancellationTemplateData.airportICAO != null ? dynamicCancellationTemplateData : null);
 
                     return result;
                 }
