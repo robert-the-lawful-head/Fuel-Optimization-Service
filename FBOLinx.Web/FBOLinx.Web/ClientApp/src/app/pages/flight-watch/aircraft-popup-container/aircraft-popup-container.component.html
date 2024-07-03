@@ -73,12 +73,15 @@
               <p>{{ aircraftWatch?.destination}}&nbsp;</p>
           </div>
       </div>
-        <div class="row actions">
+      <div class="row actions">
           <div class="col-6 info-labels">
               <button ni-button [view]="'gray'" class="customer-manager-button" [disabled]="isCustomerManagerButtonDisabled" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
           </div>
-          <div class="col-6" *ngIf="isJetNetIntegrationEnabled">
+          <div class="col-6" *ngIf="isJetNetIntegrationEnabled && hasJetNetInformation">
               <button ni-button [view]="'accent'" [disabled]="!aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation" (click)="openJetNetInformation()">Access JETNET</button>
           </div>
-    </div>
+          <div class="col-6" *ngIf="!isJetNetIntegrationEnabled || !hasJetNetInformation">
+              <button ni-button [view]="'accent'" (click)="addAircraft()">Add Aircraft</button>
+          </div>
+      </div>
 </div>

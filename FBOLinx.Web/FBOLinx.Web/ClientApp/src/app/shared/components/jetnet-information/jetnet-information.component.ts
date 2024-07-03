@@ -14,9 +14,6 @@ import { JetNetService } from '../../../services/jetnet.service';
 export class JetNetInformationComponent implements OnInit {
     public jetNetInformation: JetNet;
     public isLoading: boolean;
-    public companyBusinessTypes: string[];
-    public companyContacts: string[];
-    public companyDetailOpenState: boolean = false;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -30,11 +27,6 @@ export class JetNetInformationComponent implements OnInit {
         if (this.data && this.data.startsWith("N")) {
             this.jetNetService.getJetNetInformationByTailNumber(this.data).subscribe((response: JetNet) => {
                 this.jetNetInformation = response;
-
-                this.jetNetInformation.aircraftresult.companyrelationships.forEach((contact) => {
-                    if (contact.contactemail)
-                        contact.add = true;
-                });
 
                 this.jetNetInformation.aircraftresult.companies.forEach((company) => {
                     company.companyrelationships.forEach((contact) => {

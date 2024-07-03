@@ -29,6 +29,7 @@ export type AircraftResult = {
 
 export type Company = {
     company: string;
+    companyDetailOpenState: boolean;
     companyrelationships: CompanyRelationship[];
 }
 
