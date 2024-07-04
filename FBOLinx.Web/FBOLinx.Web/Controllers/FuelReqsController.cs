@@ -49,6 +49,7 @@ using FBOLinx.DB.Specifications.OrderNotes;
 using FBOLinx.DB.Specifications.ServiceOrderItem;
 using FBOLinx.ServiceLayer.DTO.Responses.ServiceOrder;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.DB.Specifications.FboAirport;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -1736,10 +1737,11 @@ namespace FBOLinx.Web.Controllers
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
                 fbolinxOrdersRequest.EndDateTime = request.EndDateTime;
 
-                foreach (var icao in icaos)
+                foreach(int fboId in request.FboIds)
                 {
-                    if (!fbolinxOrdersRequest.IcaosFbos.ContainsKey(icao))
-                        fbolinxOrdersRequest.IcaosFbos.Add(icao, icao);
+                    var fbo = await _fboService.GetFbo(fboId);
+                    if (!fbolinxOrdersRequest.IcaosFbos.ContainsKey(fbo.FboAirport.Icao))
+                        fbolinxOrdersRequest.IcaosFbos.Add(fbo.FboAirport.Icao, fbo.Fbo);
                 }
 
                 FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForMultipleAirports(fbolinxOrdersRequest);
