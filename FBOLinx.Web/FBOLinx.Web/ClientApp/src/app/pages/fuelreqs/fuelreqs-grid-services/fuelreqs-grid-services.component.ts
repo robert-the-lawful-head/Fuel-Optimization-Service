@@ -172,9 +172,14 @@ export class FuelreqsGridServicesComponent implements OnInit {
             if (fuelServiceItem != null)
                 this.fuelreqsServicesAndFeesGridDisplay.unshift(fuelServiceItem);
 
-            this.resetNewServiceOrderItem();
+            var addInProgressIndex = this.fuelreqsServicesAndFeesGridDisplay.findIndex(f => f.isAddMode && f.serviceName != null);
+            if (addInProgressIndex < 0) {
+                this.resetNewServiceOrderItem();
 
-            this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+                this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+            }
+            else
+                this.fuelreqsServicesAndFeesGridDisplay.push(this.fuelreqsServicesAndFeesGridDisplay.splice(addInProgressIndex, 1)[0]);
 
             if (!isArchiving) {
                 let updatedList = {
