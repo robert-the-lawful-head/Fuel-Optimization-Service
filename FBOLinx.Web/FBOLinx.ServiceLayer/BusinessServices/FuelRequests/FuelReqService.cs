@@ -317,12 +317,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 //Service orders
                 List<FuelReqDto> serviceOrdersList = new List<FuelReqDto>();
-                var serviceOrderIds = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
+                var serviceOrderIds = serviceOrders.Where(s => (s.ServiceOrderItems.Count > 0 && s.ServiceOrderItems.Any(si => !si.ServiceName.ToLower().Contains("fuel"))) && s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
                 orderDetails = await _orderDetailsEntityService.GetOrderDetailsByIds(serviceOrderIds);
                 orderConfirmations = await _fuelReqConfirmationEntityService.GetFuelReqConfirmationByIds(serviceOrderIds);
                 var customerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
 
-                foreach (ServiceOrderDto item in serviceOrders)
+                foreach (ServiceOrderDto item in serviceOrders.Where(s => (s.ServiceOrderItems.Count > 0 && s.ServiceOrderItems.Any(si => !si.ServiceName.ToLower().Contains("fuel"))) && s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime))
                 {
                     if (!result.Any(f => f.SourceId == item.FuelerLinxTransactionId))
                     {
