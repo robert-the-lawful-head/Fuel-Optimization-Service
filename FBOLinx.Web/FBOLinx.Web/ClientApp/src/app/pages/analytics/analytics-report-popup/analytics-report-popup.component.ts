@@ -73,11 +73,11 @@ export class AnalyticsReportPopupComponent implements OnInit {
         private renderer: Renderer2
     ) {
         this.isReportVisible = {
-            [AnaliticsReportType.CustomerStatistics]: true,
-            [AnaliticsReportType.ArrivalsDepartures]: true,
-            [AnaliticsReportType.FBONetworkArrivalDepartures]: true,
-            [AnaliticsReportType.LostToCompetition]: true,
-            [AnaliticsReportType.FuelerLinxCustomerCaptureRate]: true,
+            [AnaliticsReportType.CustomerStatistics]: false,
+            [AnaliticsReportType.ArrivalsDepartures]: false,
+            [AnaliticsReportType.FBONetworkArrivalDepartures]: false,
+            [AnaliticsReportType.LostToCompetition]: false,
+            [AnaliticsReportType.FuelerLinxCustomerCaptureRate]: false,
         };
     }
 
@@ -85,9 +85,8 @@ export class AnalyticsReportPopupComponent implements OnInit {
         this.getCustomersList();
     }
     ngOnChanges(changes: SimpleChanges): void {
-        if(!changes.report?.currentValue) {
-            this.isPopUpOpen = false;
-            this.renderer.removeClass(document.body, 'no-scroll');
+        if(!changes.report?.currentValue || changes.report?.currentValue == null) {
+            this.closePopUp();
             return;
         }
         for (const key in this.isReportVisible) {
