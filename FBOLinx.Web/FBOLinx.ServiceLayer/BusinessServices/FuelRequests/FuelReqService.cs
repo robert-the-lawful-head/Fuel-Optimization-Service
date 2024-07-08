@@ -317,12 +317,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 //Service orders
                 List<FuelReqDto> serviceOrdersList = new List<FuelReqDto>();
-                var serviceOrderIds = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
+                var serviceOrderIds = serviceOrders.Where(s => (s.ServiceOrderItems.Count > 0 && s.ServiceOrderItems.Any(si => !si.ServiceName.ToLower().Contains("fuel"))) && s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
                 orderDetails = await _orderDetailsEntityService.GetOrderDetailsByIds(serviceOrderIds);
                 orderConfirmations = await _fuelReqConfirmationEntityService.GetFuelReqConfirmationByIds(serviceOrderIds);
                 var customerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
 
-                foreach (ServiceOrderDto item in serviceOrders)
+                foreach (ServiceOrderDto item in serviceOrders.Where(s => (s.ServiceOrderItems.Count > 0 && s.ServiceOrderItems.Any(si => !si.ServiceName.ToLower().Contains("fuel"))) && s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime))
                 {
                     if (!result.Any(f => f.SourceId == item.FuelerLinxTransactionId))
                     {
@@ -728,8 +728,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var userContacts = await GetUserContacts(fbo);
 
                     var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
+                    var distinctFboEmails = "";
+                    foreach (string email in fboEmails.Split(';'))
+                    {
+                        if (!distinctFboEmails.Contains(email))
+                            distinctFboEmails += email + ";";
+                    }
 
-                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, dynamicTemplateData.airportICAO != null ? dynamicTemplateData : null, dynamicCancellationTemplateData.airportICAO != null ? dynamicCancellationTemplateData : null);
+                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, distinctFboEmails, dynamicTemplateData.airportICAO != null ? dynamicTemplateData : null, dynamicCancellationTemplateData.airportICAO != null ? dynamicCancellationTemplateData : null);
 
                     return result;
                 }
