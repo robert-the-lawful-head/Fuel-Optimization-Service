@@ -13,7 +13,7 @@
                             <div class="row ml-sm-n3 mr-sm-n5 ml-md-n3 mr-md-n1  ml-lg-n4 mr-lg-n2 ml-xl-n4 mr-xl-n3" *ngIf="service.isAddMode">
                                 <div class="col-7 text" *ngIf="service.isAddMode">
                                     <span>
-                                        <app-autocomplete-search [panelWidth]="250" (selectionChanged)="onAddServiceChanged(service, $event)" (filterChanged)="onAddServiceChanged(service, $event)" [options]="servicesAndFeesOptions">
+                                        <app-autocomplete-search [panelWidth]="250" [filter]="service.serviceName" (selectionChanged)="onAddServiceChanged(service, $event)" (filterChanged)="onAddServiceChanged(service, $event)" [options]="servicesAndFeesOptions">
                                         </app-autocomplete-search>
                                     </span>
                                 </div>
