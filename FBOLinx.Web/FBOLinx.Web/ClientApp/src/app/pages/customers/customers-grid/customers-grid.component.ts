@@ -1,4 +1,3 @@
-import { CurrencyPipe } from '@angular/common';
 import {
     Component,
     ElementRef,
@@ -36,9 +35,8 @@ import { CustomerGridState } from '../../../store/reducers/customer';
 import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
 // Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
-import { FavoritesService } from 'src/app/services/favorites.service';
-import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { CurrencyPresicionPipe } from 'src/app/shared/pipes/decimal/currencyPresicion.pipe';
 
 const initialColumns: ColumnType[] = [
     {
@@ -164,9 +162,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         private tagsService: TagsService,
         private dialog: MatDialog ,
         private route : ActivatedRoute,
-        private currencyPipe: CurrencyPipe,
-        private favoritesService: FavoritesService,
-        private snackbarService: SnackBarService
+        private currencyPresicion: CurrencyPresicionPipe
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
@@ -301,7 +297,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         return message;
     }
     getAllIPriceDisplayString(customer: any): any{
-        return customer.allInPrice > 0 ? this.currencyPipe.transform(customer.allInPrice, "USD","symbol","1.2-2") : "Expired";
+        return customer.allInPrice > 0 ? this.currencyPresicion.transform(customer.allInPrice) : "Expired";
     }
     getIsInNetworkDisplayString(customer: any): any{
         return customer.isFuelerLinxCustomer ? "YES" : "NO"
