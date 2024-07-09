@@ -23,7 +23,7 @@
                                             ni-button
                                             size="small"
                                             *ngIf="!service.isAdding"
-                                            [disabled]="newServiceOrderItem.serviceName == ''"
+                                            [disabled]="service.serviceName == ''"
                                             (click)="add(service)">
                                         Add
                                     </button>
