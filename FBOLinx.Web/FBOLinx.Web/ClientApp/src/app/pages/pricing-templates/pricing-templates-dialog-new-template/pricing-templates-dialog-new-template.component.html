@@ -188,28 +188,28 @@
                                                 form.value.secondStep.discountType == 0">
                                                 {{
                                                         jetACost + customerMargin.value.amount / 1
-                                                            | currency:'USD':true:'1.4-4'
+                                                            | currencyPresicion
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 0 &&
                                                 form.value.secondStep.discountType == 1">
                                                 {{
                                                         jetACost + (jetACost * customerMargin.value.amount / 100)
-                                                            | currency:'USD':true:'1.4-4'
+                                                            | currencyPresicion
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 1 &&
                                                 form.value.secondStep.discountType == 0">
                                                 {{
                                                         jetARetail - customerMargin.value.amount
-                                                            | currency:'USD':true:'1.4-4'
+                                                            | currencyPresicion
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 1 &&
                                                 form.value.secondStep.discountType == 1">
                                                 {{
                                                         jetARetail - (jetARetail * customerMargin.value.amount / 100)
-                                                            | currency:'USD':true:'1.4-4'
+                                                            | currencyPresicion
                                                 }}
                                             </div>
                                         </div>

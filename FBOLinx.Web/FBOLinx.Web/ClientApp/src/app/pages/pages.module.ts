@@ -241,6 +241,7 @@ import { ItemInputComponent } from './services-and-fees/item-input/item-input.co
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
 import { DecimalPrecisionPipe } from '../shared/pipes/decimal/decimal-precision.pipe';
+import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
 
 @NgModule({
     declarations: [
@@ -410,7 +411,8 @@ import { DecimalPrecisionPipe } from '../shared/pipes/decimal/decimal-precision.
         ItemInputComponent,
         FuelreqsGridServicesComponent,
         FuelreqsNotesComponent,
-        DecimalPrecisionPipe
+        DecimalPrecisionPipe,
+        CurrencyPresicionPipe
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -487,7 +489,8 @@ import { DecimalPrecisionPipe } from '../shared/pipes/decimal/decimal-precision.
         DetailRowService,
         DatePipe,
         CurrencyPipe,
-        DecimalPrecisionPipe
+        DecimalPrecisionPipe,
+        CurrencyPresicionPipe
     ],
 })
 export class PagesModule { }
