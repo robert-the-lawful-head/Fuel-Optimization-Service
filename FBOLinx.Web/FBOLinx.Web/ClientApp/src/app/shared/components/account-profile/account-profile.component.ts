@@ -240,7 +240,7 @@ export class AccountProfileComponent {
         });
     }
     onDecimalPrecisionchange() {
-        this.isDecimalPrecisionInRange = this.fboPreferencesData.decimalPrecision > 0 && this.fboPreferencesData.decimalPrecision <= 12;
+        this.isDecimalPrecisionInRange = this.fboPreferencesData.decimalPrecision > 1 && this.fboPreferencesData.decimalPrecision <= 12;
 
         if(!this.isDecimalPrecisionInRange)
             return;
