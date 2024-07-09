@@ -6,9 +6,9 @@ import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccess
 })
 export class DecimalPrecisionPipe implements PipeTransform {
 
-  transform(value: any, args?: any): any {
+  transform(value: any, forceDecimals: boolean = false): any {
     let numberValue = Number(value);
-    if(numberValue == null || isNaN(numberValue) || Number.isInteger(value)) return value;
+    if((numberValue == null || isNaN(numberValue) || Number.isInteger(value)) && !forceDecimals) return value;
 
     let precision = Number(localStorage.getItem(localStorageAccessConstant.decimalPrecision));
     if (precision) {

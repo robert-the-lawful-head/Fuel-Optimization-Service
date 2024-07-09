@@ -141,7 +141,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 customerMargins: this.formBuilder.array([
                     this.formBuilder.group({
                             allin: new FormControl(0),
-                            amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0))),
+                            amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0),true)),
                             itp: new FormControl(0),
                             max: new FormControl({value: 99999, disabled: true}, Validators.required),
                             min: new FormControl(1),
