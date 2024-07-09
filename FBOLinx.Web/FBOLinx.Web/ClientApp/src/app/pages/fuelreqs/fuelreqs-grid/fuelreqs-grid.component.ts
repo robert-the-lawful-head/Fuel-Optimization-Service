@@ -1,5 +1,5 @@
 import { trigger, state, style } from '@angular/animations';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -42,6 +42,7 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import * as moment from 'moment';
+import { CurrencyPresicionPipe } from 'src/app/shared/pipes/decimal/currencyPresicion.pipe';
 
 const initialColumns: ColumnType[] = [
     {
@@ -164,7 +165,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
         private datePipe: DatePipe,
-        private currencyPipe: CurrencyPipe,
+        private currencyPresicion: CurrencyPresicionPipe,
         private fuelreqsService: FuelreqsService,
         private snackBarService: SnackBarService,
         private newServiceOrderDialog: MatDialog,
@@ -298,7 +299,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
     getPPGDisplayString(fuelreq: any): any{
         return fuelreq.source == 'FuelerLinx' || fuelreq.source == ''
-            ? this.currencyPipe.transform(fuelreq.quotedPpg, "USD", "symbol", "1.4-4")
+            ? this.currencyPresicion.transform(fuelreq.quotedPpg)
             : "CONFIDENTIAL";
     }
     openSettings() {
