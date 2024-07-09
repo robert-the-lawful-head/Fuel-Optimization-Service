@@ -1,9 +1,20 @@
-﻿using FBOLinx.ServiceLayer.Dto.Responses;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.Fbo;
+using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.Dto.UseCaseModels;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.ServiceLayer.EntityServices
@@ -338,9 +349,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 else
                     x.AllInPrice = 0;
             });
-
-            var decimalPrecisionFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(fboId);
-
+                var decimalPrecisionFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(fboId);
                 //Join the inner queries on the pricing templates
                 var pricingTemplates = (from p in tempPricingTemplates
                                     join c in customerPricingResults on p.Oid equals c.PricingTemplateId
