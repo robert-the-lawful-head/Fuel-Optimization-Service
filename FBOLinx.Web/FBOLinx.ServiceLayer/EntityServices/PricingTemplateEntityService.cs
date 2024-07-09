@@ -1,23 +1,10 @@
-﻿using FBOLinx.Core.Enums;
-using FBOLinx.Core.Utilities.Extensions;
-using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
-using FBOLinx.DB.Specifications.Fbo;
-using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
-using FBOLinx.ServiceLayer.Dto.Responses;
+﻿using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.Dto.UseCaseModels;
-using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -40,14 +27,17 @@ namespace FBOLinx.ServiceLayer.EntityServices
         private readonly FboLinxContext _context;
         private readonly CustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private readonly IFboPricesEntityService _fboPricesEntityService;
+        private readonly IFboPreferencesService _fboPreferencesService;
 
         public PricingTemplateEntityService(FboLinxContext context,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IFboPricesEntityService fboPricesEntityService) : base(context)
+            IFboPricesEntityService fboPricesEntityService,
+            IFboPreferencesService fboPreferencesService) : base(context)
         {
             _context = context;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _fboPricesEntityService = fboPricesEntityService;
+            _fboPreferencesService = fboPreferencesService;
         }
 
         public async Task<PricingTemplate> CopyPricingTemplate(int? currentPricingTemplateId, string pricingTemplateName)
@@ -349,6 +339,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     x.AllInPrice = 0;
             });
 
+            var decimalPrecisionFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(fboId);
+
                 //Join the inner queries on the pricing templates
                 var pricingTemplates = (from p in tempPricingTemplates
                                     join c in customerPricingResults on p.Oid equals c.PricingTemplateId
@@ -379,7 +371,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                         AircraftsAssigned = customerAircraftAssignments.Sum(y => y.PricingTemplateId == p.Oid ? 1 : 0),
                                         PricingFormula = (p.MarginType == MarginTypes.CostPlus ? "Cost + " : "Retail - ") + (p.DiscountType == DiscountTypes.Percentage ?
                                                     (cm != null ? cm.Amount.ToString() : "0") + "%"
-                                                    : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))
+                                                    : string.Format(decimalPrecisionFormat, (cm == null ? 0 : cm.Amount.GetValueOrDefault())))
                                     }).ToList();
 
             return pricingTemplates;

@@ -92,7 +92,7 @@ namespace FBOLinx.Web.Services
         {
             _DistributePricingRequest = request;
             _IsPreview = isPreview;
-            _DecimalStringFormat = await GetStringFormat(request.FboId);
+            _DecimalStringFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(request.FboId);
 
             var customers = new List<CustomerInfoByGroupDto>();
             customers = await GetCustomersForDistribution(request);
@@ -692,12 +692,6 @@ namespace FBOLinx.Web.Services
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnlyRow.csv");
             else
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.csv");
-        }
-        private async Task<string> GetStringFormat(int? fboId)
-        {
-            var decimalPrecision = (fboId == null) ? 4 : (await _fboPreferencesService.GetByFboId((int)fboId)).DecimalPrecision;
-            
-            return $"{{0:C{decimalPrecision}}}";
         }
     
         private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDto> customers)

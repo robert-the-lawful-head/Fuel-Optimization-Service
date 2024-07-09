@@ -15,6 +15,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
     {
         public Task<Array> GetFboProducts(int fboId);
         Task<Fbopreferences> GetByFboId(int fboId);
+        Task<string> GetDecimalPrecisionStringFormat(int? fboId);
+
     }
     public class FboPreferencesService : BaseDTOService<FboPreferencesDTO, DB.Models.Fbopreferences, FboLinxContext>, IFboPreferencesService
     {
@@ -40,6 +42,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var result = this._EntityService.Where(x => x.Fboid == fboId);
             return await result.FirstOrDefaultAsync();
 
+        }
+        public async Task<string> GetDecimalPrecisionStringFormat(int? fboId)
+        {
+            var decimalPrecision = (fboId == null) ? 4 : (await this.GetByFboId((int)fboId)).DecimalPrecision;
+
+            return $"{{0:C{decimalPrecision}}}";
         }
     }
 }
