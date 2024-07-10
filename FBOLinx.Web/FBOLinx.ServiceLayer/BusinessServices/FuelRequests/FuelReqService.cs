@@ -927,7 +927,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             if (fuelerlinxTransaction != null && fuelerlinxTransaction.FuelEstWeight > 0 && !fuelerlinxTransaction.IsCancelled && orderDetails != null && ((fuelReq != null && fuelReq.Oid > 0 && !fuelerlinxTransaction.IsCancelled) || (((fuelReq == null || fuelReq.Oid == 0) && !orderDetails.IsCancelled.GetValueOrDefault()))))
             {
                 //Update fuel service line item for directs
-                if (fuelReq != null && fuelReq.Oid > 0 || (fuelerlinxTransaction.FuelEstWeight != null && fuelerlinxTransaction.FuelEstWeight > 0))
+                if ((fuelReq != null && fuelReq.Oid > 0) || (fuelerlinxTransaction.FuelEstWeight != null && fuelerlinxTransaction.FuelEstWeight > 0))
                 {
                     var fuelReqGallons = fuelerlinxTransaction.FuelEstWeight;
                     orderDetails.QuotedVolume = fuelReqGallons;
