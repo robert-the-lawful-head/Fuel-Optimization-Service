@@ -31,6 +31,7 @@ import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
 import { ToolbarSettingsModel } from '@syncfusion/ej2-angular-dropdowns';
 import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
@@ -91,6 +92,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         isDeleting: false
     };
     pricingTemplates: Array<any>;
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
 
     constructor(
         private route: ActivatedRoute,
@@ -108,7 +110,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private pricingTemplateCalcService: PricingTemplateCalcService,
         public deleteTemplateWarningDialog: MatDialog,
         public customCustomerService: CustomcustomertypesService,
-        private decimalPrecisionPipe: DecimalPrecisionPipe
+        private decimalPrecisionPipe: DecimalPrecisionPipe,
+        private stringHelperService: StringHelperService
     ) {
         this.sharedService.titleChange(this.pageTitle);
 

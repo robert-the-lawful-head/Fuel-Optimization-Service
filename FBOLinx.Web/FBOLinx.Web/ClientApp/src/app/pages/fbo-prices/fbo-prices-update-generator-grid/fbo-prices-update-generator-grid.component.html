@@ -117,7 +117,7 @@
                                            [ngModel]="pricing.pricePap | decimalPrecision"
                                            matInput
                                            placeholder="Retail*"
-                                           step="0.01"
+                                           [step]="inputStepDefaultValue"
                                            title="Your Retail values should be inclusive of all taxes/fees"
                                            type="number"/>
                                     <span class="prefixDollar" matPrefix>$</span>
@@ -156,7 +156,7 @@
                                            [ngModel]="pricing.priceCost | decimalPrecision"
                                            matInput
                                            placeholder="Cost*"
-                                           step="0.01"
+                                           [step]="inputStepDefaultValue"
                                            title="Your Cost values should be inclusive of all taxes/fees"
                                            type="number"/>
                                     <span class="prefixDollar" matPrefix>$</span>

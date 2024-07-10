@@ -23,6 +23,7 @@ import { DateTimeService } from '../../../services/datetime.service';
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';
 import { ThemePalette } from '@angular/material/core';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -98,8 +99,10 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     tooltipIndex = 0;
     timezone = "";
     public datePickerColor: ThemePalette = 'accent';
-
-    constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService, private dateTimeService: DateTimeService, private shortTimeDialog: MatDialog) {
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
+    constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService, private dateTimeService: DateTimeService, private shortTimeDialog: MatDialog,
+        private stringHelperService: StringHelperService
+    ) {
 
     }
 
@@ -162,7 +165,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
                     pricingUpdate.effectiveFrom = moment(moment(new Date(data.effectiveFrom)).format("MM/DD/YYYY HH:mm")).toDate();
                     pricingUpdate.effectiveTo = moment(data.effectiveTo).toDate();
                     pricingUpdate.submitStatus = "Stage";
-                    
+
                 }
 
                 pricingUpdate.oidCost = 0;

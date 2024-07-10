@@ -19,6 +19,7 @@ import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/compon
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 
 export interface NewPricingTemplateMargin {
     allin: FormControl;
@@ -63,6 +64,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     emailTemplatesDataSource: Array<any>;
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -77,7 +79,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         public newTemplateDialog: MatDialog,
         private marginLessThanOneDialog: MatDialog,
         private pricingTemplateCalcService: PricingTemplateCalcService,
-        private decimalPrecisionPipe: DecimalPrecisionPipe
+        private decimalPrecisionPipe: DecimalPrecisionPipe,
+        private stringHelperService: StringHelperService
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';

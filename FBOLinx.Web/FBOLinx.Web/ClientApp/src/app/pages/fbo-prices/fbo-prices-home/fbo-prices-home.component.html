@@ -260,7 +260,7 @@
                                 [ngModel]="jtRetail | decimalPrecision"
                                 matInput
                                 placeholder="Retail*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Retail values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -296,7 +296,7 @@
                                 [ngModel]="jtCost | decimalPrecision"
                                 matInput
                                 placeholder="Cost*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Cost values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -604,7 +604,7 @@
                                 [ngModel]="stagedJetRetail | decimalPrecision"
                                 matInput
                                 placeholder="Retail*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Retail values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -625,7 +625,7 @@
                                 [ngModel]="stagedJetCost | decimalPrecision"
                                 matInput
                                 placeholder="Cost*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Cost values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -737,7 +737,7 @@
                                     [ngModel]="TempValueJet | decimalPrecision"
                                     matInput
                                     placeholder="Margin"
-                                    step="0.01"
+                                    [step]="inputStepDefaultValue"
                                     type="number"
                                 />
                                 <span class="prefixDollar bigPrefix" matPrefix

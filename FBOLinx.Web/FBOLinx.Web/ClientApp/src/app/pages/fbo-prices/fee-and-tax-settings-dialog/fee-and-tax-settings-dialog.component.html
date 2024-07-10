@@ -172,11 +172,7 @@
                                                 feeAndTax.value
                                                     | decimalPrecision : true
                                             "
-                                            [step]="
-                                                feeAndTax.calculationType == 0
-                                                    ? '.01'
-                                                    : '1'
-                                            "
+                                            [step]="inputStepDefaultValue"
                                             matInput
                                             title="Your Cost values should be inclusive of all taxes/fees"
                                             type="number"
