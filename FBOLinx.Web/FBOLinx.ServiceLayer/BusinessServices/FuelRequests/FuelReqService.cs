@@ -931,7 +931,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     var fuelReqGallons = fuelerlinxTransaction.FuelEstWeight;
                     orderDetails.QuotedVolume = fuelReqGallons;
-                    orderDetails.FuelVendor= fuelerlinxTransaction.FuelVendor + " test";
+                    orderDetails.FuelVendor= fuelerlinxTransaction.FuelVendor;
                     await _orderDetailsService.UpdateAsync(orderDetails);
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
