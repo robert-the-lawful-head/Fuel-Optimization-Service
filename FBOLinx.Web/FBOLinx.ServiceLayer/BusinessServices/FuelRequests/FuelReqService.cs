@@ -924,7 +924,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 requestStatus = "cancelled";
             }
 
-            if (fuelerlinxTransaction != null && fuelerlinxTransaction.FuelEstWeight > 0 && !fuelerlinxTransaction.IsCancelled && orderDetails != null && ((fuelReq != null && fuelReq.Oid > 0 && !fuelerlinxTransaction.IsCancelled) || (((fuelReq == null || fuelReq.Oid == 0) && !orderDetails.IsCancelled.GetValueOrDefault()))))
+            if (fuelerlinxTransaction.FuelEstWeight > 0 && orderDetails != null && ((fuelReq != null && fuelReq.Oid > 0 && !fuelerlinxTransaction.IsCancelled) || ((fuelReq == null || fuelReq.Oid == 0) && !fuelerlinxTransaction.IsCancelled)))
             {
                 //Update fuel service line item for directs
                 if ((fuelReq != null && fuelReq.Oid > 0) || (fuelerlinxTransaction.FuelEstWeight != null && fuelerlinxTransaction.FuelEstWeight > 0))
@@ -935,7 +935,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
-                    if (fuelReq != null && fuelReq.Oid > 0)
+                    if (fuelReq.Oid > 0)
                     {
                         var fuelReqPrice = fuelerlinxTransaction.FuelEstCost;
 
