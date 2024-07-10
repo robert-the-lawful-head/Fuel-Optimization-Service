@@ -936,7 +936,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
-                    if (fuelReq.Oid > 0)
+                    if (fuelReq != null && fuelReq.Oid > 0)
                     {
                         var fuelReqPrice = fuelerlinxTransaction.FuelEstCost;
 
