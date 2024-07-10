@@ -931,6 +931,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     var fuelReqGallons = fuelerlinxTransaction.FuelEstWeight;
                     orderDetails.QuotedVolume = fuelReqGallons;
+                    orderDetails.FuelVendor= fuelerlinxTransaction.FuelVendor + " test";
                     await _orderDetailsService.UpdateAsync(orderDetails);
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
@@ -943,16 +944,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelReq.QuotedPpg = fuelReqPrice;
                         await UpdateAsync(fuelReq);
 
-                        var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel ")).FirstOrDefault();
-                        fuelServiceLineItem.ServiceName = "Fuel " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "" + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C"));
+                        var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
+                        fuelServiceLineItem.ServiceName = "Fuel: " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "" + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C"));
                         await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
                     }
                     else
                     {
                         if (serviceOrder.ServiceOrderItems.Count > 0)
                         {
-                            var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel ")).FirstOrDefault();
-                            fuelServiceLineItem.ServiceName = "Fuel " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
+                            var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
+                            fuelServiceLineItem.ServiceName = "Fuel: " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
                             await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
                         }
                         else
