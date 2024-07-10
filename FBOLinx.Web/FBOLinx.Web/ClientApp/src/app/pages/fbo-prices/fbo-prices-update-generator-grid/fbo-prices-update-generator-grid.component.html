@@ -101,7 +101,7 @@
                         <!--Retail Pap-->
                         <div class="col-12 col-md-2 border-bottom price-editor">
                             <div *ngIf="!pricing.isEdit" class="pt-md-1">
-                                <span *ngIf="pricing.pricePap != null">${{pricing.pricePap | number: "1.4-4"}}</span>
+                                <span *ngIf="pricing.pricePap != null">${{pricing.pricePap | decimalPrecision}}</span>
 </div>
                             <div *ngIf="pricing.isEdit">
                                 <mat-form-field class="price-form-input">
@@ -114,10 +114,10 @@
                 )
             "
                                            [ngModelOptions]="{ updateOn: 'blur' }"
-                                           [ngModel]="pricing.pricePap | number: '1.4-4'"
+                                           [ngModel]="pricing.pricePap | decimalPrecision"
                                            matInput
                                            placeholder="Retail*"
-                                           step="0.01"
+                                           [step]="inputStepDefaultValue"
                                            title="Your Retail values should be inclusive of all taxes/fees"
                                            type="number"/>
                                     <span class="prefixDollar" matPrefix>$</span>
@@ -143,7 +143,7 @@
                         <!--Fuel Cost-->
                         <div class="col-12 col-md-2 border-bottom price-editor">
                             <div *ngIf="!pricing.isEdit;" class="pt-md-1">
-                                <span *ngIf="pricing.priceCost != null">${{pricing.priceCost | number: "1.4-4"
+                                <span *ngIf="pricing.priceCost != null">${{pricing.priceCost | decimalPrecision
                                 }}</span>
                             </div>
                             <div *ngIf="pricing.isEdit;">
@@ -153,10 +153,10 @@
                     fboPriceRequiresUpdate($event, pricing, 'Cost')
                 "
                                            [ngModelOptions]="{ updateOn: 'blur' }"
-                                           [ngModel]="pricing.priceCost | number: '1.4-4'"
+                                           [ngModel]="pricing.priceCost | decimalPrecision"
                                            matInput
                                            placeholder="Cost*"
-                                           step="0.01"
+                                           [step]="inputStepDefaultValue"
                                            title="Your Cost values should be inclusive of all taxes/fees"
                                            type="number"/>
                                     <span class="prefixDollar" matPrefix>$</span>
@@ -210,9 +210,9 @@
         </div>
 
     </div>
-        
 
-        
+
+
     </div>
 </div>
 

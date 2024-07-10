@@ -5,9 +5,9 @@
     class="info-card"
 >
     <h6 class="mt-0 title">Active Flight Departments</h6>
-    <div class="count">{{ totalCustomers | number }}</div>
+    <div class="count">{{ totalCustomers | decimalPrecision }}</div>
     <small>Source: FuelerLinx &amp; Your Network</small>
     <mat-icon>person</mat-icon>
 </ni-card>
 
-<div *ngIf="!options.useCard">Flight Depts.: {{ totalCustomers | number }}</div>
+<div *ngIf="!options.useCard">Flight Depts.: {{ totalCustomers | decimalPrecision }}</div>

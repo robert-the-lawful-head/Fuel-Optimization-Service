@@ -21,6 +21,7 @@ import {
     SaveConfirmationComponent,
     SaveConfirmationData,
 } from '../../../shared/components/save-confirmation/save-confirmation.component';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 
 export interface FeeAndTaxDialogData {
     oid: number;
@@ -93,6 +94,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     };
     public requiresSaving = false;
 
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: Array<FeeAndTaxDialogData>,
         public dialogRef: MatDialogRef<FeeAndTaxSettingsDialogComponent>,
@@ -100,7 +103,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
         private feesAndTaxesService: FbofeesandtaxesService,
         private sharedService: SharedService,
         private pricingTemplateService: PricingtemplatesService,
-        private fbopricesService: FbopricesService
+        private fbopricesService: FbopricesService,
+        private stringHelperService: StringHelperService
     ) {}
 
     public ngOnInit(): void {

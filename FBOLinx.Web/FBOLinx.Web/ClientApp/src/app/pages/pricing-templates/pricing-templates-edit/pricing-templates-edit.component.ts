@@ -30,6 +30,8 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
 import { ToolbarSettingsModel } from '@syncfusion/ej2-angular-dropdowns';
+import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
@@ -90,6 +92,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         isDeleting: false
     };
     pricingTemplates: Array<any>;
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
 
     constructor(
         private route: ActivatedRoute,
@@ -107,6 +110,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private pricingTemplateCalcService: PricingTemplateCalcService,
         public deleteTemplateWarningDialog: MatDialog,
         public customCustomerService: CustomcustomertypesService,
+        private decimalPrecisionPipe: DecimalPrecisionPipe,
+        private stringHelperService: StringHelperService
     ) {
         this.sharedService.titleChange(this.pageTitle);
 
@@ -188,9 +193,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                                 customerMargin.amount !== undefined &&
                                 customerMargin.amount !== null
                             ) {
-                                customerMargin.amount = Number(
+                                customerMargin.amount = this.decimalPrecisionPipe.transform(Number(
                                     customerMargin.amount
-                                ).toFixed(4);
+                                ));
 
 
                             }
@@ -491,7 +496,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     addCustomerMargin() {
         const customerMargin = {
             allin: 0,
-            amount: Number(0).toFixed(4),
+            amount: this.decimalPrecisionPipe.transform(Number(0)),
             itp: 0,
             max: 99999,
             min: 1,
@@ -678,7 +683,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
-                margins[i].amount = Number(margins[i].amount).toFixed(4);
+                margins[i].amount = this.decimalPrecisionPipe.transform(margins[i].amount);
                    this.pricingTemplate.discountType = discountType;
             }
         }
