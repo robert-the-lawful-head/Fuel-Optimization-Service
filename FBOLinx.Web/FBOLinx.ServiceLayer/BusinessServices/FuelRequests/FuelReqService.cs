@@ -47,6 +47,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Azure.Data.Tables;
+using FBOLinx.DB.Specifications.CustomerInfoByFbo;
+using Npgsql.Logging;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -106,6 +108,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly IFuelReqConfirmationEntityService _fuelReqConfirmationEntityService;
         private readonly ICustomerService _customerService;
         private readonly IOrderDetailsEntityService _orderDetailsEntityService;
+        private readonly ICustomerInfoByFboEntityService _customerInfoByFboEntityService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -126,7 +129,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             ICustomerAircraftService customerAircraftService,
             IAircraftService aircraftService,
             IFboService fboService,
-            IFuelReqConfirmationEntityService fuelReqConfirmationEntityService, ICustomerService customerService, IOrderDetailsEntityService orderDetailsEntityService) : base(fuelReqEntityService)
+            IFuelReqConfirmationEntityService fuelReqConfirmationEntityService, ICustomerService customerService, IOrderDetailsEntityService orderDetailsEntityService, ICustomerInfoByFboEntityService customerInfoByFboEntityService) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
             _serviceOrderService = serviceOrderService;
@@ -152,6 +155,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _fuelReqConfirmationEntityService = fuelReqConfirmationEntityService;
             _customerService = customerService;
             _orderDetailsEntityService = orderDetailsEntityService;
+            _customerInfoByFboEntityService = customerInfoByFboEntityService;
         }
 
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
@@ -586,19 +590,31 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
             if (canSendEmail)
             {
+                var fboEmails = "";
+
+                var customer = new CustomersDto();
+                customer = await _customerService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerlinxCompanyId));
+
+                if (customer != null && customer.Oid > 0)
+                {
+                    var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(customer.Oid));
+                    if (customerInfoByGroup != null && customerInfoByGroup.Oid > 0)
+                    {
+                        var customerInfoByFbo = await _customerInfoByFboEntityService.GetSingleBySpec(new CustomerInfoByFboByCustomerInfoByGroupIdFboIdSpecification(customerInfoByGroup.Oid, fbo.Oid));
+                        fboEmails = customerInfoByFbo?.CustomFboEmail;
+                    }
+                }
+
                 var authentication = await _AuthService.CreateAuthenticatedLink(handlerId);
 
-                if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
+                if ((fboEmails != null && fboEmails != "") || (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found"))
                 {
-                    var customer = new CustomersDto();
                     var customerAircraftId = 0;
                     var arrivalDateTime = "";
                     var departureDateTime = "";
                     var quotedVolume = 0.0;
 
                     // Get fuel request and set customer info
-                    customer = await _customerService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerlinxCompanyId));
-
                     if (fuelReq == null)
                         fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransactionId, fbo.Oid));
                     if (fuelReq != null)
@@ -727,7 +743,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var fboContacts = await GetFboContacts(fbo.Oid);
                     var userContacts = await GetUserContacts(fbo);
 
-                    var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
+                    if (fboEmails == "")
+                        fboEmails = authentication.FboEmails;
+
+                    fboEmails += (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
                     var distinctFboEmails = "";
                     foreach (string email in fboEmails.Split(';'))
                     {

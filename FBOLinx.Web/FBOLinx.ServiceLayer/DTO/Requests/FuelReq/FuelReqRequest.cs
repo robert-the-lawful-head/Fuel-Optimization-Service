@@ -30,5 +30,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.FuelReq
         public bool DemoMode { get; set; } = true;
         public bool IsCancelled { get; set; } = false;
         public bool? IsOkToSendEmail { get; set; } = null;
+        public string FboEmail { get; set; }
     }
 }

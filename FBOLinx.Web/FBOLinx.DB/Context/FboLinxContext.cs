@@ -1092,6 +1092,10 @@ namespace FBOLinx.DB.Context
             {
                 entity.HasKey(e => e.Oid);
             });
+            modelBuilder.Entity<CustomerInfoByFbo>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
         }
 
         [DbFunction("fn_Split")]
