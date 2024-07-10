@@ -21,5 +21,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.ServiceOrder
         public List<ServiceOrderItemRequest> Services { get; set; } = new List<ServiceOrderItemRequest>();
         public string PaymentMethod { get; set; }
         public bool? IsOktoSendEmail { get; set; }
+        public string FboEmail { get; set; }
     }
 }
