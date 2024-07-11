@@ -143,7 +143,7 @@ export class FlightWatchMapComponent
     }
     ngOnInit(): void {
         this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
-        this.loadMap();
+        if(this.center) this.loadMap();
     }
 
     ngAfterViewInit() {
