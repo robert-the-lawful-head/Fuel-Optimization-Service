@@ -34,8 +34,6 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { Subscription } from 'rxjs';
-import { AirportWatchService } from 'src/app/services/airportwatch.service';
 import { FlightLegStatus, coordinatesSource } from 'src/app/enums/flight-watch.enum';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
@@ -134,7 +132,6 @@ export class FlightWatchMapComponent
         private aircraftFlightWatchService: AircraftFlightWatchService,
         private acukwikairportsService: AcukwikairportsService,
         private flightWatchHelper: FlightWatchHelper,
-        private airportWatchService: AirportWatchService,
         private flightWatchMapSharedService: FlightWatchMapSharedService
     ) {
         super();
@@ -168,7 +165,7 @@ export class FlightWatchMapComponent
 
         if(changes.center){
             this.flyTo(this.center);
-            this.updateAicraftsOnMapBounds(changes.data.currentValue);
+            this.updateAicraftsOnMapBounds(this.data);
         }
 
         if (changes.data && this.styleLoaded) {
@@ -232,6 +229,7 @@ export class FlightWatchMapComponent
         });
     }
     private updateAicraftsOnMapBounds(flights: Record<string,FlightWatchModelResponse> ): void {
+        if(!flights || !this.aicraftDataSource) return;
         this.setMapMarkersData(keys(flights));
         this.checkForPopupOpen();
         this.updateFlightOnMap(this.mapMarkers.flights);
