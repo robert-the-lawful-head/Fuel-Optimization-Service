@@ -203,14 +203,12 @@ export class FlightWatchMapComponent
             this.styleLoaded = true;
         })
         .onLoad(async () => {
-            console.log("start redering map data");
             this.isMapDataLoading = true;
             this.resizeMap();
             await this.loadMapIcons();
             await this.loadMapDataAsync();
             this.isMapDataLoading = false;
             this.getLatestData.emit();
-            console.log("finishing rendering map data");
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
