@@ -307,6 +307,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             if (transactionOrderDetails.IsOkToEmail != null)
                                 fuelRequest.ShowConfirmationButton = transactionOrderDetails.IsOkToEmail.GetValueOrDefault();
                         }
+                        else
+                            fuelRequest.Archived = false;
                         var customer = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault();
                         fuelRequest.CustomerId = customer == null ? 0 : customer.CustomerId;
                         result.Add(fuelRequest);
@@ -1084,6 +1086,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     if (_MailService.IsValidEmailRecipient(fboEmail))
                         mailMessage.To.Add(fboEmail);
                 }
+
+                mailMessage.CC.Add("donotreply@fuelerlinx.com");
 
                 if (dynamicAutomatedFuelOrderNotificationTemplateData != null)
                     mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicAutomatedFuelOrderNotificationTemplateData;
