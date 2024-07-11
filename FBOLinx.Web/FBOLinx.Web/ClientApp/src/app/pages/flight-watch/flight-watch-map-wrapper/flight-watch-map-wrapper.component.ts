@@ -73,7 +73,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (!changes.data && !changes.data.currentValue)
+        if (!changes.data && !changes.data?.currentValue)
             return;
 
         if(!changes.data.firstChange){

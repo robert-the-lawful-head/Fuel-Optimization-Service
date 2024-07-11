@@ -34,8 +34,6 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { Subscription } from 'rxjs';
-import { AirportWatchService } from 'src/app/services/airportwatch.service';
 import { FlightLegStatus, coordinatesSource } from 'src/app/enums/flight-watch.enum';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
@@ -134,7 +132,6 @@ export class FlightWatchMapComponent
         private aircraftFlightWatchService: AircraftFlightWatchService,
         private acukwikairportsService: AcukwikairportsService,
         private flightWatchHelper: FlightWatchHelper,
-        private airportWatchService: AirportWatchService,
         private flightWatchMapSharedService: FlightWatchMapSharedService
     ) {
         super();
@@ -146,7 +143,7 @@ export class FlightWatchMapComponent
     }
     ngOnInit(): void {
         this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
-        this.loadMap();
+        if(this.center) this.loadMap();
     }
 
     ngAfterViewInit() {
@@ -168,7 +165,7 @@ export class FlightWatchMapComponent
 
         if(changes.center){
             this.flyTo(this.center);
-            this.updateAicraftsOnMapBounds(changes.data.currentValue);
+            this.updateAicraftsOnMapBounds(this.data);
         }
 
         if (changes.data && this.styleLoaded) {
@@ -206,14 +203,12 @@ export class FlightWatchMapComponent
             this.styleLoaded = true;
         })
         .onLoad(async () => {
-            console.log("start redering map data");
             this.isMapDataLoading = true;
             this.resizeMap();
             await this.loadMapIcons();
             await this.loadMapDataAsync();
             this.isMapDataLoading = false;
             this.getLatestData.emit();
-            console.log("finishing rendering map data");
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
@@ -232,6 +227,7 @@ export class FlightWatchMapComponent
         });
     }
     private updateAicraftsOnMapBounds(flights: Record<string,FlightWatchModelResponse> ): void {
+        if(!flights || !this.aicraftDataSource) return;
         this.setMapMarkersData(keys(flights));
         this.checkForPopupOpen();
         this.updateFlightOnMap(this.mapMarkers.flights);
