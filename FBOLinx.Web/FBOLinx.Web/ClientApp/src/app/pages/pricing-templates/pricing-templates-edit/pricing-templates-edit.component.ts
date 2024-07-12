@@ -232,11 +232,12 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             // Margin type change event
             this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
                 (type) => {
-                    const updatedMargins = this.updateMargins(
+                    const updatedMargins = this.decimalPrecisionPipe.transform(this.updateMargins(
                         this.pricingTemplateForm.value.customerMargins,
                         type ,
                         this.pricingTemplateForm.value.discountType,
-                    );
+                    ));
+
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
                         {
@@ -249,11 +250,11 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
             this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
                 (margins) => {
-                    const updatedMargins = this.updateMargins(
+                    const updatedMargins = this.decimalPrecisionPipe.transform(this.updateMargins(
                         margins,
                         this.pricingTemplateForm.value.marginType ,
                         this.pricingTemplateForm.value.discountType
-                    );
+                    ));
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
                         {
