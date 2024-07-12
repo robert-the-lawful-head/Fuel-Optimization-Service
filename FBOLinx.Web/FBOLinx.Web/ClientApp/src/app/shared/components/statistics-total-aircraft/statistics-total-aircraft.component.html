@@ -5,9 +5,9 @@
     class="info-card"
 >
     <h6 class="mt-0 title">Active Aircraft</h6>
-    <div class="count">{{ totalAircraft | decimalPrecision }}</div>
+    <div class="count">{{ totalAircraft }}</div>
     <small>Source: FuelerLinx &amp; Your Network</small>
     <mat-icon>airplanemode_active</mat-icon>
 </ni-card>
 
-<div *ngIf="!options.useCard">Aircraft: {{ totalAircraft | decimalPrecision }}</div>
+<div *ngIf="!options.useCard">Aircraft: {{ totalAircraft }}</div>
