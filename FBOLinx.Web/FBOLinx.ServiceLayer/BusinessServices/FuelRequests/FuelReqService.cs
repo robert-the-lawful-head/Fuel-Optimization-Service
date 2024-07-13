@@ -950,7 +950,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     }
                     else
                     {
-                        if (serviceOrder.ServiceOrderItems.Count > 0)
+                        if (serviceOrder.ServiceOrderItems.Count > 0 && serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).Any())
                         {
                             var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
                             fuelServiceLineItem.ServiceName = "Fuel: " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
