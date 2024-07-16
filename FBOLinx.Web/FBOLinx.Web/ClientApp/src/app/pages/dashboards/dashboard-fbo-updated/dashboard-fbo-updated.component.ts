@@ -89,7 +89,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse[]}) => {
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
-                    this.flightWatchData = value.data;
+                    this.flightWatchData = this.flightWatchMapService.filterArrivalsAndDepartures(value.data);
                     this.isStable = true;
                 }else{
                     this.flightWatchData = null;
