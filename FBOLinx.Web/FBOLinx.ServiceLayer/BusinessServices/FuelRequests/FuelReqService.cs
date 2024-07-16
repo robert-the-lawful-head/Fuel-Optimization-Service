@@ -931,12 +931,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     var fuelReqGallons = fuelerlinxTransaction.FuelEstWeight;
                     orderDetails.QuotedVolume = fuelReqGallons;
-                    orderDetails.FuelVendor= fuelerlinxTransaction.FuelVendor;
+                    orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
                     await _orderDetailsService.UpdateAsync(orderDetails);
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
-                    if (fuelReq != null && fuelReq.Oid > 0)
+                    if (fuelReq != null && fuelReq.Oid > 0 && orderDetails.FuelVendor.ToLower().Contains("fbolinx"))
                     {
                         var fuelReqPrice = fuelerlinxTransaction.FuelEstCost;
 
