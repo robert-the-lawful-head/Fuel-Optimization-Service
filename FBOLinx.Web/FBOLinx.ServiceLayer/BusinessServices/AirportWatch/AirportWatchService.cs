@@ -371,18 +371,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 fbos = fbos.Where(f => f.Oid == fboId.Value).ToList();
 
             List<SWIMFlightLeg> swimFlightLegs = new List<SWIMFlightLeg>();
-            var airportWatchHistoricalIds = (from h in historicalData select h.AirportWatchHistoricalDataID.ToString()).ToList();
-            foreach (IEnumerable<string> idsBatch in airportWatchHistoricalIds.Batch(500))
+            if (!request.KeepParkingEvents)
             {
-                try
+                var airportWatchHistoricalIds = (from h in historicalData select h.AirportWatchHistoricalDataID.ToString()).ToList();
+                foreach (IEnumerable<string> idsBatch in airportWatchHistoricalIds.Batch(500))
                 {
-                    var swimFlightLegsIds = await _HistoricalAirportWatchSwimFlightLegEntityService.GetSWIMFlightLegsFromHistoricalAirportWatchQueryable(idsBatch.ToList()).ToListAsync();
-                    var swimFlightLegsBatch = await _FlightLegEntityService.GetSWIMFlightLegsByIdsQueryable(swimFlightLegsIds).ToListAsync();
-                    swimFlightLegs.AddRange(swimFlightLegsBatch);
-                }
-                catch(Exception ex)
-                {
+                    try
+                    {
+                        var swimFlightLegsIds = await _HistoricalAirportWatchSwimFlightLegEntityService.GetSWIMFlightLegsFromHistoricalAirportWatchQueryable(idsBatch.ToList()).ToListAsync();
+                        var swimFlightLegsBatch = await _FlightLegEntityService.GetSWIMFlightLegsByIdsQueryable(swimFlightLegsIds).ToListAsync();
+                        swimFlightLegs.AddRange(swimFlightLegsBatch);
+                    }
+                    catch (Exception ex)
+                    {
 
+                    }
                 }
             }
 
@@ -486,7 +489,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               PercentOfVisits = cv?.PercentOfVisits,
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
-                              Originated = h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : ""
+                              Originated = request.KeepParkingEvents ? "" : h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : ""
                           }).ToList();
             
             return result;
