@@ -540,7 +540,7 @@ namespace FBOLinx.Web.Services
             var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
 
             //Add the price breakdown as an image to prevent parsing
-            string priceBreakdownCsvContent = GetCustomerPriceBreakdownCSV(info);
+            string priceBreakdownCsvContent = await GetCustomerPriceBreakdownCSV(info);
 
             //Add email content to MailMessage
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage
@@ -586,7 +586,7 @@ namespace FBOLinx.Web.Services
             await _MailService.SendAsync(mailMessage);
         }
 
-        private string GetCustomerPriceBreakdownCSV(List<GroupCustomerAnalyticsResponse> info)
+        private async Task<string> GetCustomerPriceBreakdownCSV(List<GroupCustomerAnalyticsResponse> info)
         {
             string priceBreakdownTemplate = "";
             string rowHTMLTemplate = "";
@@ -604,6 +604,7 @@ namespace FBOLinx.Web.Services
                 }
                 else
                 {
+                    _DecimalStringFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(groupCustomerAnalyticsResponse.FboId);
                     priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(defaultPrice.PriceBreakdownDisplayType);
                     rowHTMLTemplate = GetCustomerPriceBreakdownRowTemplate(defaultPrice.PriceBreakdownDisplayType);
 
