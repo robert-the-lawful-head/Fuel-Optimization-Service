@@ -66,7 +66,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null)
         {
             List<CustomerInfoByGroupDto> result = new List<CustomerInfoByGroupDto>();
-            if (tailNumbers?.Count == 0 || tailNumbers == null)
+            if (tailNumbers?.Count == 0 || tailNumbers == null || tailNumbers.Count() > 500)
                 result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
             else
                 result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId, tailNumbers));
