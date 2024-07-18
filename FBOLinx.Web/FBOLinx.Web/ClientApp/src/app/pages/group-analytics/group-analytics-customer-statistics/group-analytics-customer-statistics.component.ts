@@ -67,12 +67,11 @@ export class GroupAnalyticsCustomerStatisticsComponent
         private tableSettingsDialog: MatDialog
     ) {
         this.icao = this.sharedService.currentUser.icao;
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.filterStartDate = new Date(
-            moment().add(-12, 'M').format('MM/DD/YYYY')
+            moment().add(-1, 'M').format('MM/DD/YYYY')
         );
-        this.filterEndDate = new Date(
-            moment().add(7, 'd').format('MM/DD/YYYY')
-        );
+
 
         this.filtersChanged
             .debounceTime(2000)
