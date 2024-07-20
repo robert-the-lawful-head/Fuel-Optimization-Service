@@ -127,14 +127,19 @@ export class AircraftPopupContainerComponent {
     }
 
     openJetNetInformation() {
-        this.jetNetInformationDialog.open(JetNetInformationComponent, {
+        const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
             width: '1100px',
             data: this.aircraftWatch.tailNumber
         });
+        dialogRef
+            .afterClosed()
+            .subscribe((result: any) => {
+                this.aircraftWatch.customerInfoByGroupId = result;
+            });
     }
 
     getJetNetCustomerName(changes: any) {
-        if (this.isJetNetIntegrationEnabled && this.aircraftWatch?.tailNumber.startsWith("N")) {
+        if (this.isJetNetIntegrationEnabled && this.aircraftWatch?.tailNumber?.startsWith("N")) {
             try {
                 this.jetNetService.getJetNetInformationByTailNumber(this.aircraftWatch?.tailNumber).subscribe((response: JetNet) => {
                     if (response.aircraftresult != null) {
@@ -162,6 +167,7 @@ export class AircraftPopupContainerComponent {
             //if (changes.isLoading?.currentValue)
             //    this.isLoading = changes.isLoading.currentValue;
             this.isLoading = false;
+            this.hasJetNetInformation = false;
         }
     }
 }

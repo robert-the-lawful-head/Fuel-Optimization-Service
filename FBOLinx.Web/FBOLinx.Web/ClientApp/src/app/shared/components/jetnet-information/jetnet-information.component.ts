@@ -1,7 +1,7 @@
 import { Inject, OnInit } from '@angular/core';
 import { Component, } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { JetNet } from '../../../models/jetnet-information';
+import { Company, JetNet } from '../../../models/jetnet-information';
 import { CustomersDialogNewCustomerComponent } from '../../../pages/customers/customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { JetNetService } from '../../../services/jetnet.service';
 
@@ -14,6 +14,8 @@ import { JetNetService } from '../../../services/jetnet.service';
 export class JetNetInformationComponent implements OnInit {
     public jetNetInformation: JetNet;
     public isLoading: boolean;
+    public isExpanded: boolean = false;
+    private expandedPanels: Array<string> = new Array();
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -41,6 +43,28 @@ export class JetNetInformationComponent implements OnInit {
             return;
     }
 
+    onChange(company: Company, state: string) {
+        if (state == "opened") {
+            if (this.expandedPanels == undefined)
+                this.expandedPanels = new Array();
+
+            if (this.expandedPanels.indexOf(company.company) < 0)
+                this.expandedPanels.push(company.company);
+        }
+        else {
+            this.expandedPanels = this.expandedPanels.filter((expandedCompany) => { return expandedCompany != company.company });
+        }
+
+        if (company.companyDetailOpenState == undefined)
+            company.companyDetailOpenState = false;
+
+        company.companyDetailOpenState = !company.companyDetailOpenState;
+        if (company.companyDetailOpenState)
+            this.isExpanded = true;
+        else if (this.expandedPanels.length == 0)
+            this.isExpanded = false;
+    }
+
     public onClickCloseJetNetModal() {
         this.jetNetDialogRef.close();
     }
@@ -60,7 +84,7 @@ export class JetNetInformationComponent implements OnInit {
                 return;
             }
             else
-                this.jetNetDialogRef.close();
+                this.jetNetDialogRef.close(customerInfoByGroupId);
         });
     }
 }

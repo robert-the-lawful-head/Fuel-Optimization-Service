@@ -147,7 +147,7 @@
                         Contact Information {{ i === 0 ? "" : i + 1 }}
 
                         <button
-                            *ngIf="i > 0"
+                            *ngIf="(i > 0 && contactFormArray.controls.length == 1) || (contactFormArray.controls.length > 1)"
                             mat-icon-button
                             color="warn"
                             (click)="contactFormArray.removeAt(i)"
