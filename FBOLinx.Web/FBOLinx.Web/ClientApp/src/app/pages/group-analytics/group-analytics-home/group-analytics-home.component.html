@@ -43,14 +43,9 @@
         ></app-group-analytics-customer-statistics>
         <app-group-analytics-fuel-vendor-sources></app-group-analytics-fuel-vendor-sources>
         <app-group-analytics-market-share></app-group-analytics-market-share>
-        <app-group-analytics-intra-network-visits-report></app-group-analytics-intra-network-visits-report>
+        <ni-card [headerBgColor]="'gray'" title="Fbo Network Arrivals & Departures">
+            <app-group-analytics-intra-network-visits-report></app-group-analytics-intra-network-visits-report>
+        </ni-card>
     </ng-container>
 
-    <ngx-ui-loader
-        [loaderId]="chartName"
-        bgsColor="rgb(100, 181, 246)"
-        bgsPosition="center-center"
-        bgsType="ball-spin"
-        overlayColor="rgba(0, 0, 0, 0.1)"
-    ></ngx-ui-loader>
 </section>
