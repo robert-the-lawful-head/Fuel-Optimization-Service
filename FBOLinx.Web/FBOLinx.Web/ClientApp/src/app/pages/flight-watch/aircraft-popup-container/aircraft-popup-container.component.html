@@ -78,7 +78,7 @@
               <button ni-button [view]="'gray'" class="customer-manager-button" [disabled]="isCustomerManagerButtonDisabled" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
           </div>
           <div class="col-6" *ngIf="isJetNetIntegrationEnabled && hasJetNetInformation">
-              <button ni-button [view]="'accent'" [disabled]="!aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation" (click)="openJetNetInformation()">Access JETNET</button>
+              <button ni-button [view]="'accent'" [disabled]="(aircraftWatch?.customerInfoByGroupId != null && aircraftWatch?.customerInfoByGroupId > 0) || !aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation" (click)="openJetNetInformation()">Access JETNET</button>
           </div>
           <div class="col-6" *ngIf="!isJetNetIntegrationEnabled || !hasJetNetInformation">
               <button ni-button [view]="'accent'" (click)="addAircraft()">Add Aircraft</button>

@@ -82,10 +82,9 @@ export class AircraftPopupContainerComponent {
     get isJetNetIntegrationEnabled() {
         return this.sharedService.currentUser.isJetNetIntegrationEnabled;
     }
-  get isCustomerManagerButtonDisabled(){
-    return !this.hasAircraft || this.sharedService.isCsr;
+    get isCustomerManagerButtonDisabled() {
+        return !this.hasAircraft || this.sharedService.isCsr || this.aircraftWatch?.customerInfoByGroupId == null || this.aircraftWatch?.customerInfoByGroupId == 0;
     }
-
 
   addAircraft() {
     const dialogRef = this.newCustomerAircraftDialog.open<
@@ -139,7 +138,7 @@ export class AircraftPopupContainerComponent {
     }
 
     getJetNetCustomerName(changes: any) {
-        if (this.isJetNetIntegrationEnabled && this.aircraftWatch?.tailNumber?.startsWith("N")) {
+        if ((this.aircraftWatch?.customerInfoByGroupId == null || this.aircraftWatch?.customerInfoByGroupId == 0) && this.isJetNetIntegrationEnabled && this.aircraftWatch?.tailNumber?.startsWith("N")) {
             try {
                 this.jetNetService.getJetNetInformationByTailNumber(this.aircraftWatch?.tailNumber).subscribe((response: JetNet) => {
                     if (response.aircraftresult != null) {
