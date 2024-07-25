@@ -47,6 +47,7 @@ export type Aircraftwatch = {
     faaRegisteredOwner: string;
     origin: string;
     destination: string;
+    isJetNetEnabled: boolean;
 };
 export interface FlightWatchModelResponse {
     airportWatchLiveDataId: number;

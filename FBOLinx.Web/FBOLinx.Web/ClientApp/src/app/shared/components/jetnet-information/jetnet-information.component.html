@@ -1,0 +1,106 @@
+<div width="100%" class="jetnet-container">
+    <div *ngIf="isLoading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div *ngIf="!isLoading">
+        <div class="row">
+            <div class="row-header col-6 align-content-start"><img src="../.../../../../../assets/img/jetnet-logo.png" style="max-width:200px;" /></div>
+            <div class="col-6 text-right"><button class="info-values" beforeIcon="fa fa-times" ni-button [view]="'blank'" size="large" (click)="onClickCloseJetNetModal()"></button></div>
+        </div>
+
+        <div class="row-header"><hr class="info-values" /></div>
+
+        <div class="row-header">
+            <h4 class="header"><img src="../../../../assets/img/blue-plane.png" />&nbsp;{{jetNetInformation.aircraftresult.regnbr}}</h4>
+            <div>
+                <div>{{jetNetInformation.aircraftresult.make}} {{jetNetInformation.aircraftresult.model}}</div>
+            </div>
+        </div>
+
+        <!--<div class="row">
+        <h4 class="ml-3">Company Relationships</h4>
+    </div>-->
+
+        <div class="row-header"><hr class="info-values" /></div>
+
+        <div class="row">
+            <div class="col-4 pl-5">
+                <h5 class="row-header">Company</h5>
+            </div>
+            <div class="col-4">
+                <h5 class="row-header">Relationship</h5>
+            </div>
+            <div class="col-4">
+                <h5 class="row-header">Contact</h5>
+            </div>
+        </div>
+
+        <div class="row info-values">
+            <div class="col-12">
+                    <mat-accordion>
+                            <mat-expansion-panel hideToggle *ngFor="let company of jetNetInformation.aircraftresult.companies" [expanded]="company.companyDetailOpenState"
+                                                 (opened)="onChange(company, 'opened');" (closed)="onChange(company, 'closed')">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <mat-radio-button [checked]="company.companyDetailOpenState == true ? true : false" [disabled]="true">
+                                        </mat-radio-button>
+                                        {{company.company}}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <ng-container *ngFor="let contact of company.companyrelationships">
+                                    <div class="row">
+                                        <div class="col-4 row-header" style="font-weight:bold;">
+                                            <div class="row">
+                                                <div class="col-2 col-sm-1" *ngIf="contact.contactfirstname || contact.contactbestphone || contact.contactemail">
+                                                    <mat-checkbox [(ngModel)]="contact.add">
+                                                    </mat-checkbox>
+                                                </div>
+                                                <div class="col-9 col-sm-6">
+                                                    <div>{{contact.companyaddress1}}</div>
+                                                    <div>{{contact.companyaddress2}}</div>
+                                                    <div>{{contact.companycity}}<span *ngIf="contact.companycity">,</span> {{contact.companystateabbr}} {{contact.companypostcode}} {{contact.companycountry == 'United States' ? 'USA' : contact.companycountry}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-4 row-header">
+                                            {{
+                                    contact.companyrelation
+                                            }}
+                                        </div>
+
+                                        <div class="col-4 row-header pl-4">
+                                            <div>{{contact.contactfirstname}} {{contact.contactlastname}} {{contact.contacttitle == null ? "" : "(" + contact.contacttitle + ")"}}</div>
+                                            <div *ngIf="contact.contactbestphone">{{contact.contactbestphone}}</div>
+                                            <div *ngIf="contact.contactemail">{{contact.contactemail}}</div>
+                                        </div>
+
+                                        <!--<div class="row-header col-12" *ngIf="contact.contactid != jetNetInformation.aircraftresult.companyrelationships.length"><hr class="info-values" /></div>-->
+                                    </div>
+                                </ng-container>
+                            </mat-expansion-panel>
+                    </mat-accordion>
+            </div>
+        </div>
+
+            <div class="row pt-5">
+                <div class="col-10 text-right pr-0">
+                    <button (click)="onClickCloseJetNetModal()"
+                            [view]="'blank'"
+                            ni-button>
+                        Cancel
+                    </button>
+                </div>
+                <div class="col-1">
+                    <button (click)="addCustomer()"
+                            [view]="'accent'"
+                            [disabled]="!isExpanded"
+                            ni-button>
+                        Add to CRM
+                    </button>
+                </div>
+            </div>
+        </div>
+</div>
