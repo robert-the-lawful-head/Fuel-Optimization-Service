@@ -18,4 +18,5 @@ export class User {
     isNetworkFbo: boolean;
     accountType?: AccountType;
     decimalPrecision: number;
+    isJetNetIntegrationEnabled?: boolean;
 }

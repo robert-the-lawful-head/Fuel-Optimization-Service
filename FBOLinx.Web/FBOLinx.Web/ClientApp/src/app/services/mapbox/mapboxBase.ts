@@ -273,14 +273,14 @@ export abstract class MapboxglBase {
         return new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
-            .setMaxWidth("330px")
+            .setMaxWidth("450px")
             .addTo(this.map);
     }
     openPopupRenderHtml(coordinates: [number,number],html: string):mapboxgl.Popup{
         return new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setHTML(html)
-            .setMaxWidth("330px")
+            .setMaxWidth("450px")
             .addTo(this.map);
     }
     flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){

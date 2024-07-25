@@ -1,83 +1,87 @@
-
+<div style="min-width:360px; min-height: 330px;" width="100%" class="aircraft-popup">
 <div *ngIf="isLoading" class="loading-spinner">
-  <mat-spinner></mat-spinner>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
 <div *ngIf="!isLoading">
-  <div class="dialog-title">
-      <span><strong>&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</strong></span>
-  </div>
-  <div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>Company</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.flightDepartment | NullOrEmptyToDefault }}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>FAA Registered Owner</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.faaRegisteredOwner | NullOrEmptyToDefault }}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>Flight Number</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.atcFlightNumber| NullOrEmptyToDefault }}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>Make/Model</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.aircraftMakeModel | NullOrEmptyToDefault }}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>On Ground</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.isAircraftOnGround | booleanToText }}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>Last Quote</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.lastQuote}}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>Origin</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.origin}}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
-            <p>Destination</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.destination}}&nbsp;</p>
-        </div>
-    </div>
-      <div class="row-container actions">
-        <div class="column-container info-labels">
-            <button mat-raised-button class="customer-manager-button" color="accent" [disabled]="isCustomerManagerButtonDisabled" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
-        </div>
-        <div class="column-container">
-            <button mat-raised-button color="accent" [disabled]="hasAircraft" (click)="addAircraft()">Add Aircraft</button>
-        </div>
+      <div class="row pb-2">
+      <div class="col-12 pl-4 pb-2" style="font-size:24px;"><img src="../../../../assets/img/plane.png" />&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</div>
       </div>
-  </div>
+      <div class="row pb-2">
+          <div class="col-12"><hr class="info-values" /></div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>Company</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.flightDepartment | NullOrEmptyToDefault }}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>FAA Registered Owner</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.faaRegisteredOwner | NullOrEmptyToDefault }}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>Flight Number</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.atcFlightNumber| NullOrEmptyToDefault }}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>Make/Model</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.aircraftMakeModel | NullOrEmptyToDefault }}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>On Ground</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+            <p>{{ aircraftWatch?.isAircraftOnGround | booleanToText }}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>Last Quote</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.lastQuote}}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>Origin</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.origin}}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row pb-2">
+          <div class="col-6 info-labels">
+              <p>Destination</p>
+          </div>
+          <div class="col-6 pl-4 info-values">
+              <p>{{ aircraftWatch?.destination}}&nbsp;</p>
+          </div>
+      </div>
+      <div class="row actions">
+          <div class="col-6 info-labels">
+              <button ni-button [view]="'gray'" class="customer-manager-button" [disabled]="isCustomerManagerButtonDisabled" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
+          </div>
+          <div class="col-6" *ngIf="isJetNetIntegrationEnabled && hasJetNetInformation">
+              <button ni-button [view]="'accent'" [disabled]="(aircraftWatch?.customerInfoByGroupId != null && aircraftWatch?.customerInfoByGroupId > 0) || !aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation" (click)="openJetNetInformation()">Access JETNET</button>
+          </div>
+          <div class="col-6" *ngIf="!isJetNetIntegrationEnabled || !hasJetNetInformation">
+              <button ni-button [disabled]="!isCustomerManagerButtonDisabled" [view]="'accent'" (click)="addAircraft()">Add Aircraft</button>
+          </div>
+      </div>
 </div>
