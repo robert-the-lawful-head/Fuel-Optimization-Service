@@ -39,6 +39,7 @@ import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 import { IncomingFavoriteAircraftInfoComponent } from '../incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
+import { Local } from 'protractor/built/driverProviders';
 
 @Component({
     host: {
@@ -490,7 +491,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
-                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,this.fboAirport.icao);
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao, this.fboAirport.icao);
                     this.sharedService.emitChange(
                         SharedEvents.icaoChangedEvent
                     );
@@ -506,6 +507,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isJetNetIntegrationEnabled, data.isJetNetIntegrationEnabled)
                     this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
                     this.fbo = _.assign({}, data);
                     localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);

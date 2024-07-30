@@ -212,6 +212,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             return result?.ToList();
         }
 
+        public async Task<AircraftResponseList> GetAircraftTypes()
+        {
+            var apiClient = await GetApiClient();
+            var result = await apiClient.Aircraft_GetAircraftListAsync();
+            return result;
+        }
+
         public async Task<IClient> GetApiClient()
         {
             var authToken = await GetAuthenticationTokenFromService();

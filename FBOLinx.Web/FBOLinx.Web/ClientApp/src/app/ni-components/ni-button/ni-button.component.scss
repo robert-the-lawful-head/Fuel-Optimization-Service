@@ -57,6 +57,8 @@ $types: (
     blank: (
         bg: $blank-color,
         hover-bg: darken($blank-color, 10%),
+        border-width: 70px,
+	    border-style: 1px solid accent-color(500),
     ),
     gray: (
         bg: $gray-color,
@@ -82,8 +84,7 @@ $types: (
     text-align: center;
     text-transform: $btn-tt;
     touch-action: manipulation;
-    transition: background 0.2s $btn-transition, border 0.2s $btn-transition,
-        color 0.2s $btn-transition;
+    transition: background 0.2s $btn-transition, border 0.2s $btn-transition, color 0.2s $btn-transition;
     user-select: none;
     vertical-align: middle;
     white-space: nowrap;
