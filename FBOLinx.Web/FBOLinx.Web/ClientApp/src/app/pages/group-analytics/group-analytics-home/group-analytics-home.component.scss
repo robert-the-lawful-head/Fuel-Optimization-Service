@@ -23,6 +23,14 @@
     }
 }
 
+.analytics-table {
+    ::ng-deep {
+        .card-content {
+            height: 400px;
+        }
+    }
+}
+
 ::ng-deep {
     .group-analytics-dialog {
         .mat-dialog-container {

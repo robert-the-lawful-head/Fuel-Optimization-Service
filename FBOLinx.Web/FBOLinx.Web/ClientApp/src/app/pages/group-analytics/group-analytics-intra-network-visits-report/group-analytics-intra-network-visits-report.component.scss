@@ -2,7 +2,7 @@
     height: 100%;
 }
 .table-container {
-    height: 89%;
+    height: calc(100% - 75px);
     overflow: auto;
 }
 

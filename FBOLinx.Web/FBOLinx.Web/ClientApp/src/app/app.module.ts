@@ -117,6 +117,7 @@ import { FormValidationHelperService } from './helpers/forms/formValidationHelpe
 import { FlightWatchMapSharedService } from './pages/flight-watch/services/flight-watch-map-shared.service';
 import { ManageFboGroupsService } from './services/managefbo.service';
 import { StringHelperService } from './helpers/strings/stringHelper.service';
+import {JetNetService} from './services/jetnet.service';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -248,7 +249,8 @@ import { StringHelperService } from './helpers/strings/stringHelper.service';
         FormValidationHelperService,
         FlightWatchMapSharedService,
         ManageFboGroupsService,
-        StringHelperService
+        StringHelperService,
+        JetNetService
     ],
 })
 export class AppModule { }
