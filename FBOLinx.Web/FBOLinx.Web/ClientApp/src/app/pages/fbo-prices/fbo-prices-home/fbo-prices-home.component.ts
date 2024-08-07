@@ -28,6 +28,7 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 // Components
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -112,6 +113,8 @@ export class FboPricesHomeComponent
 
     timezone: string = "";
 
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
+
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
         private fboPricesService: FbopricesService,
@@ -123,7 +126,8 @@ export class FboPricesHomeComponent
         private NgxUiLoader: NgxUiLoaderService,
         private fboPricesSelectDefaultTemplateDialog: MatDialog,
         private fboFeesAndTaxesDialog: MatDialog,
-        private proceedConfirmationDialog: MatDialog
+        private proceedConfirmationDialog: MatDialog,
+        private stringHelperService: StringHelperService
     ) { }
 
     ngOnInit(): void {

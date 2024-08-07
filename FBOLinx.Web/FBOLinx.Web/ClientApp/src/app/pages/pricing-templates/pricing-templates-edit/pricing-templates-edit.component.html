@@ -151,11 +151,11 @@
                                                     <input disabled="disabled"
                                                            matInput
                                                            value="{{
-                                                            customerMargin.value
+                                                            (customerMargin.value
                                                                 .max == 0
                                                                 ? 99999
                                                                 : customerMargin
-                                                                      .value.max
+                                                                      .value.max) | decimalPrecision
                                                         }}" />
                                                 </mat-form-field>
                                             </div>
@@ -169,7 +169,7 @@
                                                         "
                                                            formControlName="amount"
                                                            matInput
-                                                           step="0.01"
+                                                           [step]="inputStepDefaultValue"
                                                            type="number" />
                                                     <span *ngIf="
                                                     pricingTemplateForm.value
@@ -194,28 +194,28 @@
                                                     .marginType == 0 &&
                                                 pricingTemplateForm.value
                                                     .discountType != 1">
-                                                    {{ (jetACost-0) + (customerMargin.value.amount-0) | currency:'USD':true:'1.4-4' }}
+                                                    {{ (jetACost-0) + (customerMargin.value.amount-0) | currencyPresicion }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 0 &&
                                                 pricingTemplateForm.value
                                                     .discountType == 1">
-                                                    {{ (jetACost-0) + ((jetACost-0) * ((customerMargin.value.amount-0) / 100)) | currency:'USD':true:'1.4-4' }}
+                                                    {{ (jetACost-0) + ((jetACost-0) * ((customerMargin.value.amount-0) / 100)) | currencyPresicion }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 1 &&
                                                 pricingTemplateForm.value
                                                     .discountType != 1">
-                                                    {{ (jetARetail-0) - (customerMargin.value.amount-0) | currency:'USD':true:'1.4-4' }}
+                                                    {{ (jetARetail-0) - (customerMargin.value.amount-0) | currencyPresicion }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 1 &&
                                                 pricingTemplateForm.value
                                                     .discountType == 1">
-                                                    {{ (jetARetail-0) - ((jetARetail-0) * (customerMargin.value.amount-0) / 100) | currency:'USD':true:'1.4-4' }}
+                                                    {{ (jetARetail-0) - ((jetARetail-0) * (customerMargin.value.amount-0) / 100) | currencyPresicion }}
                                                 </div>
                                             </div>
                                         </td>

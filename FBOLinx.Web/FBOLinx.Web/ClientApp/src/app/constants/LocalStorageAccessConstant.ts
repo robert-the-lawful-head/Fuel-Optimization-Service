@@ -12,5 +12,7 @@ export const localStorageAccessConstant = {
     notifiedFavoriteAircraft: 'notifiedFavoriteAircraft',
     isSingleSourceFbo: 'isSingleSourceFbo',
     isNetworkFbo: 'isNetworkFbo',
-    currentUser: 'currentUser'
+    currentUser: 'currentUser',
+    decimalPrecision: 'decimalPrecision',
+    isJetNetIntegrationEnabled: 'isJetNetIntegrationEnabled'
 }

@@ -170,17 +170,9 @@
                                             }"
                                             [ngModel]="
                                                 feeAndTax.value
-                                                    | number
-                                                        : (feeAndTax.calculationType ==
-                                                          0
-                                                              ? '1.4-4'
-                                                              : '1.2-2')
+                                                | decimalPrecision
                                             "
-                                            [step]="
-                                                feeAndTax.calculationType == 0
-                                                    ? '.01'
-                                                    : '1'
-                                            "
+                                            [step]="inputStepDefaultValue"
                                             matInput
                                             title="Your Cost values should be inclusive of all taxes/fees"
                                             type="number"

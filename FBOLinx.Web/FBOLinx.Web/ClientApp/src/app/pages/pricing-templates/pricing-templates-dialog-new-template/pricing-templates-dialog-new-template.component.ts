@@ -18,6 +18,8 @@ import { CloseConfirmationComponent } from '../../../shared/components/close-con
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
+import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 
 export interface NewPricingTemplateMargin {
     allin: FormControl;
@@ -62,6 +64,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     emailTemplatesDataSource: Array<any>;
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -75,7 +78,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private emailContentService: EmailcontentService,
         public newTemplateDialog: MatDialog,
         private marginLessThanOneDialog: MatDialog,
-        private pricingTemplateCalcService: PricingTemplateCalcService
+        private pricingTemplateCalcService: PricingTemplateCalcService,
+        private decimalPrecisionPipe: DecimalPrecisionPipe,
+        private stringHelperService: StringHelperService
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -139,7 +144,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 customerMargins: this.formBuilder.array([
                     this.formBuilder.group({
                             allin: new FormControl(0),
-                            amount: new FormControl(Number(0).toFixed(4)),
+                            amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0),true)),
                             itp: new FormControl(0),
                             max: new FormControl({value: 99999, disabled: true}, Validators.required),
                             min: new FormControl(1),
@@ -178,7 +183,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             this.formBuilder.array([
                 this.formBuilder.group({
                         allin: new FormControl(0),
-                        amount: new FormControl(Number(0).toFixed(4)),
+                        amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0))),
                         itp: new FormControl(0),
                         max: new FormControl({value: 99999, disabled: true}, Validators.required),
                         min: new FormControl(1),
@@ -198,7 +203,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     addCustomerMargin() {
         const customerMargin: NewPricingTemplateMargin = {
             allin: new FormControl(0),
-            amount: new FormControl(Number(0).toFixed(4)),
+            amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0))),
             itp: new FormControl(0),
             max: new FormControl({value: 99999, disabled: true}, Validators.required),
             min: new FormControl(1),
@@ -415,7 +420,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
-                margins[i].amount = Number(margins[i].amount).toFixed(4);
+                margins[i].amount = this.decimalPrecisionPipe.transform(margins[i].amount);
             }
         }
         return margins;

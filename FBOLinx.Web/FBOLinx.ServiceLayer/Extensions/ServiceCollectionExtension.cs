@@ -15,6 +15,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations.JetNet;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -135,6 +136,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IOrderNotesService, OrderNotesService>();
             services.AddTransient<IUserEntityService, UserEntityService>();
             services.AddTransient<IHistoricalAirportWatchSwimFlightLegEntityService, HistoricalAirportWatchSwimFlightLegEntityService>();
+            services.AddTransient<IJetNetService, JetNetService>();
+            services.AddTransient<ICustomerInfoByFboService, CustomerInfoByFboService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -185,6 +188,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerContactsEntityService, CustomerContactsEntityService>();
             services.AddTransient<IAcukwikServicesOfferedDefaultsEntityService, AcukwikServicesOfferedDefaultsEntityService>();
             services.AddTransient<IOrderNotesEntityService, OrderNotesEntityService>();
+            services.AddTransient<ICustomerInfoByFboEntityService, CustomerInfoByFboEntityService>();
 
             return services;
         }

@@ -40,7 +40,7 @@
                     }"
                     >{{
                         fbo.retailPrice
-                            ? "$" + (fbo.retailPrice | number: "1.4-4")
+                            ? "$" + (fbo.retailPrice | decimalPrecision)
                             : "Expired"
                     }}</span
                 >
@@ -53,7 +53,7 @@
                     }"
                     >{{
                         fbo.costPrice
-                            ? "$" + (fbo.costPrice | number: "1.4-4")
+                            ? "$" + (fbo.costPrice | decimalPrecision)
                             : "Expired"
                     }}</span
                 >

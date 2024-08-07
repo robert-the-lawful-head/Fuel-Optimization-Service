@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
@@ -7,7 +8,10 @@ using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.JetNet;
 using FBOLinx.ServiceLayer.EntityServices;
+using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -24,6 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         Task AddAirCrafts(AirCraftsDto airCrafts);
         Task UpdateAirCrafts(AirCraftsDto airCrafts);
         Task RemoveAirCrafts(AirCraftsDto airCrafts);
+        Task<AirCraftsDto> GetAircraftTypeByIcao(string icao);
     }
 
     public class AircraftService : BaseDTOService<AirCraftsDto, DB.Models.AirCrafts, DegaContext>, IAircraftService
@@ -33,11 +38,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         private AircraftEntityService _AircraftEntityService;
         private IMemoryCache _MemoryCache;
+        private FuelerLinxApiService _FuelerLinxApiService;
 
-        public AircraftService(AircraftEntityService aircraftEntityService, IMemoryCache memoryCache) : base(aircraftEntityService)
+        public AircraftService(AircraftEntityService aircraftEntityService, IMemoryCache memoryCache, FuelerLinxApiService fuelerLinxApiService) : base(aircraftEntityService)
         {
             _MemoryCache = memoryCache;
             _AircraftEntityService = aircraftEntityService;
+            _FuelerLinxApiService = fuelerLinxApiService;
         }
 
         public async Task<List<AirCraftsDto>> GetAllAircrafts(bool useCache = true)
@@ -51,7 +58,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             if (result == null)
             {
-                result = await GetListbySpec(new AircraftSpecification());
+                result = await GetListbySpec(new DB.Specifications.Aircraft.AircraftSpecification());
                 var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
                 _MemoryCache.Set(_AllAircraftCacheKey, result, cacheEntryOptions);
             }
@@ -71,7 +78,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         public async Task<AirCraftsDto> GetAircrafts(int oid)
         {
-            return await GetSingleBySpec(new AircraftSpecification(new List<int>() { oid }));
+            return await GetSingleBySpec(new DB.Specifications.Aircraft.AircraftSpecification(new List<int>() { oid }));
         }
 
         public async Task AddAirCrafts(AirCraftsDto airCrafts)
@@ -90,6 +97,33 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         {
             await DeleteAsync(airCrafts);
             _MemoryCache.Remove(_AllAircraftCacheKey);
+        }
+
+        public async Task<AirCraftsDto> GetAircraftTypeByIcao(string icao)
+        {
+            List<AircraftDTO> result = null;
+            var cacheKey = "AircraftTypes";
+            var aircraft = new AircraftDTO();
+
+            _MemoryCache.TryGetValue(cacheKey, out result);
+            
+            if (result == null)
+            {
+                var aircrafts = await _FuelerLinxApiService.GetAircraftTypes();
+                result = aircrafts.Result.ToList();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
+                _MemoryCache.Set(cacheKey, result, cacheEntryOptions);
+            }
+
+            aircraft = result.FirstOrDefault(x => x.Icao == icao);
+            if (aircraft == null)
+            {
+                return null;
+            }
+
+            AirCraftsDto aircraftResult = new AirCraftsDto() { Make = aircraft.Make, Model = aircraft.Model};
+            return aircraftResult;
         }
     }
 }

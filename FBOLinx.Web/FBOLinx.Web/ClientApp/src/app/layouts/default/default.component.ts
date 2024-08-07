@@ -359,6 +359,8 @@ export class DefaultLayoutComponent implements OnInit {
         return new Observable((observer) => {
             this.subscriptions.push(
                 this.fboPreferencesService.getForFbo(this.sharedService.currentUser.fboId).subscribe((preferences: any) => {
+                    preferences.decimalPrecision = preferences.decimalPrecision ?? 4;
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.decimalPrecision, preferences.decimalPrecision);
                     if (preferences.enableJetA)
                         this.enableJetA = true;
                     if (preferences.enableSaf)
