@@ -16,7 +16,7 @@ import * as moment from 'moment';
 import { UserRole } from 'src/app/enums/user-role';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { fboChangedEvent } from '../../../constants/sharedEvents';
+import { accountTypeChangedEvent, fboChangedEvent } from '../../../constants/sharedEvents';
 import { FbopricesService } from '../../../services/fboprices.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
@@ -26,7 +26,7 @@ import { PricingExpiredNotificationGroupComponent } from '../../../shared/compon
 // Components
 import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { FbosGridNewFboDialogComponent } from '../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { GroupsService } from 'src/app/services/groups.service';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { GroupFboViewModel } from 'src/app/models/groups';
@@ -325,6 +325,8 @@ export class FbosGridComponent implements OnInit {
 
         this.sharedService.currentUser.icao = fbo.icao;
 
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
+
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo.groupId).toString());
 
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
@@ -332,6 +334,7 @@ export class FbosGridComponent implements OnInit {
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
 
         this.sharedService.emitChange(fboChangedEvent);
+        this.sharedService.emitChange(accountTypeChangedEvent);
         this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
     }
 }
