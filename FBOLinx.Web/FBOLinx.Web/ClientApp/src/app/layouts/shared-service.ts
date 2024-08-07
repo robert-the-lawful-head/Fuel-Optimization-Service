@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { User } from '../models/User';
+import { User } from '../models/user';
 import { AuthenticationService } from '../services/authentication.service';
 import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
 import { UserRole } from '../enums/user-role';
@@ -162,7 +162,7 @@ export class SharedService {
     }
     setCurrentUserPropertyValue(property: string, value: any): void{
         this.currentUser[property] = value;
-        localStorage.setItem(localStorageAccessConstant[property],value.toString());
+        localStorage.setItem(localStorageAccessConstant[property],value?.toString());
     }
     resetCurrentUserPropertyValue(property: string, resetvalue: any =  null): void{
         this.currentUser[property] = resetvalue;
