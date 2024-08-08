@@ -9,6 +9,7 @@ export interface IMenuItem {
     externalLink?: string;
     sub?: IMenuItemSub[];
     badge?: IMenuItemBadge;
+    class: any;
 }
 
 export interface IMenuItemIcon {
