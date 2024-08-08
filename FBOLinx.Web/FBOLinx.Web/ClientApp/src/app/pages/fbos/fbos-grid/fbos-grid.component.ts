@@ -92,9 +92,10 @@ export class FbosGridComponent implements OnInit {
         } else {
             this.displayedColumns = ['icao', 'fbo', 'price', 'active', 'edit'];
         }
+
         this.groupsService
             .groupsAndFbos()
-            .subscribe((data: GroupFboViewModel) => (this.groupsFbosData = data));
+            .subscribe((data: GroupFboViewModel) => { this.groupsFbosData = data; });
     }
 
     ngOnInit() {
@@ -327,7 +328,13 @@ export class FbosGridComponent implements OnInit {
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
 
-        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo.groupId).toString());
+        if (this.groupsFbosData == undefined) {
+            this.groupsService
+                .groupsAndFbos()
+                .subscribe((data: GroupFboViewModel) => {
+                    this.groupsFbosData = data;
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo, this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData, fbo.groupId).toString());                });
+        }
 
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
 
