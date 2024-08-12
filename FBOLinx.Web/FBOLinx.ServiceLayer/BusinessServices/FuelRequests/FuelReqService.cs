@@ -109,6 +109,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly ICustomerService _customerService;
         private readonly IOrderDetailsEntityService _orderDetailsEntityService;
         private readonly ICustomerInfoByFboEntityService _customerInfoByFboEntityService;
+        private readonly ICustomerInfoByFboService _customerInfoByFboService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -129,7 +130,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             ICustomerAircraftService customerAircraftService,
             IAircraftService aircraftService,
             IFboService fboService,
-            IFuelReqConfirmationEntityService fuelReqConfirmationEntityService, ICustomerService customerService, IOrderDetailsEntityService orderDetailsEntityService, ICustomerInfoByFboEntityService customerInfoByFboEntityService) : base(fuelReqEntityService)
+            IFuelReqConfirmationEntityService fuelReqConfirmationEntityService, ICustomerService customerService, IOrderDetailsEntityService orderDetailsEntityService, ICustomerInfoByFboEntityService customerInfoByFboEntityService, ICustomerInfoByFboService customerInfoByFboService) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
             _serviceOrderService = serviceOrderService;
@@ -156,6 +157,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _customerService = customerService;
             _orderDetailsEntityService = orderDetailsEntityService;
             _customerInfoByFboEntityService = customerInfoByFboEntityService;
+            _customerInfoByFboService = customerInfoByFboService;
         }
 
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
@@ -869,6 +871,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     return;
                 else
                 {
+                    // ADD A WAY TO CREATE FBO IF NOT IN SYSTEM? On hold until we come across any scenarios that'd require us to do so
+
                     orderDetails = new OrderDetailsDto();
                     orderDetails.ConfirmationEmail = fuelerlinxTransaction.Email == "" ? " " : fuelerlinxTransaction.Email;
                     orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
@@ -889,6 +893,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     {
                         var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
                         customerInfoByGroupId = customerInfoByGroup.Oid;
+
+                        var customerInfoByFbo = await _customerInfoByFboService.GetSingleBySpec(new CustomerInfoByFboByCustomerInfoByGroupIdFboIdSpecification(customerInfoByGroup.Oid, fbo.Oid));
+
+                        if (customerInfoByFbo == null)
+                            customerInfoByFbo = new CustomerInfoByFboDto();
+
+                        customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
+                        customerInfoByFbo.FboId = fbo.Oid;
+                        customerInfoByFbo.CustomFboEmail = fuelerlinxTransaction.FboEmail;
+                        await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
                     }
 
                     var serviceReq = new ServiceOrderDto()
