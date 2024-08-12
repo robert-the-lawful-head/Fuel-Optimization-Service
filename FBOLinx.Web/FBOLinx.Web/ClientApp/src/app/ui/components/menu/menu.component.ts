@@ -5,7 +5,7 @@ import {
     QueryList,
     ViewChildren,
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
@@ -33,6 +33,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
     tooltipIndex = 0;
     hasShownTutorial = false;
 
+    changeEmittedSubscription: Subscription;
+
     constructor(
         private menuService: MenuService,
         private sharedService: SharedService,
@@ -43,12 +45,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.getMenuItems();
     }
-
+    ngOnDestroy() {
+        this.changeEmittedSubscription?.unsubscribe();
+    }
     ngAfterViewInit(): void {
-        this.sharedService.titleChanged$.subscribe((title) => {
-                this.menuService.setMenuProps(this.menuItems);
-        });
-        this.sharedService.changeEmitted$.subscribe((message) => {
+        this.changeEmittedSubscription = this.sharedService.changeEmitted$.subscribe((message) => {
             if (message === fboChangedEvent || message === accountTypeChangedEvent) {
                 this.menuService.setMenuProps(this.menuItems);
             }

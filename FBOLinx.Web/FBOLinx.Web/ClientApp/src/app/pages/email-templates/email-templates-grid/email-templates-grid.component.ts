@@ -16,6 +16,7 @@ import { GridBase } from 'src/app/services/tables/GridBase';
 import { SharedService } from '../../../layouts/shared-service';
 import { CopyConfirmationComponent } from '../../../shared/components/copy-confirmation/copy-confirmation.component';
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-email-templates-grid',
@@ -34,7 +35,7 @@ export class EmailTemplatesGridComponent extends GridBase implements OnInit {
     public dataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ['name', 'subject', 'copy', 'delete'];
 
-
+    sortChangeSubscription: Subscription;
     constructor(
         public newTemplateDialog: MatDialog,
         public copyTemplateDialog: MatDialog,
@@ -49,7 +50,7 @@ export class EmailTemplatesGridComponent extends GridBase implements OnInit {
             return;
         }
 
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.dataSource = new MatTableDataSource(
             this.emailTemplatesData
         );
@@ -73,7 +74,9 @@ export class EmailTemplatesGridComponent extends GridBase implements OnInit {
         //    }
         //});
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     public editEmailTemplate(emailTemplate) {
         this.editEmailTemplateClicked.emit({
             emailTemplateId: emailTemplate.oid,

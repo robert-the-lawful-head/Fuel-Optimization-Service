@@ -94,7 +94,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     mapLoadSubscription: Subscription;
     selectedICAO: string = "";
-    airportWatchFetchSubscription: Subscription;
     favoriteAircraftsData : FlightWatchModelResponse[];
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
@@ -220,7 +219,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.fuelOrdersSubscription.unsubscribe();
         }
         if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
-        if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
         if(this.routeSubscription) this.routeSubscription.unsubscribe();
 
     }
@@ -598,7 +596,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadAirportWatchData() {
-        return this.airportWatchFetchSubscription = this.flightWatchService
+        this.flightWatchService
         .getAirportLiveData(
             this.sharedService.currentUser.fboId,
             this.selectedICAO

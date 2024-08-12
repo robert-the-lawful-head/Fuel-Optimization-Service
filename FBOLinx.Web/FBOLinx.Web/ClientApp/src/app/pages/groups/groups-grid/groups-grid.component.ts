@@ -168,7 +168,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.groupDataSource = this.groupsFbosData.groups;
         this.fboDataSource = this.groupsFbosData.fbos;
 
-        this.sharedService.titleChange(this.pageTitle);
+        
         const self = this;
         this.childGrid = {
             columns: [

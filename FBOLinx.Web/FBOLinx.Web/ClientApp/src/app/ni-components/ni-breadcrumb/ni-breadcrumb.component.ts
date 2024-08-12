@@ -2,6 +2,7 @@ import { Component, Input, SimpleChanges } from '@angular/core';
 
 import { Item } from './item';
 import { NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'ni-breadcrumb',
@@ -113,8 +114,10 @@ export class NiBreadcrumbComponent {
         }
     ];
 
+    routerSubscription: Subscription;
+
     constructor(private router: Router) {
-        router.events.subscribe((val) => {
+        this.routerSubscription = router.events.subscribe((val) => {
             if(val instanceof NavigationEnd){
                 if (this.whitelist.includes(val.url)) {
                     this.isDashboard = true;
@@ -132,6 +135,9 @@ export class NiBreadcrumbComponent {
             }
         });
       }
+    ngOnDestroy() {
+        this.routerSubscription?.unsubscribe();
+    }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.menu) {
             this._sectionTitle = changes.menu.currentValue.pop();

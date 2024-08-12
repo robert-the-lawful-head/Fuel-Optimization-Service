@@ -20,7 +20,7 @@ export class GroupCustomersHomeComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
         this.loadCustomers();
     }
 

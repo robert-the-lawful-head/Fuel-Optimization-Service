@@ -43,6 +43,7 @@ import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreq
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import * as moment from 'moment';
 import { CurrencyPresicionPipe } from 'src/app/shared/pipes/decimal/currencyPresicion.pipe';
+import { Subscription } from 'rxjs';
 
 const initialColumns: ColumnType[] = [
     {
@@ -160,7 +161,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     //openedNotes: any[] = [];
     previouslyOpenedOrder: string = "";
     //currentElementId: string = "";
-
+    sortChangeSubscription: Subscription;
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
@@ -193,7 +194,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
 
     async ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                 ? { ...column, sort: this.sort.direction }
@@ -221,6 +222,9 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.allColumnsToDisplay = this.getVisibleColumns();
 
         this.refreshTable();
+    }
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
     }
     getVisibleDataColumns() {
         return this.columns

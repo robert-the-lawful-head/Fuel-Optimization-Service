@@ -10,6 +10,7 @@ import { CustomerinfobygroupService } from '../../../../services/customerinfobyg
 import { DistributionService } from '../../../../services/distribution.service';
 import { EmailcontentService } from '../../../../services/emailcontent.service';
 import { PricingtemplatesService } from '../../../../services/pricingtemplates.service';
+import { Subscription } from 'rxjs';
 
 export interface DistributionDialogData {
     pricingTemplate: any;
@@ -52,6 +53,7 @@ export class DistributionWizardMainComponent implements OnInit {
     // Added services
     public sharedservice: SharedService;
 
+    pricingTemplateSubscription: Subscription;
     constructor(
         public dialogRef: MatDialogRef<DistributionWizardMainComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DistributionDialogData,
@@ -95,7 +97,7 @@ export class DistributionWizardMainComponent implements OnInit {
         this.fifthFormGroup = this.formBuilder.group({});
 
         // Subscribe to necessary changes
-        this.firstFormGroup
+        this.pricingTemplateSubscription = this.firstFormGroup
             .get('pricingTemplate')
             .valueChanges.subscribe((val) => {
                 this.data.pricingTemplate = val;
@@ -114,6 +116,9 @@ export class DistributionWizardMainComponent implements OnInit {
         //    if (this.availableCustomers && this.availableCustomers.length > 0)
         //        this.loadAvailableCustomers();
         // });
+    }
+    ngOnDestroy() {
+        this.pricingTemplateSubscription?.unsubscribe();
     }
 
     public pricingTemplateChanged() {

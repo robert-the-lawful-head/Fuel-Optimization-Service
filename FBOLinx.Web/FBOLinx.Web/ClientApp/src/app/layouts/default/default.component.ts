@@ -57,6 +57,10 @@ export class DefaultLayoutComponent implements OnInit {
 
     isExpiredPricingDialogBlocked: boolean = true;
 
+    valueChangedSubscription: Subscription;
+    changeEmittedSubscription: Subscription;
+    routerSubscription: Subscription;
+
     constructor(
         private fboairportsService: FboairportsService,
         private sharedService: SharedService,
@@ -76,12 +80,7 @@ export class DefaultLayoutComponent implements OnInit {
         this.compress = false;
         this.menuStyle = 'style-3';
 
-        sharedService.titleChanged$.subscribe((title: string) => {
-            this.sharedService.title = title;
-            setTimeout(() => (this.pageTitle = title), 100);
-        });
-
-        this.router.events
+        this.routerSubscription = this.router.events
             .pipe(filter((event) => event instanceof NavigationStart))
             .subscribe((event: RouterEvent) => {
                 if (!event.url.startsWith('/default-layout/customers')) {
@@ -114,7 +113,7 @@ export class DefaultLayoutComponent implements OnInit {
             this.triggerPrices();
         }
 
-        this.sharedService.valueChanged$.subscribe((value: any) => {
+        this.valueChangedSubscription = this.sharedService.valueChanged$.subscribe((value: any) => {
             if (!this.canUserSeePricing()) {
                 return;
             }
@@ -142,9 +141,15 @@ export class DefaultLayoutComponent implements OnInit {
 
         if (!this.isSidebarInvisible() && this.getScreenWidth >= 768) this.sidebarState();
     }
+    ngOnDestroy() {
+        this.routerSubscription?.unsubscribe();
+        this.valueChangedSubscription?.unsubscribe();
+        this.changeEmittedSubscription?.unsubscribe();
+        this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    }
     private triggerPrices(){
         var isConductorRefresh = true;
-        this.sharedService.changeEmitted$.subscribe((message) => {
+        this.changeEmittedSubscription = this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing()) {
                 return;
             }

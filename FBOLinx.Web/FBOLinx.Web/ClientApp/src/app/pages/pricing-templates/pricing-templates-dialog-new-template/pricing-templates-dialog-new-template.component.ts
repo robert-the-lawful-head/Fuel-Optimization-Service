@@ -20,6 +20,7 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
 import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
+import { Subscription } from 'rxjs';
 
 export interface NewPricingTemplateMargin {
     allin: FormControl;
@@ -65,6 +66,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     emailTemplatesDataSource: Array<any>;
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
     inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
+    valueChangeSubscription: Subscription;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -133,6 +135,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.initForm();
         this.loadEmailContentTemplate();
     }
+    ngOnDestroy() {
+        this.valueChangeSubscription?.unsubscribe();
+    }
     initForm() {
         this.form = this.formBuilder.group({
             firstStep: this.formBuilder.group({
@@ -164,7 +169,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         });
 
         const secondStep = this.form.controls.secondStep as FormGroup;
-        secondStep.valueChanges.subscribe(() => {
+        this.valueChangeSubscription = secondStep.valueChanges.subscribe(() => {
             const updatedMargins = this.updateMargins(
                 this.customerMarginsFormArray.value,
                 this.marginType ,
