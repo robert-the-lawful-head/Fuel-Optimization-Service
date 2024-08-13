@@ -30,7 +30,7 @@ export class MenuService {
     public handleError(error: any) {
         return observableThrowError(error.error || 'Server Error');
     }
-    public setDisabledMenuItems(menuItems: IMenuItem[]): void {
+    public setMenuProps(menuItems: IMenuItem[]): void {
         if(menuItems == null) return;
         if (this.sharedService.currentUser.accountType ==  AccountType.Premium){
             this.enableMenuItems(menuItems);
@@ -46,11 +46,32 @@ export class MenuService {
                 element.disabled = true;
             else
                 element.disabled = false;
+            
+            element.class = this.getLiClass(element);
+
         });
     }
     private enableMenuItems(menuItems: IMenuItem[]): void {
         menuItems.forEach(element => {
                 element.disabled = false;
+                element.class = this.getLiClass(element);
         });
+    }
+    private getLiClass(item: any) {
+        let role = this.sharedService.currentUser.role;
+        if (this.sharedService.currentUser.impersonatedRole) {
+            role = this.sharedService.currentUser.impersonatedRole;
+        }
+
+        const hidden = item.roles && item.roles.indexOf(role) === -1;
+        const isDisabled = (this.sharedService.currentUser.accountType == AccountType.Premium || !this.sharedService.currentUser?.accountType) ? false : item.disabled;
+        return {
+            active: item.active || false,  // Active class will be set in the template based on rla.isActive
+            disabled: isDisabled,
+            'has-sub': item.sub,
+            hidden,
+            'menu-item-group': item.groupTitle,
+          };
+    
     }
 }

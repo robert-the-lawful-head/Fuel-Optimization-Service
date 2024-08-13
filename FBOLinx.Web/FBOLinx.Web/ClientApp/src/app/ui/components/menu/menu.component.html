@@ -3,7 +3,7 @@
         <li
             #rla="routerLinkActive"
             *ngFor="let item of menuItems"
-            [ngClass]="getLiClasses(item, rla.isActive)"
+            [ngClass]="getItemNgClass(item, rla.isActive)"
             [routerLinkActiveOptions]="{ exact: true }"
             class="menu-item"
             routerLinkActive="active"
