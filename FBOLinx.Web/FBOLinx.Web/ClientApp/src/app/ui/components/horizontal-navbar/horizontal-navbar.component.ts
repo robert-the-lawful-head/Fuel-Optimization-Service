@@ -343,6 +343,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.fbo = null;
         this.sharedService.emitChange(fboChangedEvent);
         this.close();
+        this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
         if (this.sharedService.currentUser.conductorFbo) {
             localStorage.removeItem(localStorageAccessConstant.conductorFbo);
             this.sharedService.currentUser.conductorFbo = false;
@@ -374,7 +375,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.fboAirport = null;
         this.fbo = null;
         this.close();
-
+        this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
         this.router.navigate(['/default-layout/groups/']);
     }
 
