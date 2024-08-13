@@ -81,7 +81,7 @@ export class LoginModalComponent {
         }
     }
     private async setFboSessionVariables(fboObj: any) {
-        let icao: string = fboObj.fbo.fboAirport.icao;
+        let icao: string = fboObj.fbo?.fboAirport?.icao ?? this.groupsFbosData.fbos.find((obj) => obj.oid == fboObj.fbo.oid)?.icao;
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fbo,fboObj.fbo.fbo);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);
