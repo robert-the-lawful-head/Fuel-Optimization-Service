@@ -1,7 +1,7 @@
 import { state, style, trigger } from '@angular/animations';
 import { ChangeDetectorRef, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sort';
+import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { SharedService } from 'src/app/layouts/shared-service';
@@ -18,6 +18,7 @@ import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favor
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 import { FlightWatchMapSharedService } from '../../services/flight-watch-map-shared.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-flight-watch-aircraft-data-table',
@@ -61,6 +62,8 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
 
     hasChangeDefaultSort = false;
 
+    aicraftDetailsSubscription: Subscription;
+    sortChangeSubscription: Subscription;
     constructor(private getTime : GetTimePipe,
                 private toReadableTime: ToReadableTimePipe,
                 private sharedService: SharedService,
@@ -68,7 +71,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
                 private flightWatchHelper: FlightWatchHelper,
                 private flightWatchMapSharedService: FlightWatchMapSharedService,
                 private cdr: ChangeDetectorRef) {
-                    this.flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
+                    this.aicraftDetailsSubscription = this.flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
                     this.expandedDetailData = data;
                     });
                     this.dataSource.sort = this.sort;
@@ -79,9 +82,13 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
         this.fboId = this.sharedService.currentUser.fboId;
         this.icao = this.sharedService.currentUser.icao;
     }
+    ngOnDestroy(){
+        this.aicraftDetailsSubscription?.unsubscribe();
+        this.sortChangeSubscription?.unsubscribe();
+    }
     ngAfterViewInit() {
         this.intializeDataSource(this.data);
-        this.sort?.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort?.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }

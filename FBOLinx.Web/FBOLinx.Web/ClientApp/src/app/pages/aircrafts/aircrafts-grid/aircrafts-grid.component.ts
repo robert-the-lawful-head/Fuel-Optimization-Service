@@ -25,6 +25,7 @@ import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -59,6 +60,8 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
     public isLoadingAircraftTypes = false;
     customersCsvOptions: csvFileOptions = { fileName: 'Aircraft', sheetName: 'Aircraft' };
 
+    sortChangeSubscription: Subscription;
+
     constructor(
         public newCustomerAircraftDialog: MatDialog,
         public editCustomerAircraftDialog: MatDialog,
@@ -66,9 +69,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService ,
         private route : ActivatedRoute,
-        private nullOrEmptyToDefault: NullOrEmptyToDefault,
-        private favoritesService: FavoritesService,
-        private snackbarService: SnackBarService
+        private nullOrEmptyToDefault: NullOrEmptyToDefault
     ) {
         super();
         this.isLoadingAircraftTypes = true;
@@ -86,7 +87,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
             return;
         }
 
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.aircraftsDataSource = new MatTableDataSource(this.aircraftsData);
         this.aircraftsDataSource.sort = this.sort;
         this.aircraftsDataSource.paginator = this.paginator;
@@ -141,7 +142,9 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         };
         this.setVirtualScrollVariables(this.paginator, this.sort, this.aircraftsDataSource.data);
     }
-
+    ngOnDestroy(){
+        this.sortChangeSubscription?.unsubscribe();
+    }
     public editCustomerAircraft(customerAircraft) {
         if (customerAircraft) {
             const dialogRef = this.editCustomerAircraftDialog.open(

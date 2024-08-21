@@ -24,6 +24,7 @@ import { PricingTemplatesDialogCopyTemplateComponent } from '../pricing-template
 import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
 // Components
 import { PricingTemplatesDialogNewTemplateComponent } from '../pricing-templates-dialog-new-template/pricing-templates-dialog-new-template.component';
+import { Subscription } from 'rxjs';
 
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
@@ -67,7 +68,7 @@ export class PricingTemplatesGridComponent extends GridBase implements OnInit {
         newtemplate: 0,
         isDeleting: true
     };
-
+    sortChangeSubscription: Subscription;
     constructor(
         private store: Store<State>,
         public newTemplateDialog: MatDialog,
@@ -85,7 +86,7 @@ export class PricingTemplatesGridComponent extends GridBase implements OnInit {
             return;
         }
 
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.dataSource = new MatTableDataSource(
             this.pricingTemplatesData
         );
@@ -109,7 +110,9 @@ export class PricingTemplatesGridComponent extends GridBase implements OnInit {
             }
         });
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     public editPricingTemplate(pricingTemplate) {
         this.editPricingTemplateClicked.emit({
             filter: this.dataSource.filter,

@@ -26,6 +26,7 @@ import { DistributionWizardReviewComponent } from '../../../shared/components/di
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { AccountType } from 'src/app/enums/user-role';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
+import { Subscription } from 'rxjs';
 
 @Component({
     host: {
@@ -65,7 +66,9 @@ export class AdditionNavbarComponent
     private pricesExpired: boolean;
     private retailPrice: number;
     private costPrice: number;
-    changedSubscription: any;
+    changedSubscription: Subscription;
+    changeSortSubscription: Subscription;
+    currentMessageSubscription: Subscription;
     loadingPrices: boolean = false;
 
     constructor(
@@ -74,8 +77,7 @@ export class AdditionNavbarComponent
         private distributeConfirmationDialog: MatDialog,
         private templateDialog: MatDialog,
         private distributionService: DistributionService,
-        private fboPricesService: FbopricesService,
-        private expiredPricingDialog: MatDialog
+        private fboPricesService: FbopricesService
     ) {
         this.title = 'Distribute Prices';
         this.open = false;
@@ -90,7 +92,7 @@ export class AdditionNavbarComponent
     ngOnInit() {}
 
     ngAfterViewInit() {
-        this.sharedService.currentMessage.subscribe((message) => {
+        this.currentMessageSubscription = this.sharedService.currentMessage.subscribe((message) => {
             this.message = message;
         });
 
@@ -101,7 +103,11 @@ export class AdditionNavbarComponent
                 }
             });
     }
-
+    ngOnDestroy() {
+        this.changedSubscription?.unsubscribe();
+        this.changeSortSubscription?.unsubscribe();
+        this.currentMessageSubscription?.unsubscribe();
+    }
     ngOnChanges(changes: SimpleChanges): void {
         if (
             changes.templatelst &&
@@ -494,7 +500,7 @@ export class AdditionNavbarComponent
         if (!this.pricingTemplatesData || !this.sort) {
             return;
         }
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.changeSortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.marginTemplateDataSource = new MatTableDataSource(
             this.pricingTemplatesData
         );

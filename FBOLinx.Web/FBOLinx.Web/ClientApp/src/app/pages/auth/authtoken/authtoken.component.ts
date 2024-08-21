@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { AuthenticationService } from '../../../services/authentication.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-authtoken',
@@ -13,6 +14,8 @@ export class AuthtokenComponent {
     tokenParam: string;
     idParam: string;
 
+    routeSubscription: Subscription;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -20,7 +23,7 @@ export class AuthtokenComponent {
     ) {
         // Check for passed in id
         //const token = this.route.snapshot.paramMap.get('token');
-        this.route.queryParamMap.subscribe((params) => {
+        this.routeSubscription = this.route.queryParamMap.subscribe((params) => {
             this.tokenParam = params.get('token');
             this.idParam = params.get('id');
         });
@@ -68,5 +71,8 @@ export class AuthtokenComponent {
                     }
                 );
         }
+    }
+    ngOnDestroy() {
+        this.routeSubscription?.unsubscribe();
     }
 }

@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SharedService } from 'src/app/layouts/shared-service';
 import {
@@ -56,6 +56,9 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
     submitting = false;
     aircraftType: AircraftType;
 
+    formValueChangesSubscription: Subscription;
+    combineLatestSubscription: Subscription;
+
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: AircraftResult,
         public dialogRef: MatDialogRef<CustomersDialogNewCustomerComponent>,
@@ -98,7 +101,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
         this.addNewContact();
         this.addNewAircraft();
 
-        this.templateFormGroup.valueChanges
+        this.formValueChangesSubscription = this.templateFormGroup.valueChanges
             .pipe(
                 switchMap(() =>
                     this.fboFeesAndTaxesService.getByFboAndPricingTemplate(
@@ -221,7 +224,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        combineLatest([
+        this.combineLatestSubscription = combineLatest([
             this.customerInfoByGroupService.getCertificateTypes(),
             this.customerCompanyTypesService.getNonFuelerLinxForFbo(
                 this.sharedService.currentUser.fboId
@@ -250,7 +253,10 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
             }
         );
     }
-
+    ngOnDestroy() {
+        this.combineLatestSubscription?.unsubscribe();
+        this.formValueChangesSubscription?.unsubscribe();
+    }
     next() {
         if (this.step !== WizardStep.AIRCRAFT) {
             this.step++;

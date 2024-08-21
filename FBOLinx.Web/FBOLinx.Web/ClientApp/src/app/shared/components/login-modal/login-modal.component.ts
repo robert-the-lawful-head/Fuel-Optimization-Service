@@ -54,7 +54,7 @@ export class LoginModalComponent {
                     (data) => {
                         this.authenticationService.postAuth().subscribe(async () => {
                             this.dialogRef.close();
-                            if (data.role === 3) {
+                            if (data.role === UserRole.Conductor) {
                                 this.router.navigate([
                                     '/default-layout/groups/',
                                 ]);

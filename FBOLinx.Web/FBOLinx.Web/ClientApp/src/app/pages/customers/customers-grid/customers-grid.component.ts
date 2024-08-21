@@ -151,6 +151,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     limit: number = 20;
     end: number = this.limit + this.start;
 
+    sortChangeSubscription: Subscription;
     constructor(
         private newCustomerDialog: MatDialog,
         private deleteCustomerDialog: MatDialog,
@@ -193,7 +194,9 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         }
         this.airportWatchStartDate = new Date("10/6/2022");
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     // Methods
     addContactToCustomerDataList(){
         this.customersData.forEach(c => {
@@ -667,7 +670,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     }
 
     private refreshCustomerDataSource() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }

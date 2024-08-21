@@ -30,6 +30,7 @@ import { CustomerAircraft } from '../../../models/customer-aircraft';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-customer-aircrafts-grid',
@@ -67,6 +68,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     results = '[]';
 
     /*private importer: FlatfileImporter;*/
+    sortChangeSubscription: Subscription;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -77,9 +79,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
         private aircraftPricesService: AircraftpricesService,
         private customCustomerTypeService: CustomcustomertypesService,
         private sharedService: SharedService ,
-        private route : ActivatedRoute,
-        private snackbarService: SnackBarService,
-        private favoritesService: FavoritesService
+        private route : ActivatedRoute
     ) {
         this.isLoadingAircraftTypes = true;
         this.aircraftsService.getAll().subscribe((data: any) => {
@@ -93,7 +93,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
         if (!this.customerAircraftsData) {
             return;
         }
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.customerAircraftsDataSource = new MatTableDataSource(
             this.customerAircraftsData
         );
@@ -171,6 +171,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
         //    name: 'WebsiteImport',
         //    userId: '1',
         //});
+    }
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
     }
     ngOnChanges(changes: SimpleChanges) {
         if(changes.customer){
