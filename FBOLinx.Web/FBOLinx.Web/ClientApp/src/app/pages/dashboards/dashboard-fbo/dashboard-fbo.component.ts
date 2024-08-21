@@ -45,7 +45,7 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
         );
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
-        this.sharedService.titleChange(this.pageTitle);
+        
     }
 
     get isCsr() {

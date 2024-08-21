@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-customer-history',
@@ -29,6 +30,7 @@ export class CustomerHistoryComponent implements OnInit {
     'role',
     'tableName'
     ];
+  sortChangeSubscription: Subscription;
 
   constructor(public dialog: MatDialog,
      private sharedService : SharedService,
@@ -36,7 +38,7 @@ export class CustomerHistoryComponent implements OnInit {
      private route : ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
       this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory);
     this.customerHistoryDataSource.sort = this.sort;
     this.customerHistoryDataSource.paginator = this.paginator;
@@ -51,19 +53,22 @@ export class CustomerHistoryComponent implements OnInit {
     }
 
   }
-  public applyFilter(filterValue: string) {
-    this.customerHistoryDataSource.filter = filterValue.trim().toLowerCase();
-}
-openDetailsDialog(customer)
-{
-   this.dialog.open(CustomerHistoryDetailsComponent, {
-        width: '500px',
-        data: customer
-      });
+  ngOnDestroy() {
+    this.sortChangeSubscription.unsubscribe();
+  }
+    public applyFilter(filterValue: string) {
+      this.customerHistoryDataSource.filter = filterValue.trim().toLowerCase();
+  }
+  openDetailsDialog(customer)
+  {
+    this.dialog.open(CustomerHistoryDetailsComponent, {
+          width: '500px',
+          data: customer
+        });
 
-}
+  }
 
-onPageChanged(e: any) {
-    sessionStorage.setItem('pageIndex', e.pageIndex);
-}
+  onPageChanged(e: any) {
+      sessionStorage.setItem('pageIndex', e.pageIndex);
+  }
 }

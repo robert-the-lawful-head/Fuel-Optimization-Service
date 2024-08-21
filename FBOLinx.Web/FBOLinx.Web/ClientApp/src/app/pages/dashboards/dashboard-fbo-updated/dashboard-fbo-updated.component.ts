@@ -16,6 +16,7 @@ import { FlightWatchMapService } from '../../flight-watch/flight-watch-map/fligh
 import {localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { GroupsService } from 'src/app/services/groups.service';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-dashboard-fbo-updated',
@@ -49,11 +50,12 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
 
     groupsFbosData: any = null;
 
+    valueChangedSubscription: Subscription;
+    changeEmittedSubscription: Subscription;
+
     constructor(private sharedService: SharedService,
         private router: Router,
-        private flightWatchMapService: FlightWatchMapService,
-        private manageFboGroupsService: ManageFboGroupsService,
-        private groupsService: GroupsService,
+        private flightWatchMapService: FlightWatchMapService
         ) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -64,7 +66,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         );
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
-        this.sharedService.titleChange(this.pageTitle);
+        
 
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
 
@@ -86,7 +88,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     async ngOnInit() {
         await this.setFlightWatchMapCenter();
 
-        this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse[]}) => {
+        this.valueChangedSubscription = this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse[]}) => {
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
                     this.flightWatchData = this.flightWatchMapService.filterArrivalsAndDepartures(value.data);
@@ -101,7 +103,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.locationChangedSubscription =
-            this.sharedService.changeEmitted$.subscribe((message) => {
+            this.changeEmittedSubscription = this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.applyDateFilterChange();
                 }else if(message == SharedEvents.icaoChangedEvent){
@@ -112,6 +114,8 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.changeEmittedSubscription?.unsubscribe();
+        this.valueChangedSubscription?.unsubscribe();
         if (this.locationChangedSubscription) {
             this.locationChangedSubscription.unsubscribe();
         }

@@ -29,7 +29,7 @@ export class AntennaStatusHomeComponent implements OnInit {
         private ngxLoader: NgxUiLoaderService,
         private airportWatchService: AirportWatchService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
     }
 
     ngOnInit() {

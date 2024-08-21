@@ -72,6 +72,8 @@ export class CustomersEditComponent implements OnInit {
     isLoadingHistory: boolean = true;
     searchText: string = "";
 
+    routeSubscription: Subscription;
+    formValueChangesSubscription: Subscription[] = [];
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -83,7 +85,6 @@ export class CustomersEditComponent implements OnInit {
         private customerContactsService: CustomercontactsService,
         private pricingTemplatesService: PricingtemplatesService,
         private customerAircraftsService: CustomeraircraftsService,
-        private customerMarginService : CustomermarginsService,
         private sharedService: SharedService,
         private customerCompanyTypesService: CustomerCompanyTypesService,
         private customersViewedByFboService: CustomersviewedbyfboService,
@@ -96,9 +97,9 @@ export class CustomersEditComponent implements OnInit {
         private contactInfoByFboService: ContactinfobyfboService
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-        this.sharedService.titleChange(this.pageTitle);
+        
 
-        this.route.queryParams.subscribe((params) => {
+        this.routeSubscription = this.route.queryParams.subscribe((params) => {
             if (params.tab) {
                 this.selectedIndex = parseInt(params.tab);
             }
@@ -254,7 +255,7 @@ export class CustomersEditComponent implements OnInit {
             )
             .subscribe( scusess => {this.loadCustomerHistory();});
 
-        this.customerForm.controls.customerCompanyType.valueChanges.subscribe(
+        let customerCompanyTypeSubscription = this.customerForm.controls.customerCompanyType.valueChanges.subscribe(
             (type) => {
                 if (type < 0) {
                     this.customerCompanyTypeChanged();
@@ -262,8 +263,9 @@ export class CustomersEditComponent implements OnInit {
                 }
             }
         );
+        this.formValueChangesSubscription.push(customerCompanyTypeSubscription);
 
-        this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(
+        let customerMarginTemplateValueChangeSubscription = this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(
             (selectedValue) => {
                 this.loadCustomerHistory();
                 this.customCustomerType.customerType = selectedValue;
@@ -271,12 +273,18 @@ export class CustomersEditComponent implements OnInit {
 
             }
         );
-
+        this.formValueChangesSubscription.push(customerMarginTemplateValueChangeSubscription);
         this.loadCustomerFeesAndTaxes();
         this.loadCustomerTags();
         this.checkAircraftsForCompanyPricing();
     }
-
+    ngOnDestroy() {
+        this.formValueChangesSubscription.forEach(subscription => {
+            subscription?.unsubscribe();
+        });  
+        this.tagSubsctiption?.unsubscribe();
+        this.routeSubscription?.unsubscribe();
+    }
     loadCustomerHistory()
     {
        this.sharedService.updatedHistory.next(true);

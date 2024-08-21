@@ -16,6 +16,7 @@ import { getCustomerGridState } from '../../../store/selectors';
 import { MatTableDataSource } from '@angular/material/table';
 import { AircraftsGridComponent } from '../../aircrafts/aircrafts-grid/aircrafts-grid.component';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-customers-home',
@@ -45,7 +46,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     charNameCustomer = 'CustomersCustomer';
     charNameAircraft = 'CustomersAicraft';
     charNamePricingTemplate = 'pricingTempates';
-
+    routeQueryParamSubscription: Subscription;
     constructor(
         private store: Store<State>,
         private router: Router,
@@ -58,14 +59,14 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircraft();
         this.loadFuelVendors();
         this.loadTags();
 
-        this.route.queryParams.subscribe((params) => {
+        this.routeQueryParamSubscription = this.route.queryParams.subscribe((params) => {
             if (params.tab && params.tab) {
                 this.selectedTabIndex = parseInt(params.tab);
             }
@@ -86,6 +87,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.routeQueryParamSubscription?.unsubscribe();
         if (this.locationChangedSubscription) {
             this.locationChangedSubscription.unsubscribe();
         }

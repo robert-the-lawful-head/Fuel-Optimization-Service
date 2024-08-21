@@ -94,7 +94,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     mapLoadSubscription: Subscription;
     selectedICAO: string = "";
-    airportWatchFetchSubscription: Subscription;
     favoriteAircraftsData : FlightWatchModelResponse[];
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
@@ -220,7 +219,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.fuelOrdersSubscription.unsubscribe();
         }
         if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
-        if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
         if(this.routeSubscription) this.routeSubscription.unsubscribe();
 
     }
@@ -346,12 +344,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.sharedService.currentUser.conductorFbo) {
             localStorage.removeItem(localStorageAccessConstant.conductorFbo);
             this.sharedService.currentUser.conductorFbo = false;
+            this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
             this.router.navigate(['/default-layout/groups/']);
         } else {
             if (this.sharedService.currentUser.role === 3) {
                 this.sharedService.currentUser.impersonatedRole = 2;
                 localStorage.setItem(localStorageAccessConstant.impersonatedrole, '2');
             }
+            this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
             this.router.navigate(['/default-layout/fbos/']);
         }
     }
@@ -374,7 +374,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.fboAirport = null;
         this.fbo = null;
         this.close();
-
+        this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
         this.router.navigate(['/default-layout/groups/']);
     }
 

@@ -9,7 +9,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import {
     MatDialog,
 } from '@angular/material/dialog';
@@ -93,7 +93,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     };
     pricingTemplates: Array<any>;
     inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
-
+    combineLatestSubscription: Subscription[] = [];
+    valueChangesSubscription: Subscription[] = [];
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -113,7 +114,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private decimalPrecisionPipe: DecimalPrecisionPipe,
         private stringHelperService: StringHelperService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
 
 
     }
@@ -127,6 +127,10 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.valueChangesSubscription.forEach((subscription) => {
+            subscription?.unsubscribe();
+        });
+        this.combineLatestSubscription.forEach((subscription) => {  subscription?.unsubscribe(); });
         if (!this.hasSaved)
             return;
         this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe((response: any) => {
@@ -149,7 +153,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
         this.pricingTemplates = await this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).toPromise();
 
-        combineLatest([
+        let combineLatestSubscription = combineLatest([
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(
                 this.id
             ),
@@ -223,14 +227,14 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 notes: [this.pricingTemplate.notes],
             });
 
-            this.pricingTemplateForm.valueChanges.subscribe(() => {
+            let pricingTemplateValueChangeSubscription = this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
                 if (!this.isDefaultChanged)
                     this.savePricingTemplate();
             });
-
+            this.valueChangesSubscription.push(pricingTemplateValueChangeSubscription);
             // Margin type change event
-            this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
+            let pricingMarginTypeSubscription = this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
                 (type) => {
                     const updatedMargins = this.decimalPrecisionPipe.transform(this.updateMargins(
                         this.pricingTemplateForm.value.customerMargins,
@@ -247,8 +251,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                     this.savePricingTemplate();
                 }
             );
-
-            this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
+            this.valueChangesSubscription.push(pricingMarginTypeSubscription);
+            let pricingCustomerMarginSubscription = this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
                 (margins) => {
                     const updatedMargins = this.decimalPrecisionPipe.transform(this.updateMargins(
                         margins,
@@ -265,9 +269,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 }
             );
 
-
+            this.valueChangesSubscription.push(pricingCustomerMarginSubscription);
         //When Discount Type Change event
-        this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
+        let pricingDiscountVAlueChangeSubscription = this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
             (type) => {
                  const updatedMargins = this.updateMargins(
                     this.pricingTemplateForm.value.customerMargins,
@@ -284,9 +288,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 this.savePricingTemplate();
             }
             );
-
+            this.valueChangesSubscription.push(pricingDiscountVAlueChangeSubscription);
             // Default toggle event
-            this.pricingTemplateForm.controls.default.valueChanges.subscribe(
+            let pricingValueChangeSubscription  = this.pricingTemplateForm.controls.default.valueChanges.subscribe(
                 (type) => {
                     if (!type) {
                         this.isDefaultChanged = true;
@@ -332,8 +336,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
                 }
             );
+            this.valueChangesSubscription.push(pricingValueChangeSubscription);
         });
-
+        this.combineLatestSubscription.push(combineLatestSubscription);
         this.loadPricingTemplateFeesAndTaxes();
         this.loadEmailContentTemplate();
     }
@@ -390,7 +395,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             'oid'
         );
 
-        combineLatest([
+        let combineLatestSubscription  = combineLatest([
             this.customerMarginsService.bulkRemove(removedCustomerMargins),
             this.priceTiersService.updateFromCustomerMarginsViewModel(
                 this.pricingTemplateForm.value.customerMargins
@@ -426,6 +431,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 );
             }
         );
+        this.combineLatestSubscription.push(combineLatestSubscription);
     }
 
     onFileChange(event) {

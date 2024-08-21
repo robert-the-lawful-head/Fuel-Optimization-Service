@@ -30,6 +30,7 @@ import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccess
 import { GroupsService } from 'src/app/services/groups.service';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { GroupFboViewModel } from 'src/app/models/groups';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-fbos-grid',
@@ -61,7 +62,7 @@ export class FbosGridComponent implements OnInit {
     public tableSortOrderFbos = 'asc';
 
     public groupsFbosData: GroupFboViewModel;
-
+    sortChangeSubscription: Subscription;
     constructor(
         private newFboDialog: MatDialog,
         private fboService: FbosService,
@@ -75,7 +76,7 @@ export class FbosGridComponent implements OnInit {
         private groupsService: GroupsService,
         private manageFboGroupsService: ManageFboGroupsService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
         this.canManageFbo = [UserRole.Conductor, UserRole.GroupAdmin].includes(
             this.sharedService.currentUser.role
         );
@@ -102,7 +103,7 @@ export class FbosGridComponent implements OnInit {
         if (!this.fbosData) {
             return;
         }
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.refreshTable();
         if (this.sharedService.currentUser.role !== 3) {
             const remindMeLaterFlag = localStorage.getItem(
@@ -128,7 +129,9 @@ export class FbosGridComponent implements OnInit {
 
         this.paginator.pageIndex = 0;
     }
-
+    ngOnDestory() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     public deleteRecord(record) {
         const dialogRef = this.deleteFboDialog.open(
             DeleteConfirmationComponent,

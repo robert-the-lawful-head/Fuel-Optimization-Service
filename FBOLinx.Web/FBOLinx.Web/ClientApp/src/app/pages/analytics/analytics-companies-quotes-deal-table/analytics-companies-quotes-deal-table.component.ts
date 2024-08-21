@@ -25,6 +25,7 @@ import {
     SelectedDateFilter,
 } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import { ReportFilterItems } from '../analytics-report-popup/report-filters/report-filters.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
@@ -55,6 +56,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     selectedDateFilter: SelectedDateFilter;
     hiddenFilters: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.isCommercialAircraft];
 
+    sortChangeSubscription: Subscription;
+
     constructor(
         private fuelreqsService: FuelreqsService,
         private fbosService: FbosService,
@@ -76,7 +79,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                 this.initColumns();
             });
 
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -103,6 +106,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     }
 
     ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
         if (this.icaoChangedSubscription) {
             this.icaoChangedSubscription.unsubscribe();
         }
