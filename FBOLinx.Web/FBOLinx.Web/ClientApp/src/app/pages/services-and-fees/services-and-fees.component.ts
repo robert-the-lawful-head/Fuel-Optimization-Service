@@ -6,7 +6,7 @@ import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 import { ItemInputComponent } from './item-input/item-input.component';
 import { DatePipe } from '@angular/common';
-import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
+import { ServiceTypeService } from 'src/app/services/servicetypes.service';
 import { AccountType } from 'src/app/enums/user-role';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';

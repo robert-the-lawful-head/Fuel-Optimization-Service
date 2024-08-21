@@ -121,7 +121,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
         else {
             this.ngxLoader.stopLoader(this.chartName);
             this.selectedFbos = this.fbos;
-            this.refreshData();
+            //this.refreshData();
         }
     }
 

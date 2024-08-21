@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
-import { PolicyAndAgreementDocuments } from 'src/app/models/policyAndAgreementDocuments';
+import { PolicyAndAgreementDocuments } from 'src/app/models/PolicyAndAgreementDocuments';
 import { DocumentService } from 'src/app/services/documents.service';
 
 import { AppService } from '../../../services/app.service';
