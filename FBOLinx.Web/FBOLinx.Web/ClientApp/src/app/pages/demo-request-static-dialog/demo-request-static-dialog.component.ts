@@ -12,7 +12,7 @@ import { accountTypeChangedEvent, fboChangedEvent } from 'src/app/constants/shar
   styleUrls: ['./demo-request-static-dialog.component.scss']
 })
 export class DemoRequestStaticDialogComponent implements OnInit {
-    public isStaticModalVisible: boolean;
+    public isStaticModalVisible: boolean = false;
     private routerSubscription: Subscription;
 
     public freemiumDisableMenuItemsRoutes = [

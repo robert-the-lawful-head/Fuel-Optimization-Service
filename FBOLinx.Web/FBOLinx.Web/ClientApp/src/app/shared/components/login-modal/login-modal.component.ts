@@ -58,7 +58,7 @@ export class LoginModalComponent {
                                 this.router.navigate([
                                     '/default-layout/groups/',
                                 ]);
-                            } else if (data.role ===  UserRole.GroupAdmin) {
+                            } else if (data.role === UserRole.GroupAdmin) {
                                 this.router.navigate(['/default-layout/fbos/']);
                             } else {
                                 this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
@@ -82,7 +82,8 @@ export class LoginModalComponent {
         }
     }
     private async setFboSessionVariables(fboObj: any) {
-        let icao: string = fboObj.fbo.fboAirport.icao;
+        let icao: string = fboObj.fbo?.fboAirport?.icao ?? this.groupsFbosData.fbos.find((obj) => obj.oid == fboObj.fbo.oid)?.icao;
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fboObj.fbo?.accountType);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fbo,fboObj.fbo.fbo);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);

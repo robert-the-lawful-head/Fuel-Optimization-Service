@@ -8,6 +8,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.Mapping;
 using Mapster;
 using NetTopologySuite.IO;
@@ -30,6 +31,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
     public class BaseDTOService<TDTO, T, TContext> : IBaseDTOService<TDTO, T> where T : class
     {
         protected IRepository<T, TContext> _EntityService;
+        private readonly ILoggingService _loggingService;
 
         public IUserService EntityService { get; }
 
@@ -71,9 +73,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
 
         public async Task<TDTO> AddAsync(TDTO dto)
         {
-            var result = await _EntityService.AddAsync(dto.Adapt<T>());
-            await HandlePostChangeEvents();
-            return result == null ? default(TDTO) : result.Adapt<TDTO>();
+            try
+            {
+                var result = await _EntityService.AddAsync(dto.Adapt<T>());
+                await HandlePostChangeEvents();
+                return result == null ? default(TDTO) : result.Adapt<TDTO>();
+            }
+            catch (Exception ex)
+            {
+                _loggingService.LogError("Add Async error: " + ex.Message + " Inner exception: " + ex.InnerException, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                return default(TDTO);
+            }
         }
 
         public async Task UpdateAsync(TDTO dto)
