@@ -88,7 +88,6 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
             localStorageAccessConstant.icao
         );
 
-        this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
         this.columns = this.getClientSavedColumns(
             this.tableLocalStorageKey,
             this.columns
@@ -115,7 +114,6 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         this.sortChangeSubscription?.unsubscribe();
     }
     initColumns() {
-        this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
         this.columns = this.getClientSavedColumns(
             this.tableLocalStorageKey,
             this.columns

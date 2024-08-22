@@ -118,6 +118,7 @@ import { FlightWatchMapSharedService } from './pages/flight-watch/services/fligh
 import { ManageFboGroupsService } from './services/managefbo.service';
 import { StringHelperService } from './helpers/strings/stringHelper.service';
 import {JetNetService} from './services/jetnet.service';
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -189,7 +190,7 @@ import {JetNetService} from './services/jetnet.service';
         {
             multi: true,
             provide: HTTP_INTERCEPTORS,
-            useClass: ErrorInterceptor,
+            useClass: HttpErrorInterceptor,
         },
         AcukwikairportsService,
         AircraftsService,

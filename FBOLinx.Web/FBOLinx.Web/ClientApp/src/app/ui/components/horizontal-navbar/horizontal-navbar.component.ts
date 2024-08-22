@@ -598,6 +598,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadAirportWatchData() {
+        if(this.selectedICAO == null) return;
+        
         this.flightWatchService
         .getAirportLiveData(
             this.sharedService.currentUser.fboId,
