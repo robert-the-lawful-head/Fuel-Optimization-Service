@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../../../models/user';
 // Services
 import { UserService } from '../../../services/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-reset-password',
@@ -26,6 +27,8 @@ export class ResetPasswordComponent implements OnInit {
     user: User;
     reset: boolean;
 
+    routeSubscription: Subscription;
+    
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -34,7 +37,7 @@ export class ResetPasswordComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.route.queryParams.subscribe((params) => {
+        this.routeSubscription = this.route.queryParams.subscribe((params) => {
             if (!params.token) {
                 this.router.navigate(['/']);
             }
@@ -65,7 +68,9 @@ export class ResetPasswordComponent implements OnInit {
             );
         });
     }
-
+    ngOnDestroy() {
+        this.routeSubscription?.unsubscribe();
+    }
     passwordConfirming(c: AbstractControl) {
         if (c.get('newPassword').value !== c.get('confirmPassword').value) {
             return {

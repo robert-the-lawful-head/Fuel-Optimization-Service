@@ -9,7 +9,7 @@
                      theme="tiny"
                      title="SAF">
                 <div class="header-button" style="position: absolute; right: 10px; top: -30px" *ngIf="retailSaf > 0">
-                    <button (click)="clear('SAF')" 
+                    <button (click)="clear('SAF')"
                             color="warn" mat-flat-button size="small" class="mr-1">
                         Clear
                     </button>
@@ -22,7 +22,7 @@
                         </div>
                         <div class="col">
                             <h6 class="mt-0 mb-1 font-weight-bold">
-                                <span *ngIf="retailSaf > 0">${{ retailSaf | number: "1.4-4" }}</span>
+                                <span *ngIf="retailSaf > 0">${{ retailSaf | decimalPrecision }}</span>
                                 <span *ngIf="retailSaf <= 0">Expired</span>
                             </h6>
                         </div>
@@ -35,7 +35,7 @@
                         </div>
                         <div class="col">
                             <h6 class="mt-0 mb-1 font-weight-bold">
-                                <span *ngIf="costSaf > 0">${{ costSaf | number: "1.4-4" }}</span>
+                                <span *ngIf="costSaf > 0">${{ costSaf | decimalPrecision }}</span>
                                 <span *ngIf="costSaf <= 0">Expired</span>
                             </h6>
                         </div>
@@ -66,7 +66,7 @@
                         </div>
                         <div class="col">
                             <h6 class="mt-0 mb-1 font-weight-bold">
-                                <span *ngIf="retailJetA > 0">${{ retailJetA | number: "1.4-4" }}</span>
+                                <span *ngIf="retailJetA > 0">${{ retailJetA | decimalPrecision }}</span>
                                 <span *ngIf="retailJetA <= 0">Expired</span>
                             </h6>
                         </div>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="col">
                             <h6 class="mt-0 mb-1 font-weight-bold">
-                                <span *ngIf="costJetA > 0">${{ costJetA | number: "1.4-4" }}</span>
+                                <span *ngIf="costJetA > 0">${{ costJetA | decimalPrecision }}</span>
                                 <span *ngIf="costJetA <= 0">Expired</span>
                             </h6>
                         </div>

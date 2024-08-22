@@ -41,6 +41,7 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private string _CurrentPostedRetail = "";
         private string _ValidUntil = "";
+        private string _DecimalStringFormat = "";
         private FbosDto _Fbo;
         private FboLinxImageFileData _Logo;
         private FbolinxPricingTemplateFileAttachmentDto _PricingTemplateFileAttachment;
@@ -59,11 +60,14 @@ namespace FBOLinx.Web.Services
         private readonly IDistributionErrorsEntityService _distributionErrorsEntityService;
         private readonly ICustomerContactsEntityService _customerContactsEntityService;
         private PriceBreakdownDisplayTypes _PriceBreakdownDisplayType;
+        private IFboPreferencesService _fboPreferencesService;
+
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, 
             FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, IEmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
-            IFboService fboService, IFboPricesService fbopricesService, IDistributionErrorsEntityService distributionErrorsEntityService, ICustomerContactsEntityService customerContactsEntityService)
+            IFboService fboService, IFboPricesService fbopricesService, IDistributionErrorsEntityService distributionErrorsEntityService, ICustomerContactsEntityService customerContactsEntityService,
+             IFboPreferencesService fboPreferencesService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -78,6 +82,7 @@ namespace FBOLinx.Web.Services
             _fbopricesService = fbopricesService;
             _distributionErrorsEntityService = distributionErrorsEntityService;
             _customerContactsEntityService = customerContactsEntityService;
+            _fboPreferencesService = fboPreferencesService;
         }
         #endregion
 
@@ -87,6 +92,7 @@ namespace FBOLinx.Web.Services
         {
             _DistributePricingRequest = request;
             _IsPreview = isPreview;
+            _DecimalStringFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(request.FboId);
 
             var customers = new List<CustomerInfoByGroupDto>();
             customers = await GetCustomersForDistribution(request);
@@ -481,11 +487,11 @@ namespace FBOLinx.Web.Services
                         row = row.Replace("&nbsp;-&nbsp;", "");
                     }
 
-                    row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
-                    row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                    row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResultsByProduct.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE%", String.Format(_DecimalStringFormat, (model.AllInPrice.GetValueOrDefault())));
+                    row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format(_DecimalStringFormat, (commercialInternationalPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format(_DecimalStringFormat, (privateInternationalPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format(_DecimalStringFormat, (commercialDomesticPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format(_DecimalStringFormat, (privateDomesticPricingResultsByProduct.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
                     rowsHTML.Append(row);
 
                     loopIndex++;
@@ -534,7 +540,7 @@ namespace FBOLinx.Web.Services
             var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
 
             //Add the price breakdown as an image to prevent parsing
-            string priceBreakdownCsvContent = GetCustomerPriceBreakdownCSV(info);
+            string priceBreakdownCsvContent = await GetCustomerPriceBreakdownCSV(info);
 
             //Add email content to MailMessage
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage
@@ -580,7 +586,7 @@ namespace FBOLinx.Web.Services
             await _MailService.SendAsync(mailMessage);
         }
 
-        private string GetCustomerPriceBreakdownCSV(List<GroupCustomerAnalyticsResponse> info)
+        private async Task<string> GetCustomerPriceBreakdownCSV(List<GroupCustomerAnalyticsResponse> info)
         {
             string priceBreakdownTemplate = "";
             string rowHTMLTemplate = "";
@@ -598,6 +604,7 @@ namespace FBOLinx.Web.Services
                 }
                 else
                 {
+                    _DecimalStringFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(groupCustomerAnalyticsResponse.FboId);
                     priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(defaultPrice.PriceBreakdownDisplayType);
                     rowHTMLTemplate = GetCustomerPriceBreakdownRowTemplate(defaultPrice.PriceBreakdownDisplayType);
 
@@ -646,11 +653,11 @@ namespace FBOLinx.Web.Services
                                 row = row.Replace("-", "");
                             }
 
-                            row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
-                            row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", model.IntComm.GetValueOrDefault()));
-                            row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", model.IntPrivate.GetValueOrDefault()));
-                            row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", model.DomComm.GetValueOrDefault()));
-                            row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE%", String.Format(_DecimalStringFormat, model.DomPrivate.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format(_DecimalStringFormat, model.IntComm.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format(_DecimalStringFormat, model.IntPrivate.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format(_DecimalStringFormat, model.DomComm.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format(_DecimalStringFormat, model.DomPrivate.GetValueOrDefault()));
                             row = row.Replace("%PRODUCT%", model.Product);
 
                             row = row.Replace("%TAIL_NUMBERS%", groupCustomerAnalyticsResponse.TailNumbers);
@@ -687,9 +694,10 @@ namespace FBOLinx.Web.Services
             else
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.csv");
         }
-
+    
         private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDto> customers)
         {
+
             await GetEmailContent();
             if (!_IsPreview)
                 await LogDistributionRecord();
@@ -697,7 +705,7 @@ namespace FBOLinx.Web.Services
             var result = await _fbopricesService.GetPrices(_DistributePricingRequest.FboId);
             //Get current posted retail
             var currentRetailResult = result.Where(f => f.Product == "JetA Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-            _CurrentPostedRetail = "Current Posted Retail: " + String.Format("{0:C}", currentRetailResult.Price);
+            _CurrentPostedRetail = "Current Posted Retail: " + String.Format(_DecimalStringFormat, currentRetailResult.Price);
 
             //Get expiration date
             var priceDate = new DateTime();

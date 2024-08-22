@@ -81,6 +81,7 @@
     <None Remove="ClientApp\src\app\models\fuelreq.ts" />
     <None Remove="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
     <None Remove="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
+    <None Remove="ClientApp\src\app\models\jetnet-information.ts" />
     <None Remove="ClientApp\src\app\models\order-note.ts" />
     <None Remove="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
     <None Remove="ClientApp\src\app\models\service-order-item.ts" />
@@ -129,12 +130,14 @@
     <None Remove="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
     <None Remove="ClientApp\src\app\services\fbomissedquoteslog.service.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
+    <None Remove="ClientApp\src\app\services\jetnet.service.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
     <None Remove="ClientApp\src\app\services\serviceorder.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
+    <None Remove="ClientApp\src\app\shared\components\jetnet-information\jetnet-information.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\price-checker\price-checker.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\proceed-confirmation\proceed-confirmation.component.ts" />
@@ -200,6 +203,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\fuelreq.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\jetnet-information.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\order-note.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\service-order-item.ts" />
@@ -248,12 +252,14 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbomissedquoteslog.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\jetnet.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\serviceorder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\jetnet-information\jetnet-information.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\price-checker\price-checker.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\proceed-confirmation\proceed-confirmation.component.ts" />

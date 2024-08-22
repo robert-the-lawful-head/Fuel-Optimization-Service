@@ -51,7 +51,7 @@ export class FbosEditComponent implements OnInit {
         private confirmDialog: MatDialog,
         private airportWatchService: AirportWatchService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
     }
 
     get canChangeActive() {

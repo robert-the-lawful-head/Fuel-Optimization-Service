@@ -110,12 +110,15 @@ import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTem
 import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
 import { ServicesAndFeesService } from './services/servicesandfees.service';
-import { ServiceTypeService } from './services/serviceTypes.service';
+import { ServiceTypeService } from './services/servicetypes.service';
 import { SnackBarService } from './services/utils/snackBar.service';
 import { FavoritesService } from './services/favorites.service';
 import { FormValidationHelperService } from './helpers/forms/formValidationHelper.service';
 import { FlightWatchMapSharedService } from './pages/flight-watch/services/flight-watch-map-shared.service';
 import { ManageFboGroupsService } from './services/managefbo.service';
+import { StringHelperService } from './helpers/strings/stringHelper.service';
+import {JetNetService} from './services/jetnet.service';
+import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -187,7 +190,7 @@ import { ManageFboGroupsService } from './services/managefbo.service';
         {
             multi: true,
             provide: HTTP_INTERCEPTORS,
-            useClass: ErrorInterceptor,
+            useClass: HttpErrorInterceptor,
         },
         AcukwikairportsService,
         AircraftsService,
@@ -246,7 +249,9 @@ import { ManageFboGroupsService } from './services/managefbo.service';
         FavoritesService,
         FormValidationHelperService,
         FlightWatchMapSharedService,
-        ManageFboGroupsService
+        ManageFboGroupsService,
+        StringHelperService,
+        JetNetService
     ],
 })
 export class AppModule { }

@@ -127,7 +127,8 @@ export class FavoriteIconComponent implements OnInit {
                 aircraftICAO: this.favoriteData.aircraftICAO,
                 faaRegisteredOwner: this.favoriteData.faaRegisteredOwner,
                 origin: this.favoriteData.origin,
-                destination: this.favoriteData.destination
+                destination: this.favoriteData.destination,
+                isJetNetEnabled: false
             };
             this.favoriteData.isFavorite = this.isFavorite;
             this.favoriteData.isCustomerManagerAircraft = true;

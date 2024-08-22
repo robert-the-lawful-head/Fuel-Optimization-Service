@@ -9,7 +9,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import {
     MatDialog,
 } from '@angular/material/dialog';
@@ -30,6 +30,8 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
 import { ToolbarSettingsModel } from '@syncfusion/ej2-angular-dropdowns';
+import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
+import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
@@ -90,7 +92,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         isDeleting: false
     };
     pricingTemplates: Array<any>;
-
+    inputStepDefaultValue: string = this.stringHelperService.getNumberInputStepDefaultValue();
+    combineLatestSubscription: Subscription[] = [];
+    valueChangesSubscription: Subscription[] = [];
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -107,8 +111,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private pricingTemplateCalcService: PricingTemplateCalcService,
         public deleteTemplateWarningDialog: MatDialog,
         public customCustomerService: CustomcustomertypesService,
+        private decimalPrecisionPipe: DecimalPrecisionPipe,
+        private stringHelperService: StringHelperService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
 
 
     }
@@ -122,6 +127,10 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.valueChangesSubscription.forEach((subscription) => {
+            subscription?.unsubscribe();
+        });
+        this.combineLatestSubscription.forEach((subscription) => {  subscription?.unsubscribe(); });
         if (!this.hasSaved)
             return;
         this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe((response: any) => {
@@ -144,7 +153,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
         this.pricingTemplates = await this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).toPromise();
 
-        combineLatest([
+        let combineLatestSubscription = combineLatest([
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(
                 this.id
             ),
@@ -188,9 +197,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                                 customerMargin.amount !== undefined &&
                                 customerMargin.amount !== null
                             ) {
-                                customerMargin.amount = Number(
+                                customerMargin.amount = this.decimalPrecisionPipe.transform(Number(
                                     customerMargin.amount
-                                ).toFixed(4);
+                                ));
 
 
                             }
@@ -218,20 +227,21 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 notes: [this.pricingTemplate.notes],
             });
 
-            this.pricingTemplateForm.valueChanges.subscribe(() => {
+            let pricingTemplateValueChangeSubscription = this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
                 if (!this.isDefaultChanged)
                     this.savePricingTemplate();
             });
-
+            this.valueChangesSubscription.push(pricingTemplateValueChangeSubscription);
             // Margin type change event
-            this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
+            let pricingMarginTypeSubscription = this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
                 (type) => {
-                    const updatedMargins = this.updateMargins(
+                    const updatedMargins = this.decimalPrecisionPipe.transform(this.updateMargins(
                         this.pricingTemplateForm.value.customerMargins,
                         type ,
                         this.pricingTemplateForm.value.discountType,
-                    );
+                    ));
+
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
                         {
@@ -241,14 +251,14 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                     this.savePricingTemplate();
                 }
             );
-
-            this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
+            this.valueChangesSubscription.push(pricingMarginTypeSubscription);
+            let pricingCustomerMarginSubscription = this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
                 (margins) => {
-                    const updatedMargins = this.updateMargins(
+                    const updatedMargins = this.decimalPrecisionPipe.transform(this.updateMargins(
                         margins,
                         this.pricingTemplateForm.value.marginType ,
                         this.pricingTemplateForm.value.discountType
-                    );
+                    ));
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
                         {
@@ -259,9 +269,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 }
             );
 
-
+            this.valueChangesSubscription.push(pricingCustomerMarginSubscription);
         //When Discount Type Change event
-        this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
+        let pricingDiscountVAlueChangeSubscription = this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
             (type) => {
                  const updatedMargins = this.updateMargins(
                     this.pricingTemplateForm.value.customerMargins,
@@ -278,9 +288,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 this.savePricingTemplate();
             }
             );
-
+            this.valueChangesSubscription.push(pricingDiscountVAlueChangeSubscription);
             // Default toggle event
-            this.pricingTemplateForm.controls.default.valueChanges.subscribe(
+            let pricingValueChangeSubscription  = this.pricingTemplateForm.controls.default.valueChanges.subscribe(
                 (type) => {
                     if (!type) {
                         this.isDefaultChanged = true;
@@ -326,8 +336,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
                 }
             );
+            this.valueChangesSubscription.push(pricingValueChangeSubscription);
         });
-
+        this.combineLatestSubscription.push(combineLatestSubscription);
         this.loadPricingTemplateFeesAndTaxes();
         this.loadEmailContentTemplate();
     }
@@ -384,7 +395,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             'oid'
         );
 
-        combineLatest([
+        let combineLatestSubscription  = combineLatest([
             this.customerMarginsService.bulkRemove(removedCustomerMargins),
             this.priceTiersService.updateFromCustomerMarginsViewModel(
                 this.pricingTemplateForm.value.customerMargins
@@ -420,6 +431,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 );
             }
         );
+        this.combineLatestSubscription.push(combineLatestSubscription);
     }
 
     onFileChange(event) {
@@ -491,7 +503,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     addCustomerMargin() {
         const customerMargin = {
             allin: 0,
-            amount: Number(0).toFixed(4),
+            amount: this.decimalPrecisionPipe.transform(Number(0)),
             itp: 0,
             max: 99999,
             min: 1,
@@ -678,7 +690,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
-                margins[i].amount = Number(margins[i].amount).toFixed(4);
+                margins[i].amount = this.decimalPrecisionPipe.transform(margins[i].amount);
                    this.pricingTemplate.discountType = discountType;
             }
         }

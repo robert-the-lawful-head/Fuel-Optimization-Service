@@ -32,5 +32,7 @@ namespace FBOLinx.DB.Models
         [InverseProperty("Preferences")]
         [ForeignKey("Fboid")]
         public Models.Fbos Fbo { get; set; }
+
+        public byte? DecimalPrecision { get; set; }
     }
 }

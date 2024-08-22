@@ -35,7 +35,6 @@
                                 [fboPrice]="currentFboPriceJetARetail.price"
                                 [feesAndTaxes]="feesAndTaxes"
                                 [marginType]="1"
-                               
                                 [showLineSeparator]="true"
                                 [validDepartureTypes]="[0, 1, 2, 3]"
                                 [validFlightTypes]="[0, 1, 2, 3]"
@@ -74,7 +73,7 @@
                             <h4 *ngIf="jetARetailExists()" class="mt-0 mb-1">
                                 ${{
                                     currentFboPriceJetARetail.price
-                                        | number: "1.4-4"
+                                        | decimalPrecision
                                 }}
                             </h4>
                             <h4
@@ -122,7 +121,7 @@
                             <h4 *ngIf="jetACostExists()" class="mt-0 mb-1">
                                 ${{
                                     currentFboPriceJetACost.price
-                                        | number: "1.4-4"
+                                        | decimalPrecision
                                 }}
                             </h4>
                             <h4
@@ -258,10 +257,10 @@
                                     )
                                 "
                                 [ngModelOptions]="{ updateOn: 'blur' }"
-                                [ngModel]="jtRetail | number: '1.4-4'"
+                                [ngModel]="jtRetail | decimalPrecision"
                                 matInput
                                 placeholder="Retail*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Retail values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -294,10 +293,10 @@
                                     fboPriceRequiresUpdate($event, 'JetA Cost')
                                 "
                                 [ngModelOptions]="{ updateOn: 'blur' }"
-                                [ngModel]="jtCost | number: '1.4-4'"
+                                [ngModel]="jtCost | decimalPrecision"
                                 matInput
                                 placeholder="Cost*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Cost values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -406,7 +405,7 @@
                                 >
                                     ${{
                                         stagedFboPriceJetARetail.price
-                                            | number: "1.4-4"
+                                            | decimalPrecision
                                     }}
                                 </h4>
                                 <h4
@@ -461,7 +460,7 @@
                                 >
                                     ${{
                                         stagedFboPriceJetACost.price
-                                            | number: "1.4-4"
+                                            | decimalPrecision
                                     }}
                                 </h4>
                                 <h4
@@ -602,10 +601,10 @@
                                     )
                                 "
                                 [ngModelOptions]="{ updateOn: 'blur' }"
-                                [ngModel]="stagedJetRetail | number: '1.4-4'"
+                                [ngModel]="stagedJetRetail | decimalPrecision"
                                 matInput
                                 placeholder="Retail*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Retail values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -623,10 +622,10 @@
                                     )
                                 "
                                 [ngModelOptions]="{ updateOn: 'blur' }"
-                                [ngModel]="stagedJetCost | number: '1.4-4'"
+                                [ngModel]="stagedJetCost | decimalPrecision"
                                 matInput
                                 placeholder="Cost*"
-                                step="0.01"
+                                [step]="inputStepDefaultValue"
                                 title="Your Cost values should be inclusive of all taxes/fees"
                                 type="number"
                             />
@@ -735,10 +734,10 @@
                                     (click)="$event.target.select()"
                                     (ngModelChange)="marginValueChanged($event)"
                                     [ngModelOptions]="{ updateOn: 'blur' }"
-                                    [ngModel]="TempValueJet | number: '1.4-4'"
+                                    [ngModel]="TempValueJet | decimalPrecision"
                                     matInput
                                     placeholder="Margin"
-                                    step="0.01"
+                                    [step]="inputStepDefaultValue"
                                     type="number"
                                 />
                                 <span class="prefixDollar bigPrefix" matPrefix

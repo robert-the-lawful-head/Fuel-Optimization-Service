@@ -15,6 +15,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UserService } from '../../../services/user.service';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { UsersDialogNewUserComponent } from '../users-dialog-new-user/users-dialog-new-user.component';
+import { Subscribable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-users-grid',
@@ -42,7 +43,7 @@ export class UsersGridComponent implements OnInit {
         'delete',
     ];
     public resultsLength = 0;
-
+    sortChangeSubscription: Subscription;
     constructor(
         private userService: UserService,
         public newUserDialog: MatDialog,
@@ -53,13 +54,15 @@ export class UsersGridComponent implements OnInit {
         if (!this.usersData) {
             return;
         }
-        this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
         this.usersDataSource = new MatTableDataSource(this.usersData);
         this.usersDataSource.sort = this.sort;
         this.usersDataSource.paginator = this.paginator;
         this.resultsLength = this.usersData.length;
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     // Public Methods
     public deleteRecord(record) {
         const dialogRef = this.deleteUserDialog.open(

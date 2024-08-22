@@ -65,7 +65,7 @@
                     </mat-expansion-panel-header>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6" *ngIf="!data">
                             <mat-form-field>
                                 <input
                                     formControlName="mainPhone"
@@ -119,7 +119,7 @@
                                 />
                             </mat-form-field>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" *ngIf="!data">
                             <mat-form-field>
                                 <input
                                     formControlName="website"
@@ -147,7 +147,7 @@
                         Contact Information {{ i === 0 ? "" : i + 1 }}
 
                         <button
-                            *ngIf="i > 0"
+                            *ngIf="(i > 0 && contactFormArray.controls.length == 1) || (contactFormArray.controls.length > 1)"
                             mat-icon-button
                             color="warn"
                             (click)="contactFormArray.removeAt(i)"
@@ -206,7 +206,7 @@
                         <mat-expansion-panel>
                             <mat-expansion-panel-header>
                                 <mat-panel-title>
-                                    Address Detail
+                                    <span *ngIf="!data">Address</span><span *ngIf="data">Additional</span>&nbsp;Detail
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
 
@@ -239,28 +239,28 @@
                                                placeholder="Fax" />
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" *ngIf="!data">
                                     <mat-form-field>
                                         <input formControlName="address"
                                                matInput
                                                placeholder="Address" />
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" *ngIf="!data">
                                     <mat-form-field>
                                         <input formControlName="city"
                                                matInput
                                                placeholder="City" />
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" *ngIf="!data">
                                     <mat-form-field>
                                         <input formControlName="state"
                                                matInput
                                                placeholder="State" />
                                     </mat-form-field>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6" *ngIf="!data">
                                     <mat-form-field>
                                         <input formControlName="country"
                                                matInput
@@ -356,6 +356,7 @@
                                     [options]="aircraftTypes"
                                     [displayFn]="displayAircraft"
                                     formControlName="aircraft"
+                                    [filter]="aircraftType"
                                 ></app-autocomplete-search>
                             </div>
 

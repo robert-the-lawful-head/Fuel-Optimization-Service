@@ -19,6 +19,7 @@ import { ContactinfobygroupsService } from '../../../services/contactinfobygroup
 import { ContactsService } from '../../../services/contacts.service';
 import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { SystemcontactsNewContactModalComponent } from '../systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-systemcontacts-grid',
@@ -50,6 +51,7 @@ export class SystemcontactsGridComponent implements OnInit {
     results = '[]';
 
     /*private importer: FlatfileImporter;*/
+    sortChangeSubscription: Subscription;
 
     constructor(
         private route: ActivatedRoute,
@@ -75,10 +77,12 @@ export class SystemcontactsGridComponent implements OnInit {
         //    userId: '1',
         //});
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     // Public Methods
     public refreshTable() {
-        this.sort.sortChange.subscribe(() => {});
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
         const unselectedIndexAlerts = _.findIndex(

@@ -25,6 +25,7 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-group-analytics-fuel-vendor-sources',
@@ -47,7 +48,7 @@ export class GroupAnalyticsFuelVendorSourcesComponent
 
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
-
+    sortChangeSubscription: Subscription;
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
@@ -75,7 +76,7 @@ export class GroupAnalyticsFuelVendorSourcesComponent
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -99,6 +100,7 @@ export class GroupAnalyticsFuelVendorSourcesComponent
     }
 
     ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
         if (this.icaoChangedSubscription) {
             this.icaoChangedSubscription.unsubscribe();
         }

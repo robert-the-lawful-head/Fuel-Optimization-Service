@@ -39,6 +39,7 @@ import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 import { IncomingFavoriteAircraftInfoComponent } from '../incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
+import { Local } from 'protractor/built/driverProviders';
 
 @Component({
     host: {
@@ -93,7 +94,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     mapLoadSubscription: Subscription;
     selectedICAO: string = "";
-    airportWatchFetchSubscription: Subscription;
     favoriteAircraftsData : FlightWatchModelResponse[];
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
@@ -184,11 +184,11 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 }
                 if (message === SharedEvents.locationChangedEvent) {
                     this.loadAirportWatchData();
-                }else if(message == SharedEvents.icaoChangedEvent){
+                } else if (message == SharedEvents.icaoChangedEvent) {
                     this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
                     this.loadAirportWatchData();
                 }
-                if(message === SharedEvents.flightWatchDataEvent){
+                if (message === SharedEvents.flightWatchDataEvent) {
                     this.loadAirportWatchData();
                 }
             }
@@ -219,7 +219,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.fuelOrdersSubscription.unsubscribe();
         }
         if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
-        if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
         if(this.routeSubscription) this.routeSubscription.unsubscribe();
 
     }
@@ -345,12 +344,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.sharedService.currentUser.conductorFbo) {
             localStorage.removeItem(localStorageAccessConstant.conductorFbo);
             this.sharedService.currentUser.conductorFbo = false;
+            this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
             this.router.navigate(['/default-layout/groups/']);
         } else {
             if (this.sharedService.currentUser.role === 3) {
                 this.sharedService.currentUser.impersonatedRole = 2;
                 localStorage.setItem(localStorageAccessConstant.impersonatedrole, '2');
             }
+            this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
             this.router.navigate(['/default-layout/fbos/']);
         }
     }
@@ -373,7 +374,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.fboAirport = null;
         this.fbo = null;
         this.close();
-
+        this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);    
         this.router.navigate(['/default-layout/groups/']);
     }
 
@@ -462,7 +463,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
-                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,this.fboAirport.icao);
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao, this.fboAirport.icao);
                     this.sharedService.emitChange(
                         SharedEvents.icaoChangedEvent
                     );
@@ -478,6 +479,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isJetNetIntegrationEnabled, data.isJetNetIntegrationEnabled)
                     this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
                     this.fbo = _.assign({}, data);
                     localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
@@ -596,7 +598,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadAirportWatchData() {
-        return this.airportWatchFetchSubscription = this.flightWatchService
+        if(this.selectedICAO == null) return;
+        
+        this.flightWatchService
         .getAirportLiveData(
             this.sharedService.currentUser.fboId,
             this.selectedICAO
