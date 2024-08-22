@@ -135,16 +135,10 @@ namespace FBOLinx.Job.AirportWatch
                 airportWatchData.Add(airportWatchRow);
             }
 
-            return GroupAndAirportWatchData(airportWatchData);
-
-            //return airportWatchData
-            //    .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
-            //    .GroupBy(row => new { row.AircraftHexCode, row.BoxName })
-            //    .Select(grouped => grouped.First())
-            //    .ToList();
+            return GroupAndGetAirportWatchDataList(airportWatchData);
         }
 
-        public List<AirportWatchLiveData> GroupAndAirportWatchData(List<AirportWatchLiveData> airportWatchData)
+        public List<AirportWatchLiveData> GroupAndGetAirportWatchDataList(List<AirportWatchLiveData> airportWatchData)
         {
             var groupedData = airportWatchData
                 .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
