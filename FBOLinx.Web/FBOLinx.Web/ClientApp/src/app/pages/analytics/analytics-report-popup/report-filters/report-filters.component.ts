@@ -19,7 +19,7 @@ export enum ReportFilterItems{
     styleUrls: ['./report-filters.component.scss'],
 })
 export class ReportFiltersComponent implements OnInit {
-    @Input() icao: string = '';
+    @Input() icao: string = null;
     @Input() dataSource: MatTableDataSource<any> =  new MatTableDataSource([]);
     @Input() selectedDateFilter: SelectedDateFilter;
     @Input() hiddenFilters: ReportFilterItems[];
@@ -39,6 +39,7 @@ export class ReportFiltersComponent implements OnInit {
     constructor(private acukwikairportsService: AcukwikairportsService) {}
 
     async ngOnInit() {
+        if(!this.icao) return;
         this.airportsICAO = (
             await this.acukwikairportsService
                 .getNearByAcukwikAirportsByICAO(this.icao, this.nearbyMiles)
