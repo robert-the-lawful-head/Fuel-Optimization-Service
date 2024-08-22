@@ -146,7 +146,7 @@ namespace FBOLinx.Job.Test
             ModelMapperService service = new ModelMapperService();
 
             // Act
-            var result = service.GroupAndAirportWatchData(inputData);
+            var result = service.GroupAndGetAirportWatchDataList(inputData);
 
             // Assert
             Assert.AreEqual(
