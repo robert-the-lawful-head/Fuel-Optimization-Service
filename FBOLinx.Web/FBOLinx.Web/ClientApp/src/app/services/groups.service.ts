@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { GroupFboViewModel } from '../models/groups';
 
 @Injectable()
 export class GroupsService {
@@ -50,7 +51,7 @@ export class GroupsService {
     }
 
     groupsAndFbos() {
-        return this.http.get(this.accessPointUrl + '/group-fbo', {
+        return this.http.get<GroupFboViewModel>(this.accessPointUrl + '/group-fbo', {
             headers: this.headers,
         });
     }

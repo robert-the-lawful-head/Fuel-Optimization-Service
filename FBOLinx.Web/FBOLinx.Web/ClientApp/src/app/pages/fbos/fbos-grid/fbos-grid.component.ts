@@ -93,13 +93,9 @@ export class FbosGridComponent implements OnInit {
         } else {
             this.displayedColumns = ['icao', 'fbo', 'price', 'active', 'edit'];
         }
-
-        this.groupsService
-            .groupsAndFbos()
-            .subscribe((data: GroupFboViewModel) => { this.groupsFbosData = data; });
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         if (!this.fbosData) {
             return;
         }
@@ -128,6 +124,9 @@ export class FbosGridComponent implements OnInit {
         }
 
         this.paginator.pageIndex = 0;
+
+        this.groupsFbosData = await this.groupsService
+        .groupsAndFbos().toPromise();
     }
     ngOnDestory() {
         this.sortChangeSubscription?.unsubscribe();
@@ -331,14 +330,14 @@ export class FbosGridComponent implements OnInit {
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
 
-        if (this.groupsFbosData == undefined) {
-            this.groupsService
-                .groupsAndFbos()
-                .subscribe((data: GroupFboViewModel) => {
-                    this.groupsFbosData = data;
-                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo, this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData, fbo.groupId).toString());                });
-        }
+        this.sharedService.setCurrentUserPropertyValue(
+            localStorageAccessConstant.isNetworkFbo,
+            this.manageFboGroupsService
+                .isNetworkFbo(this.groupsFbosData, fbo.groupId)
+                .toString()
+        );
 
+        this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo);
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
