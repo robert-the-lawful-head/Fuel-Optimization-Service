@@ -42,6 +42,8 @@ export class FbosGridComponent implements OnInit {
     @Output() editFboClicked = new EventEmitter<any>();
     @Input() fbosData: Array<any>;
     @Input() groupInfo: any;
+    @Input() groupsFbosData: GroupFboViewModel;
+
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -61,7 +63,6 @@ export class FbosGridComponent implements OnInit {
     public tableSortFbos = 'icao';
     public tableSortOrderFbos = 'asc';
 
-    public groupsFbosData: GroupFboViewModel;
     sortChangeSubscription: Subscription;
     constructor(
         private newFboDialog: MatDialog,
@@ -124,9 +125,6 @@ export class FbosGridComponent implements OnInit {
         }
 
         this.paginator.pageIndex = 0;
-
-        this.groupsFbosData = await this.groupsService
-        .groupsAndFbos().toPromise();
     }
     ngOnDestory() {
         this.sortChangeSubscription?.unsubscribe();

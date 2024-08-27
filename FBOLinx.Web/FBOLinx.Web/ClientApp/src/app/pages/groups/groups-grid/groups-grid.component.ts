@@ -45,6 +45,7 @@ import { AssociationsDialogNewAssociationComponent } from '../../associations/as
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { UserRole } from 'src/app/enums/user-role';
+import { GroupFboViewModel } from 'src/app/models/groups';
 
 const initialColumns: ColumnType[] = [
     {
@@ -109,7 +110,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
 
     // Input/Output Bindings
-    @Input() groupsFbosData: any;
+    @Input() groupsFbosData: GroupFboViewModel;
     @Input() groupGridState: GroupGridState;
     @Output() editGroupClicked = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
