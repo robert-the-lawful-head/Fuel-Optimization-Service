@@ -72,7 +72,7 @@ namespace FBOLinx.Web.Controllers
                     NauticalMileRadiusForData = nauticalMileRange,
                     AirportIdentifier = icao,
                     IncludeCustomerAircraftInformation = true,
-                    IncludeFuelOrderInformation = false,
+                    IncludeFuelOrderInformation = true,
                     IncludeVisitsAtFbo = false,
                     IncludeCompanyPricingLogLastQuoteDate = false
                 });
