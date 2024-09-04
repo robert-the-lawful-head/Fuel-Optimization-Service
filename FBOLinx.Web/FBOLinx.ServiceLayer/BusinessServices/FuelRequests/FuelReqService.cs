@@ -1051,7 +1051,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         {
             var fboContacts = await _FboContactsEntityService.GetFboContactsByFboId(fboId);
             var fboContactsToEmail = fboContacts.Where(f => f.CopyOrders.HasValue && f.CopyOrders.Value)
-                                       .Select(f => new Contacts()
+                                       .Select(f => new ContactsDto()
                                        {
                                            Email = f.Email,
                                        })

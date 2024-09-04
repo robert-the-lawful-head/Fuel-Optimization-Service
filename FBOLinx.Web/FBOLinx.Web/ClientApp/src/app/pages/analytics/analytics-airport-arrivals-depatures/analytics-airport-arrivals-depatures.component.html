@@ -66,7 +66,23 @@
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
-                    {{ info.tailNumber }}
+                    <span *ngIf="isJetNetIntegrationEnabled && info.tailNumber.startsWith('N')"><a (click)="tailNumberSearch(info.tailNumber)" class="btn-link">{{ info.tailNumber }}</a></span>
+                    <span *ngIf="!isJetNetIntegrationEnabled || !info.tailNumber.startsWith('N')"> {{ info.tailNumber }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="customerActionStatus">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="customerActionStatus">
+                            <span>Customer Action Status</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let info" mat-cell>
+                    <app-customer-action-status  matTooltip="{{ info.toolTipText }}" matTooltipPosition="after" customerActionStatusEmailRequired="{{info.customerActionStatusEmailRequired}}" customerActionStatusSetupRequired="{{info.customerActionStatusSetupRequired}}" customerActionStatusTopCustomer="{{info.customerActionStatusTopCustomer}}"></app-customer-action-status>
                 </td>
             </ng-container>
 
@@ -219,12 +235,10 @@
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell clickStopPropagation>
-                    <mat-slide-toggle
-                        *ngIf="info.status == 'Arrival'"
-                        color="primary"
-                        [(ngModel)]="info.isParkedWithinGeofence"
-                        (change)="confirmedVisitToggled(info)"
-                    >
+                    <mat-slide-toggle *ngIf="info.status == 'Arrival'"
+                                      color="primary"
+                                      [(ngModel)]="info.isParkedWithinGeofence"
+                                      (change)="confirmedVisitToggled(info)">
                     </mat-slide-toggle>
                 </td>
             </ng-container>
@@ -249,7 +263,7 @@
             <tr *matHeaderRowDef="visibleColumns; sticky: true"
                 mat-header-row></tr>
             <tr *matRowDef="let row; columns: visibleColumns"
-                mat-row
+                mat-row class="example-element-row"
                 (click)="onClickAircraft(row)"></tr>
         </table>
 

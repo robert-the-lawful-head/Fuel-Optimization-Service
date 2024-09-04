@@ -12,6 +12,9 @@ import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable, Subject } from 'rxjs';
 import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
+import { JetNetInformationComponent } from '../../../shared/components/jetnet-information/jetnet-information.component';
+import { CustomerActionStatusComponent } from '../../../shared/components/customer-action-status/customer-action-status.component';
+
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
@@ -82,6 +85,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             name: 'Company',
         },
         {
+            id: 'customerActionStatus',
+            name: 'Customer Action Status',
+        },
+        {
             id: 'tailNumber',
             name: 'Tail #',
         },
@@ -122,7 +129,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         {
             id: 'percentOfVisits',
             name: 'Percent of Visits',
-        },
+        }
     ];
 
     csvFileOptions: csvFileOptions = {
@@ -137,7 +144,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private fbosService: FbosService
+        private fbosService: FbosService,
+        private jetNetInformationDialog: MatDialog,
     ) {
         super();
         this.icao = this.sharedService.getCurrentUserPropertyValue(
@@ -155,6 +163,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
                 .filter((column) => !column.hidden)
                 .map((column) => column.id) || []
         );
+    }
+
+    get isJetNetIntegrationEnabled() {
+        return this.sharedService.currentUser.isJetNetIntegrationEnabled;
     }
 
     ngOnInit() {
@@ -427,6 +439,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.filterStartDate = filter.offsetDate;
         this.refreshData();
     }
+    tailNumberSearch(tailNumber: any) {
+        if (tailNumber.trim() != "") {
+            const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
+                width: '1100px',
+                data: tailNumber.trim()
+            });
+            dialogRef
+                .afterClosed()
+                .subscribe((result: any) => {
+
+                });
+        }
+    }
+
     private setColumns() {
         this.columns =
             this.icao == this.sharedService.currentUser.icao

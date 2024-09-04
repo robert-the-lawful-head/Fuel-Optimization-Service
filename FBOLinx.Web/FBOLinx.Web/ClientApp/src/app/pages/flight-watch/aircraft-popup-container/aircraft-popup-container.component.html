@@ -14,7 +14,7 @@
               <p>Company</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p>{{ aircraftWatch?.flightDepartment | NullOrEmptyToDefault }}&nbsp;</p>
+              <p>{{ hasJetNetInformation ? aircraftWatch?.flightDepartment : "Info N/A on JETNET"}}&nbsp;</p>
           </div>
       </div>
       <div class="row pb-2">
@@ -70,7 +70,7 @@
               <p>Destination</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p>{{ aircraftWatch?.destination}}&nbsp;</p>
+              <p>{{ aircraftWatch?.destination == null ? "N/A" : aircraftWatch?.destination}}&nbsp;</p>
           </div>
       </div>
       <div class="row actions">

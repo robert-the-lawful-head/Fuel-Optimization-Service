@@ -1,0 +1,15 @@
+<ni-badge *ngIf="customerActionStatusEmailRequired == 'true'" [borderRadius]="false"
+          [color]="'active'" >
+    <img src="../../../../assets/img/envelope-regular16.png" style="padding-right:5px; padding-bottom: 3px;"> Email Required
+</ni-badge>
+
+<ni-badge *ngIf="customerActionStatusSetupRequired == 'true'" [borderRadius]="false"
+          [color]="'danger'">
+    <img src="../../../../assets/img/wrench-regular16.png" style="padding-right:5px; padding-bottom: 3px;">  Setup Required
+</ni-badge>
+
+<ni-badge *ngIf="customerActionStatusTopCustomer == 'true'" [borderRadius]="false"
+          [color]="'success'">
+    <img src="../../../../assets/img/award-regular_16.png" style="padding-right:5px; padding-bottom: 2px;"> Top Customer
+</ni-badge>
+

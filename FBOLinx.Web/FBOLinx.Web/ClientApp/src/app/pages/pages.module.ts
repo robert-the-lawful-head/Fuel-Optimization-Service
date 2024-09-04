@@ -241,6 +241,7 @@ import { ItemInputComponent } from './services-and-fees/item-input/item-input.co
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
 import { JetNetInformationComponent } from '../shared/components/jetnet-information/jetnet-information.component';
+import {CustomerActionStatusComponent} from '../shared/components/customer-action-status/customer-action-status.component';
 
 @NgModule({
     declarations: [
@@ -410,7 +411,8 @@ import { JetNetInformationComponent } from '../shared/components/jetnet-informat
         ItemInputComponent,
         FuelreqsGridServicesComponent,
         FuelreqsNotesComponent,
-        JetNetInformationComponent
+        JetNetInformationComponent,
+        CustomerActionStatusComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
