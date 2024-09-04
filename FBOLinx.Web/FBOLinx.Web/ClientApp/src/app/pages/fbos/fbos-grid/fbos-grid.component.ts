@@ -335,7 +335,6 @@ export class FbosGridComponent implements OnInit {
                 .toString()
         );
 
-        this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo);
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
