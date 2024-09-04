@@ -34,7 +34,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         private servicesAndFeesService: ServicesAndFeesService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
         this.filterStartDate = new Date(
             moment().add(-30, 'd').format('MM/DD/YYYY')
         );

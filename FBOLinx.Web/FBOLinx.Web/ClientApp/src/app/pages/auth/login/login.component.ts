@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { OAuthService } from '../../../services/oauth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -17,6 +18,8 @@ export class LoginComponent implements OnInit {
     error: string;
     submit: boolean;
 
+    routeSubscription: Subscription;
+    
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -30,7 +33,7 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.queryParams.subscribe((params) => {
+        this.routeSubscription =this.route.queryParams.subscribe((params) => {
             if (!params.partner || !params.redirectTo) {
                 this.router.navigate(['/']);
             }
@@ -38,7 +41,9 @@ export class LoginComponent implements OnInit {
             this.redirectTo = params.redirectTo;
         });
     }
-
+    ngOnDestroy() {
+        this.routeSubscription?.unsubscribe();
+    }
     public onSubmit() {
         if (this.submit) {
             return;

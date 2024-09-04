@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
@@ -134,6 +134,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         sheetName: 'Airport Departures and Arrivals',
     };
 
+    filtersChangeSubscription: Subscription;
+    sortChangeSubscription: Subscription;
+
     constructor(
         private newCustomerAircraftDialog: MatDialog,
         private tableSettingsDialog: MatDialog,
@@ -147,7 +150,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.icao = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );
-        this.filtersChanged
+        this.filtersChangeSubscription = this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
         this.initColumns();
@@ -177,7 +180,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             this.fboName = currentFbo.fbo;
         });
         this.getCustomersList();
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -236,7 +239,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             this.initialColumns
         );
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+        this.filtersChangeSubscription?.unsubscribe();
+    }
     refreshData(isLoaderActive: boolean = false) {
         let endDate = this.getEndOfDayTime(this.filterEndDate, true);
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);

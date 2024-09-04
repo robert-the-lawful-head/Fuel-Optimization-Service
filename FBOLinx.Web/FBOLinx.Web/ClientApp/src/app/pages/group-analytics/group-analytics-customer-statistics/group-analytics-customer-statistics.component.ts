@@ -12,7 +12,7 @@ import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subject, interval } from 'rxjs';
+import { Subject, Subscription, interval } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import {
     CsvExportModalComponent,
@@ -58,7 +58,9 @@ export class GroupAnalyticsCustomerStatisticsComponent
     pageIndex = 0;
     pageSize = 10;
     dataLength = 0;
-
+    intervalSubscription: Subscription;
+    sortChangeSubscription: Subscription;
+    filterChangeSubscription: Subscription;
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
@@ -73,7 +75,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
         );
 
 
-        this.filtersChanged
+        this.filterChangeSubscription = this.filtersChanged
             .debounceTime(2000)
             .subscribe(() => this.refreshData());
 
@@ -89,7 +91,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -105,7 +107,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
 
         if (this.fbos == undefined) {
             var isFbosLoaded = false;
-            interval(1000)
+            this.intervalSubscription = interval(1000)
                 .pipe(takeWhile(() => !isFbosLoaded))
                 .subscribe(() => {
                     if (this.fbos == undefined)
@@ -121,7 +123,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
         else {
             this.ngxLoader.stopLoader(this.chartName);
             this.selectedFbos = this.fbos;
-            //this.refreshData();
+            this.refreshData();
         }
     }
 
@@ -135,6 +137,9 @@ export class GroupAnalyticsCustomerStatisticsComponent
     }
 
     ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+        this.filterChangeSubscription?.unsubscribe();   
+        this.intervalSubscription?.unsubscribe();
         if (this.icaoChangedSubscription) {
             this.icaoChangedSubscription.unsubscribe();
         }

@@ -12,7 +12,7 @@ import { accountTypeChangedEvent, fboChangedEvent } from 'src/app/constants/shar
   styleUrls: ['./demo-request-static-dialog.component.scss']
 })
 export class DemoRequestStaticDialogComponent implements OnInit {
-    public isStaticModalVisible: boolean;
+    public isStaticModalVisible: boolean = false;
     private routerSubscription: Subscription;
 
     public freemiumDisableMenuItemsRoutes = [
@@ -24,6 +24,8 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         "/default-layout/customers",
         "/default-layout/analytics"
     ];
+
+    changeEmittedSubscription: Subscription;
 
     constructor(
         private router: Router,
@@ -37,14 +39,15 @@ export class DemoRequestStaticDialogComponent implements OnInit {
 
     ngOnInit() {
         this.isStaticModalVisible = this.getIsStaticModalVisible(this.router.url);
-        this.sharedService.changeEmitted$.subscribe((message) => {
+        this.changeEmittedSubscription = this.sharedService.changeEmitted$.subscribe((message) => {
             if (message === fboChangedEvent || message === accountTypeChangedEvent) {
                 this.isStaticModalVisible = this.getIsStaticModalVisible(this.router.url);
             }
         });
     }
     ngOnDestroy() {
-        this.routerSubscription.unsubscribe();
+        this.routerSubscription?.unsubscribe();
+        this.changeEmittedSubscription?.unsubscribe();
     }
 
     openRequestDemo() {

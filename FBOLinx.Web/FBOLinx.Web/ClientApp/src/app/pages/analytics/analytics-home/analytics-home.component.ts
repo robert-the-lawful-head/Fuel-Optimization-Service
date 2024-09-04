@@ -7,7 +7,8 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 import { AnatylticsReports, analyticsReports } from '../analytics-activity-reports/analytics-activity-reports.component';
 import { AnaliticsReportType } from '../analytics-report-popup/analytics-report-popup.component';
 import { ActivatedRoute } from '@angular/router';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-analytics-home',
@@ -36,9 +37,11 @@ export class AnalyticsHomeComponent implements OnInit {
         this.pastThirtyDaysStartDate = new Date(
             moment().add(-30, 'days').format('MM/DD/YYYY')
         );
-        this.sharedService.titleChange(this.pageTitle);
+        
         this.authenticatedIcao = this.sharedService.currentUser.icao;
     }
+
+    routeSubscription: Subscription;
 
     ngOnInit() {
         this.getAircrafts();
@@ -50,14 +53,16 @@ export class AnalyticsHomeComponent implements OnInit {
                 )
         );
 
-        this.route.queryParams.subscribe(params => {
+        this.routeSubscription = this.route.queryParams.subscribe(params => {
             const reportType = params['report'] as AnaliticsReportType;
             if(reportType == AnaliticsReportType.LostToCompetition && !isSingleSourceFbo){
                 this.openReport(analyticsReports[AnaliticsReportType.LostToCompetition]);
             }
         });
     }
-
+    ngOnDestroy() {
+        this.routeSubscription?.unsubscribe();
+    }
     getAircrafts() {
         this.customerAircraftsService
             .getAircraftsListByGroupAndFbo(

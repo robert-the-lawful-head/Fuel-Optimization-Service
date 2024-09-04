@@ -53,7 +53,6 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private messageService: Parametri,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
         this.aircraftsService
             .getAll()
             .subscribe((data: any) => (this.aircraftTypes = data));

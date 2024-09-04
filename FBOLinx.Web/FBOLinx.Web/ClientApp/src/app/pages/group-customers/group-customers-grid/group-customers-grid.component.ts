@@ -20,6 +20,7 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+import { Subscription } from 'rxjs';
 
 const initialColumns: ColumnType[] = [
     {
@@ -72,7 +73,7 @@ export class GroupCustomersGridComponent implements OnInit {
     LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
 
     results = '[]';
-
+    sortChangeSubscription: Subscription;
     constructor(
         private tableSettingsDialog: MatDialog,
         private airportWatchService: AirportWatchService
@@ -94,7 +95,9 @@ export class GroupCustomersGridComponent implements OnInit {
         //});
         this.airportWatchStartDate = new Date("10/6/2022");
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     onPageChanged(event: any) {
         localStorage.setItem('pageIndex', event.pageIndex);
         sessionStorage.setItem(
@@ -184,7 +187,7 @@ export class GroupCustomersGridComponent implements OnInit {
     }
 
     private refreshCustomerDataSource() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }

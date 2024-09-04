@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
 
 import { SharedService } from '../../../../layouts/shared-service';
+import { Subscription } from 'rxjs';
 
 @Component({
     providers: [SharedService],
@@ -15,7 +16,7 @@ export class DistributionWizardReviewComponent {
 
     public navigationSubscription: any;
     public previewEmail: string;
-
+    routerSubscription: Subscription;
     constructor(
         public dialogRef: MatDialogRef<DistributionWizardReviewComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -23,7 +24,7 @@ export class DistributionWizardReviewComponent {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
 
-        this.router.events.subscribe((evt) => {
+        this.routerSubscription = this.router.events.subscribe((evt) => {
             if (evt instanceof NavigationEnd) {
                 // trick the Router into believing it's last link wasn't previously loaded
                 this.router.navigated = false;
@@ -32,7 +33,9 @@ export class DistributionWizardReviewComponent {
             }
         });
     }
-
+    ngOnDestroy() {
+        this.routerSubscription?.unsubscribe();
+    }
     public closeDialog() {
         this.dialogRef.close();
     }

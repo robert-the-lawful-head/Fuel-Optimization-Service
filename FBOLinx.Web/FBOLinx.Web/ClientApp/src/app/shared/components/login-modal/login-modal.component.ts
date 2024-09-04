@@ -9,6 +9,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { GroupsService } from 'src/app/services/groups.service';
+import { UserRole } from 'src/app/enums/user-role';
 
 @Component({
     selector: 'app-login-modal',
@@ -53,17 +54,17 @@ export class LoginModalComponent {
                     (data) => {
                         this.authenticationService.postAuth().subscribe(async () => {
                             this.dialogRef.close();
-                            if (data.role === 3) {
+                            if (data.role === UserRole.Conductor) {
                                 this.router.navigate([
                                     '/default-layout/groups/',
                                 ]);
-                            } else if (data.role === 2) {
+                            } else if (data.role === UserRole.GroupAdmin) {
                                 this.router.navigate(['/default-layout/fbos/']);
                             } else {
                                 this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
                                 this.setFboSessionVariables(data);
 
-                                if (data.role === 5)
+                                if (data.role === UserRole.CSR)
                                     this.router.navigate([
                                         '/default-layout/dashboard-csr/',
                                     ]);
@@ -81,7 +82,8 @@ export class LoginModalComponent {
         }
     }
     private async setFboSessionVariables(fboObj: any) {
-        let icao: string = fboObj.fbo.fboAirport.icao;
+        let icao: string = fboObj.fbo?.fboAirport?.icao ?? this.groupsFbosData.fbos.find((obj) => obj.oid == fboObj.fbo.oid)?.icao;
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fboObj.fbo?.accountType);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fbo,fboObj.fbo.fbo);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);

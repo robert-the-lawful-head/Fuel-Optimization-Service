@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-table-global-search',
@@ -24,6 +25,8 @@ export class TableGlobalSearchComponent implements OnInit {
     private idParam: string = "";
 
     public hasContent = false;
+
+    private routeParamSubscription: Subscription;
 
     constructor(
         private route: ActivatedRoute,
@@ -68,7 +71,7 @@ export class TableGlobalSearchComponent implements OnInit {
         else
             this.page = "fuel-orders-filters";
 
-        this.route.queryParamMap.subscribe((params) => {
+        this.routeParamSubscription = this.route.queryParamMap.subscribe((params) => {
             this.idParam = params.get('id');
         });
 
@@ -94,7 +97,10 @@ export class TableGlobalSearchComponent implements OnInit {
 
         this.applyFilter(this.userTypedFilter);
     }
+    ngOnDestroy(): void {
+        this.routeParamSubscription?.unsubscribe();
 
+    }
     public applyFilter(filterValue: any) {
         if (!this.matDataSource) {
             this.filterApplied.emit(filterValue);

@@ -9,7 +9,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 // Services
@@ -87,6 +87,9 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
 
     csvFileOptions: csvFileOptions = { fileName: 'Missed Orders', sheetName: 'Missed Orders' };
     reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.isCommercialAircraft];
+    filtersChangedSubscription: Subscription;
+    sortChangeSubscription: Subscription;
+    routeQueryParamsSubscription: Subscription;
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
@@ -97,7 +100,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
 
-        this.route.queryParams.subscribe((params) => {
+        this.routeQueryParamsSubscription = this.route.queryParams.subscribe((params) => {
             if (params.search && params.search) {
                 this.searchText = params.search;
             }
@@ -105,7 +108,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -128,7 +131,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
             this.paginator.pageIndex = 0;
         }
 
-        this.filtersChanged
+        this.filtersChangedSubscription = this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshTable());
 
@@ -138,6 +141,8 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     }
 
     ngOnDestroy() {
+        this.routeQueryParamsSubscription?.unsubscribe();
+        this.filtersChangedSubscription?.unsubscribe();
         if (this.resetMissedOrdersSubscription) {
             this.resetMissedOrdersSubscription.unsubscribe();
         }

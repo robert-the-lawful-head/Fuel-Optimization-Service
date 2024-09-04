@@ -32,12 +32,10 @@ export class SharedService {
     updatedHistory = new BehaviorSubject<boolean>(false);
 
     // Observable string sources
-    titleChangeSource = new Subject();
     emitChangeSource = new Subject();
     valueChangeSource = new Subject();
 
     // Observable string streams
-    titleChanged$ = this.titleChangeSource.asObservable();
     changeEmitted$ = this.emitChangeSource.asObservable();
     valueChanged$ = this.valueChangeSource.asObservable();
 
@@ -140,10 +138,6 @@ export class SharedService {
 
     NotifyPricingTemplateComponent(message: string) {
         this.priceTemplateMessageSource.next(message);
-    }
-
-    titleChange(title: string) {
-        this.titleChangeSource.next(title);
     }
 
     // Service message commands

@@ -17,6 +17,7 @@ import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SharedService } from 'src/app/layouts/shared-service';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
+import { Subscription } from 'rxjs';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -55,14 +56,17 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
     public chartName = 'map-wrapper';
 
+    aicraftDetailsSubscription: Subscription;
+    aicraftCompanyAssignSubscription: Subscription;
+
     constructor(private flightWatchMapService: FlightWatchMapService,
         flightWatchMapSharedService: FlightWatchMapSharedService,
         private ngxLoader: NgxUiLoaderService,
         private sharedService: SharedService,) {
-        flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
+        this.aicraftDetailsSubscription = flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
             this.updatePopUpData(data);
         });
-        flightWatchMapSharedService.aicraftCompanyAssign$.subscribe( (data: Aircraftwatch) => {
+        this.aicraftCompanyAssignSubscription = flightWatchMapSharedService.aicraftCompanyAssign$.subscribe( (data: Aircraftwatch) => {
             this.updateAircraftCompanyAssignData(data);
         });
         this.sharedService.valueChange(SharedEvents.locationChangedEvent);
@@ -71,7 +75,10 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     ngOnInit() {
         this.ngxLoader.startLoader(this.chartName);
     }
-
+    ngOnDestroy() {
+        this.aicraftDetailsSubscription?.unsubscribe();
+        this.aicraftCompanyAssignSubscription?.unsubscribe();
+    }
     ngOnChanges(changes: SimpleChanges): void {
         if (!changes.data && !changes.data?.currentValue)
             return;

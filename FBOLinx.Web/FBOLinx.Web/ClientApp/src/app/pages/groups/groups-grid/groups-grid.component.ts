@@ -168,7 +168,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.groupDataSource = this.groupsFbosData.groups;
         this.fboDataSource = this.groupsFbosData.fbos;
 
-        this.sharedService.titleChange(this.pageTitle);
+        
         const self = this;
         this.childGrid = {
             columns: [
@@ -456,7 +456,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,group.oid);
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,"2");
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole, UserRole.GroupAdmin);
+                
+                this.sharedService.emitChange(accountTypeChangedEvent);
 
                 this.router.navigate(['/default-layout/fbos/']);
             });

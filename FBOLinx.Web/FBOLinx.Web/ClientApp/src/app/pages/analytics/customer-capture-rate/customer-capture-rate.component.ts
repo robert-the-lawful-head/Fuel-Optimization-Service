@@ -7,10 +7,12 @@ import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter
 import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { CustomerCaptureRateReport } from 'src/app/models/customer-capture-rate-report';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { Subscription } from 'rxjs';
+
 @Component({
     selector: 'app-customer-capture-rate',
     templateUrl: './customer-capture-rate.component.html',
@@ -58,6 +60,8 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         },
     ];
 
+    sortChangeSubscription: Subscription;
+
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
@@ -93,7 +97,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         this.refreshData();
     }
     ngOnInit(): void {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -106,6 +110,9 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
 
             this.saveSettings(this.tableLocalStorageKey, this.columns);
         });
+    }
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
     }
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;

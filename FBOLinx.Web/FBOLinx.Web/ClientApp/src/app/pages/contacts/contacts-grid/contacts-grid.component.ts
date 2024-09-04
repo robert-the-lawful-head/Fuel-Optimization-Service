@@ -20,6 +20,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
 import { ContactinfobyfboService } from '../../../services/contactinfobyfbo.service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-contacts-grid',
@@ -51,6 +52,7 @@ export class ContactsGridComponent implements OnInit {
     results = '[]';
 
     /*private importer: FlatfileImporter;*/
+    sortChangeSubscription: Subscription;
 
     constructor(
         public deleteUserDialog: MatDialog,
@@ -72,13 +74,15 @@ export class ContactsGridComponent implements OnInit {
             (contact) => !contact.copyAlerts
         );
         this.copyAll = foundedIndex >= 0 ? false : true;
-        this.sort.sortChange.subscribe(() => {});
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
 
         /*this.initializeImporter();*/
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+    }
     // Public Methods
     public deleteRecord(record) {
         const id = this.route.snapshot.paramMap.get('id');

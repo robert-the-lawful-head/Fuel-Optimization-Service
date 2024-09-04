@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-dashboard-home',
@@ -11,9 +12,9 @@ import { SharedService } from '../../../layouts/shared-service';
 })
 export class DashboardHomeComponent {
     idParam: string;
-
+    routeQueryParamSubscription: Subscription;
     constructor(private router: Router, private sharedService: SharedService, private route: ActivatedRoute) {
-        this.route.queryParamMap.subscribe((params) => {
+        this.routeQueryParamSubscription = this.route.queryParamMap.subscribe((params) => {
             this.idParam = params.get('id');
         });
 
@@ -47,5 +48,8 @@ export class DashboardHomeComponent {
         } else {
             this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
         }
+    }
+    ngOnDestroy() {
+        this.routeQueryParamSubscription?.unsubscribe();
     }
 }

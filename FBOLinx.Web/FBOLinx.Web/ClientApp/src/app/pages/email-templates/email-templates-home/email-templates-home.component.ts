@@ -9,6 +9,7 @@ import { EmailcontentService } from '../../../services/emailcontent.service';
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-email-templates-home',
@@ -24,6 +25,7 @@ export class EmailTemplatesHomeComponent
     public locationChangedSubscription: any;
 
     public chartName = 'EmailTemplates';
+
     public constructor(
         private router: Router,
         private emailContentService: EmailcontentService,
@@ -31,7 +33,7 @@ export class EmailTemplatesHomeComponent
         private deleteEmailContentDialog: MatDialog,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
     }
 
     ngOnInit(): void {

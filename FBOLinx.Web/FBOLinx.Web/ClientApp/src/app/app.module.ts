@@ -110,7 +110,7 @@ import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTem
 import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
 import { ServicesAndFeesService } from './services/servicesandfees.service';
-import { ServiceTypeService } from './services/serviceTypes.service';
+import { ServiceTypeService } from './services/servicetypes.service';
 import { SnackBarService } from './services/utils/snackBar.service';
 import { FavoritesService } from './services/favorites.service';
 import { FormValidationHelperService } from './helpers/forms/formValidationHelper.service';

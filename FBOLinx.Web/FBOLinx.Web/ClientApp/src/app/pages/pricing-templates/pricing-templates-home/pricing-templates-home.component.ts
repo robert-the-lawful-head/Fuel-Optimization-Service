@@ -36,7 +36,6 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
         public deleteFBODialog: MatDialog,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.sharedService.titleChange(this.pageTitle);
         this.loadPricingTemplateData();
     }
 

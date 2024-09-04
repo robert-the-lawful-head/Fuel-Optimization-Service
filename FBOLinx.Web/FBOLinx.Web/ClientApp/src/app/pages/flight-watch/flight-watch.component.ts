@@ -25,6 +25,7 @@ import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/fli
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatTableDataSource } from '@angular/material/table';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
+import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-flight-watch',
     styleUrls: ['./flight-watch.component.scss'],
@@ -61,13 +62,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         filteredTypes: [],
     };
 
+    valueChangedSubscription: Subscription;
+
     constructor(
         private flightWatchMapService: FlightWatchMapService,
         private sharedService: SharedService,
         public dialog: MatDialog,
         private cdref: ChangeDetectorRef
         ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );
@@ -83,7 +86,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         if(this.center == null)
             this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
 
-        this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
+        this.valueChangedSubscription = this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
                     this.flightWatchData = this.flightWatchMapService.filterArrivalsAndDepartures(value.data);
@@ -100,6 +103,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         });
     }
     ngOnDestroy() {
+        this.valueChangedSubscription?.unsubscribe();
     }
     setIcaoList(airportList: AcukwikAirport[]) {
         this.acukwikairport = airportList;
