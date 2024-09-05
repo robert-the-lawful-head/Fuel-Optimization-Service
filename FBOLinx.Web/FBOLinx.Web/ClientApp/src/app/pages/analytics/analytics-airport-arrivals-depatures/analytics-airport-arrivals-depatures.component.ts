@@ -83,10 +83,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             id: 'company',
             name: 'Company',
         },
-        {
-            id: 'customerActionStatus',
-            name: 'Customer Action Status',
-        },
+        //{
+        //    id: 'customerActionStatus',
+        //    name: 'Customer Action Status',
+        //},
         {
             id: 'tailNumber',
             name: 'Tail #',
@@ -461,7 +461,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             dialogRef
                 .afterClosed()
                 .subscribe((result: any) => {
-
+                    if (result != null && result > 0) {
+                        this.refreshData();
+                    }
                 });
         }
     }
