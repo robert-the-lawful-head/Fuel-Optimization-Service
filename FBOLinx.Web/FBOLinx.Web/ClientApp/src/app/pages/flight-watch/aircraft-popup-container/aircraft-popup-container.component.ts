@@ -45,6 +45,7 @@ export class AircraftPopupContainerComponent {
     public selectedGroupId: number;
     private newChanges: any;
     public hasJetNetInformation: boolean = false;
+    public isJetNetOpened: boolean = false;
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -126,6 +127,7 @@ export class AircraftPopupContainerComponent {
     }
 
     openJetNetInformation() {
+        this.isJetNetOpened = true;
         const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
             width: '1100px',
             data: this.aircraftWatch.tailNumber
@@ -134,6 +136,7 @@ export class AircraftPopupContainerComponent {
             .afterClosed()
             .subscribe((result: any) => {
                 this.aircraftWatch.customerInfoByGroupId = result;
+                this.isJetNetOpened = false;
             });
     }
 
