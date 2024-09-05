@@ -65,8 +65,8 @@
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
-                    <span *ngIf="isJetNetIntegrationEnabled && info.tailNumber.startsWith('N')"><a (click)="tailNumberSearch(info.tailNumber)" class="btn-link">{{ info.tailNumber }}</a></span>
-                    <span *ngIf="!isJetNetIntegrationEnabled || !info.tailNumber.startsWith('N')"> {{ info.tailNumber }}</span>
+                    <span *ngIf="isJetNetIntegrationEnabled && info.tailNumber.startsWith('N') && (info.companyId == null || info.companyId == 0)"><a (click)="tailNumberSearch(info.tailNumber)" class="btn-link">{{ info.tailNumber }}</a></span>
+                    <span *ngIf="!isJetNetIntegrationEnabled || !info.tailNumber.startsWith('N') || info.companyId > 0"> {{ info.tailNumber }}</span>
                 </td>
             </ng-container>
 
