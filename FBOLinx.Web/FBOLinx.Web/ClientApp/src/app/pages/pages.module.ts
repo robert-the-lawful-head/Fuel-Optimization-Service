@@ -240,8 +240,10 @@ import { CustomerCaptureRateComponent } from './analytics/customer-capture-rate/
 import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
+import { DecimalPrecisionPipe } from '../shared/pipes/decimal/decimal-precision.pipe';
 import { JetNetInformationComponent } from '../shared/components/jetnet-information/jetnet-information.component';
 import {CustomerActionStatusComponent} from '../shared/components/customer-action-status/customer-action-status.component';
+import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
 
 @NgModule({
     declarations: [
@@ -412,7 +414,9 @@ import {CustomerActionStatusComponent} from '../shared/components/customer-actio
         FuelreqsGridServicesComponent,
         FuelreqsNotesComponent,
         JetNetInformationComponent,
-        CustomerActionStatusComponent
+        CustomerActionStatusComponent,
+        DecimalPrecisionPipe,
+        CurrencyPresicionPipe
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -489,6 +493,8 @@ import {CustomerActionStatusComponent} from '../shared/components/customer-actio
         DetailRowService,
         DatePipe,
         CurrencyPipe,
+        DecimalPrecisionPipe,
+        CurrencyPresicionPipe
     ],
 })
 export class PagesModule { }

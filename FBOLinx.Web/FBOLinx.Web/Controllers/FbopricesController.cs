@@ -617,7 +617,7 @@ namespace FBOLinx.Web.Controllers
                         Default = string.IsNullOrEmpty(p.TailNumbers),
                         Price = (p.AllInPrice ?? 0),
                         TailNumberList = p.TailNumbers,
-                        ExpirationDate = p.ExpirationDate,
+                        ExpirationDate = p.ExpirationDate == DateTime.Parse("9999-12-31 23:59:59.997") ? null : p.ExpirationDate,
                         PricingTemplateId = (p.PricingTemplateId ?? 0) == 0 ? ct.CustomerType : (p.PricingTemplateId ?? 0),
                         PricingTemplateName = (p.PricingTemplateId ?? 0) == 0 ? ct.PricingTemplateName : p.PricingTemplateName,
                         FuelDeskEmail = p.FuelDeskEmail,

@@ -37,6 +37,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     join parking in context.AirportWatchHistoricalParking on hd.Oid equals parking.AirportWatchHistoricalDataId 
                         into parkingJoin
                     from parking in parkingJoin.DefaultIfEmpty()
+                    join historical in context.HistoricalAirportWatchSwimFlightLeg on hd.Oid equals historical.AirportWatchHistoricalDataId
+                        into historicalJoin
+                    from historical in historicalJoin.DefaultIfEmpty()
                     join icao in context.AsTable(airportIcaos) on hd.AirportICAO equals icao.Value
                         into icaoJoin
                     from icao in icaoJoin.DefaultIfEmpty()
@@ -78,7 +81,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
                         //TransponderCode = hd.TransponderCode,
                         //VerticalSpeedKts = hd.VerticalSpeedKts,
                         //AltitudeInStandardPressure = hd.AltitudeInStandardPressure
-                        AirportWatchHistoricalParking = parking
+                        AirportWatchHistoricalParking = parking,
+                        SwimFlightLegId = historical.SwimFlightLegId
                     }
                 );
             return query;

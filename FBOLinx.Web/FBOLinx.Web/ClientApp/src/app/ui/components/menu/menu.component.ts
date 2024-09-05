@@ -5,7 +5,7 @@ import {
     QueryList,
     ViewChildren,
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
@@ -17,6 +17,7 @@ import { ServiceOrder } from 'src/app/models/service-order';
 import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 
 import * as moment from 'moment';
+
 @Component({
     host: { class: 'app-menu' },
     providers: [MenuService],
@@ -32,6 +33,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
     tooltipIndex = 0;
     hasShownTutorial = false;
 
+    changeEmittedSubscription: Subscription;
+
     constructor(
         private menuService: MenuService,
         private sharedService: SharedService,
@@ -42,14 +45,13 @@ export class MenuComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.getMenuItems();
     }
-
+    ngOnDestroy() {
+        this.changeEmittedSubscription?.unsubscribe();
+    }
     ngAfterViewInit(): void {
-        this.sharedService.titleChanged$.subscribe((title) => {
-                this.menuService.setDisabledMenuItems(this.menuItems);
-        });
-        this.sharedService.changeEmitted$.subscribe((message) => {
+        this.changeEmittedSubscription = this.sharedService.changeEmitted$.subscribe((message) => {
             if (message === fboChangedEvent || message === accountTypeChangedEvent) {
-                this.menuService.setDisabledMenuItems(this.menuItems);
+                this.menuService.setMenuProps(this.menuItems);
             }
             if (message === fboPricesLoadedEvent) {
                 this.showTooltipsIfFirstLogin();
@@ -66,26 +68,18 @@ export class MenuComponent implements OnInit, AfterViewInit {
             error: (err) => this.menuService.handleError(err),
             next: (x) => {
                 this.menuItems = x;
-                this.menuService.setDisabledMenuItems(this.menuItems);            },
+                this.menuService.setMenuProps(this.menuItems);            
+            },
         };
         this.menuService.getData().subscribe(OBSERVER);
     }
 
-    getLiClasses(item: any, isActive: any) {
-        let role = this.sharedService.currentUser.role;
-        if (this.sharedService.currentUser.impersonatedRole) {
-            role = this.sharedService.currentUser.impersonatedRole;
-        }
-
-        const hidden = item.roles && item.roles.indexOf(role) === -1;
+    getItemNgClass(item: any, isActive: boolean) {
         return {
-            active: isActive ?? item.active,
-            disabled: item.disabled,
-            'has-sub': item.sub,
-            hidden,
-            'menu-item-group': item.groupTitle,
+          ...item.class,
+          active: isActive
         };
-    }
+      }
 
     isHidden(item: any) {
         let role = this.sharedService.currentUser.role;

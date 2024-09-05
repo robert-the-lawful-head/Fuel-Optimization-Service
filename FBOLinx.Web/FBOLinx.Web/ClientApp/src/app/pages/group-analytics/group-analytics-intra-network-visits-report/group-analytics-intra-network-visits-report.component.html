@@ -8,6 +8,7 @@
                 [selectedDateFilter]="selectedDateFilter"
                 (onChangeIcaoFilter)="changeIcaoFilter($event)"
                 (onDateChange)="applyPresetDateFilter($event)"
+                (commercialAicraftToogle)="filterChanged($event)"
             >
             </app-report-filters>
         </div>
@@ -143,11 +144,11 @@
             ></mat-paginator>
         </div>
     </div>
-</div>
-<ngx-ui-loader
+    <ngx-ui-loader
     [loaderId]="chartName"
     bgsColor="rgb(100, 181, 246)"
     bgsPosition="center-center"
     bgsType="ball-spin"
     overlayColor="rgba(0, 0, 0, 0.1)"
 ></ngx-ui-loader>
+</div>

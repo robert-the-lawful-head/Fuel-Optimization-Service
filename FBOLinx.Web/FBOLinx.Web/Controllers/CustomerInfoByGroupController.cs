@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,9 +28,6 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.Logging;
-using NuGet.Packaging;
-using Microsoft.Extensions.Azure;
-using System.Text.RegularExpressions;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
 
@@ -57,6 +53,7 @@ namespace FBOLinx.Web.Controllers
         private ICustomerInfoByGroupService _customerInfoByGroupService;
         private readonly ICustomerAircraftService _customerAircraftService;
         private ICustomerInfoByGroupNoteService _CustomerInfoByGroupNoteService;
+        private readonly IFboPreferencesService _fboPreferencesService;
 
         public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context,
             ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService,
@@ -65,7 +62,8 @@ namespace FBOLinx.Web.Controllers
             DegaContext degaContext, IFboPricesService fbopricesService,
             IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService,
             ILoggingService logger, ICustomerAircraftService customerAircraftService,
-            ICustomerInfoByGroupNoteService customerInfoByGroupNoteService) : base(logger)
+            ICustomerInfoByGroupNoteService customerInfoByGroupNoteService,
+            IFboPreferencesService fboPreferencesService) : base(logger)
         {
             _CustomerInfoByGroupNoteService = customerInfoByGroupNoteService;
             _hostingEnvironment = hostingEnvironment;
@@ -82,6 +80,7 @@ namespace FBOLinx.Web.Controllers
             _fboFeesAndTaxesService = fboFeesAndTaxesService;
             _customerInfoByGroupService = customerInfoByGroupService;
             _customerAircraftService = customerAircraftService;
+            _fboPreferencesService = fboPreferencesService;
         }
 
 
@@ -1126,6 +1125,9 @@ namespace FBOLinx.Web.Controllers
                                               join c in _context.Contacts on cc.ContactId equals c.Oid
                                               select new {cc.CustomerId, cc.ContactId, c.Email, c.FirstName, c.LastName}).ToListAsync();
 
+                var decimalStringFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(fboId);
+
+
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
                         join ca in allCustomerAircraftsGrouped on cg.CustomerId equals ca.CustomerId into leftJoinCA
@@ -1179,10 +1181,10 @@ namespace FBOLinx.Web.Controllers
                                                  (FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(defaultPricingTemplate.MarginType) + " " +
                                                      (defaultPricingTemplate.DiscountType == DiscountTypes.Percentage ?
                                                          defaultPricingTemplate.DefaultAmount.ToString() + "%"
-                                                         : string.Format("{0:C}", defaultPricingTemplate.DefaultAmount.GetValueOrDefault())))
+                                                         : string.Format(decimalStringFormat, defaultPricingTemplate.DefaultAmount.GetValueOrDefault())))
                                                  : (ai.MarginTypeDescription + " " + (ai.DiscountType == DiscountTypes.Percentage ?
                                                      cm == null ? "0" : cm.Amount.ToString() + "%"
-                                                     : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))),
+                                                     : string.Format(decimalStringFormat, (cm == null ? 0 : cm.Amount.GetValueOrDefault())))),
                             FavoriteCompany = cg.FavoriteCompany
                         }
                         into resultsGroup

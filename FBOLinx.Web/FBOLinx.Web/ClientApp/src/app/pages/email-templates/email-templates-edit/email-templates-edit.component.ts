@@ -41,7 +41,7 @@ FileManagerSettingsModel
         fileHelper: FileHelper
     ) {
         super(fileHelper);
-        this.sharedService.titleChange(this.pageTitle);
+        
     }
     async ngOnInit() {
         // Check for passed in id

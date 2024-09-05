@@ -273,6 +273,35 @@
                     </div>
                 </form>
             </mat-tab>
+
+            <mat-tab label="Settings">
+                <form  *ngIf="fboPreferencesData">
+                    <div class="mt-4 mb-2 pl-4 container">
+                        <div class="row border-bottom row-padding">
+                            <div class="col text-center">Number of decimals to display</div>
+                            <div class="col text-center">
+                                <div class="col-md-4 col-sm-12">
+                                    <mat-form-field>
+                                        <input matInput class="text-center" type="number"
+                                        name="numberInput"
+                                        [(ngModel)]="this.fboPreferencesData.decimalPrecision"
+                                        #numberInputModel="ngModel"
+                                        required
+                                        min="2"
+                                        max="12"
+                                        pattern="^[1-9]*$"
+                                        (input)="onDecimalPrecisionchange()"/>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!isDecimalPrecisionInRange" class="text-center"
+                                style="color: red">
+                            Decimal Precision must be between 2 and 12
+                        </div>
+                    </div>
+                </form>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>

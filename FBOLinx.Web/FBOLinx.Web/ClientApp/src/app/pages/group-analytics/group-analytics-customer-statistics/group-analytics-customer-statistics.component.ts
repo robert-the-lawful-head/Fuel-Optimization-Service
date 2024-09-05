@@ -12,7 +12,7 @@ import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subject, interval } from 'rxjs';
+import { Subject, Subscription, interval } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import {
     CsvExportModalComponent,
@@ -58,7 +58,9 @@ export class GroupAnalyticsCustomerStatisticsComponent
     pageIndex = 0;
     pageSize = 10;
     dataLength = 0;
-
+    intervalSubscription: Subscription;
+    sortChangeSubscription: Subscription;
+    filterChangeSubscription: Subscription;
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
@@ -67,14 +69,13 @@ export class GroupAnalyticsCustomerStatisticsComponent
         private tableSettingsDialog: MatDialog
     ) {
         this.icao = this.sharedService.currentUser.icao;
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.filterStartDate = new Date(
-            moment().add(-12, 'M').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(
-            moment().add(7, 'd').format('MM/DD/YYYY')
+            moment().add(-1, 'M').format('MM/DD/YYYY')
         );
 
-        this.filtersChanged
+
+        this.filterChangeSubscription = this.filtersChanged
             .debounceTime(2000)
             .subscribe(() => this.refreshData());
 
@@ -90,7 +91,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -106,7 +107,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
 
         if (this.fbos == undefined) {
             var isFbosLoaded = false;
-            interval(1000)
+            this.intervalSubscription = interval(1000)
                 .pipe(takeWhile(() => !isFbosLoaded))
                 .subscribe(() => {
                     if (this.fbos == undefined)
@@ -136,6 +137,9 @@ export class GroupAnalyticsCustomerStatisticsComponent
     }
 
     ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+        this.filterChangeSubscription?.unsubscribe();   
+        this.intervalSubscription?.unsubscribe();
         if (this.icaoChangedSubscription) {
             this.icaoChangedSubscription.unsubscribe();
         }

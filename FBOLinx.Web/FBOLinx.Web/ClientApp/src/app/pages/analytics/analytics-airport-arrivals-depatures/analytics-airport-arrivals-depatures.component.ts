@@ -10,10 +10,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Observable, Subject } from 'rxjs';
-import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { ColumnType } from '../../../shared/components/table-settings/table-settings.component';
 import { JetNetInformationComponent } from '../../../shared/components/jetnet-information/jetnet-information.component';
-import { CustomerActionStatusComponent } from '../../../shared/components/customer-action-status/customer-action-status.component';
 
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
@@ -32,10 +31,10 @@ import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
-import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
-import { FbosGridViewModel } from 'src/app/models/FbosGridViewModel';
+import { csvFileOptions, GridBase } from '../../../services/tables/GridBase';
+import { localStorageAccessConstant } from '../../../constants/LocalStorageAccessConstant';
+import { SelectedDateFilter } from '../../../shared/components/preset-date-filter/preset-date-filter.component';
+import { FbosGridViewModel } from '../../../models/FbosGridViewModel';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -57,7 +56,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     icao: string;
     selectedDateFilter: SelectedDateFilter;
 
-    isCommercialInvisible = true;
+    hideCommercialAicrafts = false;
 
     data: FlightWatchHistorical[];
 
@@ -129,6 +128,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         {
             id: 'percentOfVisits',
             name: 'Percent of Visits',
+        },
+        {
+            id: 'originated',
+            name: 'Origin ICAO',
         }
     ];
 
@@ -136,6 +139,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         fileName: 'Airport Departures and Arrivals',
         sheetName: 'Airport Departures and Arrivals',
     };
+
+    filtersChangeSubscription: Subscription;
+    sortChangeSubscription: Subscription;
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -151,7 +157,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.icao = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );
-        this.filtersChanged
+        this.filtersChangeSubscription = this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
         this.initColumns();
@@ -185,7 +191,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             this.fboName = currentFbo.fbo;
         });
         this.getCustomersList();
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -244,7 +250,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             this.initialColumns
         );
     }
-
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
+        this.filtersChangeSubscription?.unsubscribe();
+    }
     refreshData(isLoaderActive: boolean = false) {
         let endDate = this.getEndOfDayTime(this.filterEndDate, true);
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);
@@ -279,7 +288,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     refreshDataSource() {
-        const data = this.data.map((x) => ({
+        this.ngxLoader.startLoader(this.chartName);
+        const data = this.data.filter(
+            (x) => { return (!this.hideCommercialAicrafts)? true:  !isCommercialAircraft(x.flightNumber)}
+        ).map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
@@ -294,19 +306,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.tailNumbers = [
             ...new Set(
                 this.data
-                    .filter(
-                        (x) =>
-                            !this.isCommercialInvisible ||
-                            !isCommercialAircraft(x.aircraftTypeCode)
-                    )
-                    .map((x) => x.tailNumber)
+                .filter(
+                    (x) => { return (!this.hideCommercialAicrafts)? true:  (!isCommercialAircraft(x.flightNumber) || !isCommercialAircraft(x.tailNumber))}
+                ).map((x) => x.tailNumber)
             ),
         ].map((tailNumber) =>
             this.data.find((x) => x.tailNumber === tailNumber)
         );
+        this.ngxLoader.stopAllLoader(this.chartName);
     }
 
-    filterChanged() {
+    filterChanged(value: any = null) {
+        if(typeof value == "boolean")
+            this.hideCommercialAicrafts = value;
+
         this.filtersChanged.next();
     }
 
@@ -350,7 +363,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     clearAllFilters() {
-        this.isCommercialInvisible = true;
+        this.hideCommercialAicrafts = false;
 
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {
@@ -454,24 +467,22 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     }
 
     private setColumns() {
-        this.columns =
-            this.icao == this.sharedService.currentUser.icao
-                ? this.initialColumns.filter((column) => {
-                    return column.id != 'originated';
-                })
-                : this.filteredColumns;
+        this.columns = this.filteredColumns;
     }
     get filteredColumns() {
         var filteredColumns = this.initialColumns;
-        if (!filteredColumns.find((column) => column.id === 'originated')) {
-            filteredColumns.push({
-                id: 'originated',
-                name: 'Origin ICAO',
-            });
-        };
+        //if (!filteredColumns.find((column) => column.id === 'originated')) {
+        //    filteredColumns.push({
+        //        id: 'originated',
+        //        name: 'Origin ICAO',
+        //    });
+        //};
 
-        return filteredColumns.filter((column) => {
-            return !this.hiddenColumns.includes(column.id);
-        });
+        if (this.icao != this.sharedService.currentUser.icao)
+            return filteredColumns.filter((column) => {
+                return !this.hiddenColumns.includes(column.id);
+            });
+        else
+            return filteredColumns;
     }
 }

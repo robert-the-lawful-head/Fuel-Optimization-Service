@@ -33,7 +33,7 @@ export class FboGeofencingHomeComponent implements OnInit {
         private ngxLoader: NgxUiLoaderService,
         public newAirportDialog: MatDialog
     ) {
-        this.sharedService.titleChange(this.pageTitle);
+        
     }
 
     ngOnInit() {

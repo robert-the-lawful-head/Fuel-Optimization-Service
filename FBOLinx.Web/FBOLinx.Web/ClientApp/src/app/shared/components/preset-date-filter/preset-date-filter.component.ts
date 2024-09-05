@@ -40,7 +40,6 @@ export class PresetDateFilterComponent implements OnInit {
     ngOnInit() {
         this.selectedFilter = PresetDateFilterEnum.oneMonth;
         let filter = this.getPresetDatesFilters(this.selectedFilter);
-        this.selectedFilterChange.emit(filter);
     }
 
     onToggleChange(event: any) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { User } from '../models/User';
+import { User } from '../models/user';
 import { AuthenticationService } from '../services/authentication.service';
 import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
 import { UserRole } from '../enums/user-role';
@@ -32,12 +32,10 @@ export class SharedService {
     updatedHistory = new BehaviorSubject<boolean>(false);
 
     // Observable string sources
-    titleChangeSource = new Subject();
     emitChangeSource = new Subject();
     valueChangeSource = new Subject();
 
     // Observable string streams
-    titleChanged$ = this.titleChangeSource.asObservable();
     changeEmitted$ = this.emitChangeSource.asObservable();
     valueChanged$ = this.valueChangeSource.asObservable();
 
@@ -142,10 +140,6 @@ export class SharedService {
         this.priceTemplateMessageSource.next(message);
     }
 
-    titleChange(title: string) {
-        this.titleChangeSource.next(title);
-    }
-
     // Service message commands
     emitChange(change: string) {
         this.emitChangeSource.next(change);
@@ -160,9 +154,9 @@ export class SharedService {
             this.currentUser.managerGroupId > 0 &&
             this.currentUser.groupId != this.currentUser.managerGroupId);
     }
-    setCurrentUserPropertyValue(property: string, value: string): void{
+    setCurrentUserPropertyValue(property: string, value: any): void{
         this.currentUser[property] = value;
-        localStorage.setItem(localStorageAccessConstant[property],value);
+        localStorage.setItem(localStorageAccessConstant[property],value?.toString());
     }
     resetCurrentUserPropertyValue(property: string, resetvalue: any =  null): void{
         this.currentUser[property] = resetvalue;

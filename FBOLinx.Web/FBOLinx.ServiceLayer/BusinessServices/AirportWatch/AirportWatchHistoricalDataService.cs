@@ -97,7 +97,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var customerInfoByGroupCollection = await _CustomerInfoByGroupService.GetCustomers(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData);
             var customerAircrafts = customerInfoByGroupCollection.SelectMany(ca => ca.Customer.CustomerAircrafts).ToList();
 
-
             //var customerAircrafts =
             //    await _CustomerAircraftEntityService.GetListBySpec(
             //        new CustomerAircraftsByGroupSpecification(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData));
@@ -125,6 +124,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                     AircraftId = cad == null ? 0 : cad.AircraftId,
                                     //We are allowed to use the nullable ? reference here because we are not executing this LINQ query against the DB.
                                     CustomerInfoByGroupID = cad?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.Oid,
+                                    SwimFlightLegId = hd.SwimFlightLegId
                                 }
                 into groupedResult
                                 select new FboHistoricalDataModel
@@ -143,7 +143,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                     CustomerInfoByGroupID = groupedResult.Key.CustomerInfoByGroupID.GetValueOrDefault(),
                                     Latitude = groupedResult.Key.Latitude,
                                     Longitude = groupedResult.Key.Longitude,
-                                    AirportWatchHistoricalParking = groupedResult.FirstOrDefault(x => x.AirportWatchHistoricalParking != null)?.AirportWatchHistoricalParking.Adapt<AirportWatchHistoricalParkingDto>()
+                                    AirportWatchHistoricalParking = groupedResult.FirstOrDefault(x => x.AirportWatchHistoricalParking != null)?.AirportWatchHistoricalParking.Adapt<AirportWatchHistoricalParkingDto>(),
+                                    SwimFlightLegId = groupedResult.Key.SwimFlightLegId
                                 })
                 .ToList();
 
@@ -180,7 +181,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     CustomerInfoByGroupID = h.CustomerInfoByGroupID,
                     Latitude = h.Latitude,
                     Longitude = h.Longitude,
-                    AirportWatchHistoricalParking = h.AirportWatchHistoricalParking
+                    AirportWatchHistoricalParking = h.AirportWatchHistoricalParking,
+                    SwimFlightLegId = h.SwimFlightLegId
                 });
             return result.ToList();
         }

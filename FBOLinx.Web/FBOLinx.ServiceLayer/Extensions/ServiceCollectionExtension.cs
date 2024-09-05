@@ -136,8 +136,10 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IRefreshTokensService, RefreshTokensService>();
             services.AddTransient<IOrderNotesService, OrderNotesService>();
             services.AddTransient<IUserEntityService, UserEntityService>();
+            services.AddTransient<IHistoricalAirportWatchSwimFlightLegEntityService, HistoricalAirportWatchSwimFlightLegEntityService>();
             services.AddTransient<IJetNetService, JetNetService>();
             services.AddTransient<IContactInfoByGroupService, ContactInfoByGroupService>();
+            services.AddTransient<ICustomerInfoByFboService, CustomerInfoByFboService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -188,6 +190,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerContactsEntityService, CustomerContactsEntityService>();
             services.AddTransient<IAcukwikServicesOfferedDefaultsEntityService, AcukwikServicesOfferedDefaultsEntityService>();
             services.AddTransient<IOrderNotesEntityService, OrderNotesEntityService>();
+            services.AddTransient<ICustomerInfoByFboEntityService, CustomerInfoByFboEntityService>();
 
             return services;
         }

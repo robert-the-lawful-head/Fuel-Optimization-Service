@@ -24,6 +24,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../constants/sharedEvents';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { Subscribable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-group-analytics-market-share',
@@ -45,7 +46,7 @@ export class GroupAnalyticsMarketShareComponent
 
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
-
+    sortChangeSubscription: Subscription;
     constructor(
         private fuelreqsService: FuelreqsService,
         private sharedService: SharedService,
@@ -54,12 +55,11 @@ export class GroupAnalyticsMarketShareComponent
         private tableSettingsDialog: MatDialog
     ) {
         this.icao = this.sharedService.currentUser.icao;
+
         this.filterStartDate = new Date(
-            moment().add(-12, 'M').format('MM/DD/YYYY')
+            moment().add(-1, 'M').format('MM/DD/YYYY')
         );
-        this.filterEndDate = new Date(
-            moment().add(7, 'd').format('MM/DD/YYYY')
-        );
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
 
         this.initColumns();
     }
@@ -73,7 +73,7 @@ export class GroupAnalyticsMarketShareComponent
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -99,6 +99,7 @@ export class GroupAnalyticsMarketShareComponent
     }
 
     ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
         if (this.icaoChangedSubscription) {
             this.icaoChangedSubscription.unsubscribe();
         }

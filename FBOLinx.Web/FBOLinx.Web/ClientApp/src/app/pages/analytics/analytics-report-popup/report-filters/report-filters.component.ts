@@ -10,7 +10,8 @@ export interface CustomIcaoList{
 export enum ReportFilterItems{
     icaoDropDown,
     presetdateFilter,
-    searchInput
+    searchInput,
+    isCommercialAircraft
 }
 @Component({
     selector: 'app-report-filters',
@@ -18,7 +19,7 @@ export enum ReportFilterItems{
     styleUrls: ['./report-filters.component.scss'],
 })
 export class ReportFiltersComponent implements OnInit {
-    @Input() icao: string = '';
+    @Input() icao: string = null;
     @Input() dataSource: MatTableDataSource<any> =  new MatTableDataSource([]);
     @Input() selectedDateFilter: SelectedDateFilter;
     @Input() hiddenFilters: ReportFilterItems[];
@@ -26,6 +27,8 @@ export class ReportFiltersComponent implements OnInit {
 
     @Output() onChangeIcaoFilter: EventEmitter<string> = new EventEmitter<string>();
     @Output() onDateChange: EventEmitter<SelectedDateFilter> = new EventEmitter<SelectedDateFilter>();
+    @Output() commercialAicraftToogle: EventEmitter<boolean> = new EventEmitter<boolean>();
+
 
     airportsICAO: string[] = [];
     nearbyMiles: number = 150;
@@ -36,6 +39,7 @@ export class ReportFiltersComponent implements OnInit {
     constructor(private acukwikairportsService: AcukwikairportsService) {}
 
     async ngOnInit() {
+        if(!this.icao) return;
         this.airportsICAO = (
             await this.acukwikairportsService
                 .getNearByAcukwikAirportsByICAO(this.icao, this.nearbyMiles)
@@ -58,6 +62,9 @@ export class ReportFiltersComponent implements OnInit {
             this.filterEndDate = changes.SelectedDateFilter.currentValue.limitDate;
         }
 
+    }
+    commercialAicraftToogleChange($event: any) {
+        this.commercialAicraftToogle.emit($event.checked);
     }
     changeIcaoFilter($event: string) {
         this.onChangeIcaoFilter.emit($event);

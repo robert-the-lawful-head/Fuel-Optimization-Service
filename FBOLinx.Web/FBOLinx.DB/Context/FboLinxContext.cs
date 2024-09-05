@@ -173,6 +173,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
         public virtual DbSet<FboFavoriteAircraft> FboFavoriteAircraft { get; set; }
         public virtual DbSet<FboFavoriteCompany> FboFavoriteCompanies { get; set; }
+        public virtual DbSet<HistoricalAirportWatchSwimFlightLeg> HistoricalAirportWatchSwimFlightLeg { get; set; }
         public virtual DbSet<OrderNote> OrderNotes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1088,6 +1089,10 @@ namespace FBOLinx.DB.Context
                 entity.HasKey(e => e.Oid);
             });
             modelBuilder.Entity<OrderNote>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
+            modelBuilder.Entity<CustomerInfoByFbo>(entity =>
             {
                 entity.HasKey(e => e.Oid);
             });

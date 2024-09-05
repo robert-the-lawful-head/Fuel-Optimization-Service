@@ -34,9 +34,7 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { Subscription } from 'rxjs';
-import { AirportWatchService } from 'src/app/services/airportwatch.service';
-import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+import { FlightLegStatus, coordinatesSource } from 'src/app/enums/flight-watch.enum';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
 
@@ -62,6 +60,8 @@ export class FlightWatchMapComponent
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
     @Output() popUpClosed = new EventEmitter<FlightWatchModelResponse>();
     @Output() updatePopUpData = new EventEmitter<FlightWatchModelResponse>();
+    @Output() getLatestData = new EventEmitter<any>();
+
 
     @ViewChild('aircraftPopupContainer')
     aircraftPopupContainer: AircraftPopupContainerComponent;
@@ -122,6 +122,8 @@ export class FlightWatchMapComponent
         }
     }
 
+    isNextCallEnqueued: boolean = false;
+
     constructor(
         private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
         private sharedService: SharedService,
@@ -130,7 +132,6 @@ export class FlightWatchMapComponent
         private aircraftFlightWatchService: AircraftFlightWatchService,
         private acukwikairportsService: AcukwikairportsService,
         private flightWatchHelper: FlightWatchHelper,
-        private airportWatchService: AirportWatchService,
         private flightWatchMapSharedService: FlightWatchMapSharedService
     ) {
         super();
@@ -142,6 +143,7 @@ export class FlightWatchMapComponent
     }
     ngOnInit(): void {
         this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
+        if(this.center) this.loadMap();
     }
 
     ngAfterViewInit() {
@@ -159,19 +161,27 @@ export class FlightWatchMapComponent
             return;
         }
 
-        if(!this.map) return;
+        if(!this.map || this.isMapDataLoading) return;
 
         if(changes.center){
             this.flyTo(this.center);
-            this.updateAicraftsOnMapBounds(changes.data.currentValue);
+            this.updateAicraftsOnMapBounds(this.data);
         }
 
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
             this.popupUpdatesTracking = {};
             this.previousFlightData = {};
+
             if(changes.data.previousValue){
                 for (let key in changes.data.previousValue) {
+                    if(changes.data.previousValue[key] === undefined || changes.data.currentValue[key] === undefined){
+                        continue;
+                    }
+                    if(changes.data.previousValue[key].sourceOfCoordinates == coordinatesSource.Antenna &&
+                        changes.data.currentValue[key].sourceOfCoordinates == coordinatesSource.Swim &&
+                    (changes.data.currentValue[key].status == FlightLegStatus.Landing || changes.data.currentValue[key].status == FlightLegStatus.Arrived))
+                        continue;
                     this.previousFlightData[key] = changes.data.previousValue[key];
                 }
             }
@@ -193,14 +203,12 @@ export class FlightWatchMapComponent
             this.styleLoaded = true;
         })
         .onLoad(async () => {
-            console.log("start redering map data");
             this.isMapDataLoading = true;
             this.resizeMap();
             await this.loadMapIcons();
             await this.loadMapDataAsync();
             this.isMapDataLoading = false;
-            this.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
-            console.log("finishing rendering map data");
+            this.getLatestData.emit();
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
@@ -219,6 +227,7 @@ export class FlightWatchMapComponent
         });
     }
     private updateAicraftsOnMapBounds(flights: Record<string,FlightWatchModelResponse> ): void {
+        if(!flights || !this.aicraftDataSource) return;
         this.setMapMarkersData(keys(flights));
         this.checkForPopupOpen();
         this.updateFlightOnMap(this.mapMarkers.flights);
@@ -471,8 +480,14 @@ export class FlightWatchMapComponent
             self.animationFrameIds.push(callbackFrameId);
         }else{
             self.aicraftDataFeatures = null;
-            self.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
             self.cancelExistingAnimationFames();
+            this.getLatestData.emit();
+            this.isNextCallEnqueued = false;
+            return;
+        }
+        if(elapsedTime > (environment.flightWatch.apiCallInterval - 1000) && !this.isNextCallEnqueued){
+            self.sharedService.emitChange(SharedEvents.flightWatchDataEvent);
+            this.isNextCallEnqueued = true;
         }
     }
     private animateAircrafts(): void {

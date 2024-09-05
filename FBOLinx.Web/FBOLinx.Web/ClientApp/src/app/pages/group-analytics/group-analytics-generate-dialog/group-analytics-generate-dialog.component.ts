@@ -12,6 +12,7 @@ import * as XLSX from 'xlsx';
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { GroupAnalyticsEmailPricingDialogComponent } from '../group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
+import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
 
 export type GroupAnalyticsGenerateDialogData = {
     customers: any[];
@@ -49,7 +50,8 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private emailDialog: MatDialog,
-        private emailContentService: EmailcontentService
+        private emailContentService: EmailcontentService,
+        private decimalPrecisionPipe: DecimalPrecisionPipe
     ) {}
 
     public ngOnInit(): void {
@@ -184,26 +186,26 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
                     row['Volume Tier'] = fboPrice.prices[i].volumeTier;
                     row["Product"] = fboPrice.prices[i].product;
                     if (fboPrice.prices[i].priceBreakdownDisplayType === 0) {
-                        row.Price = fboPrice.prices[i].domPrivate?.toFixed(4);
+                        row.Price = this.decimalPrecisionPipe.transform(fboPrice.prices[i].domPrivate);
                     } else if (fboPrice.prices[i].priceBreakdownDisplayType === 1) {
                         row['International Price'] =
-                            fboPrice.prices[i].intPrivate?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].intPrivate)
                         row['Domestic Price'] =
-                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].domPrivate);
                     } else if (fboPrice.prices[i].priceBreakdownDisplayType === 2) {
                         row['Commercial Price'] =
-                            fboPrice.prices[i].domComm?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].domComm);
                         row['Private Price'] =
-                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].domPrivate);
                     } else {
                         row['Int/Comm Price'] =
-                            fboPrice.prices[i].intComm?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].intComm);
                         row['Int/Private Price'] =
-                            fboPrice.prices[i].intPrivate?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].intPrivate);
                         row['Dom/Comm Price'] =
-                            fboPrice.prices[i].domComm?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].domComm);
                         row['Dom/Private Price'] =
-                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                        this.decimalPrecisionPipe.transform(fboPrice.prices[i].domPrivate);
                     }
                     row['Tail Numbers'] = fbo.tailNumbers;
                     exportData.push(row);

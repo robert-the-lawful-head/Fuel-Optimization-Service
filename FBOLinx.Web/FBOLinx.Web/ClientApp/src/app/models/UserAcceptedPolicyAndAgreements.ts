@@ -1,4 +1,4 @@
-import { PolicyAndAgreementDocuments } from "./policyAndAgreementDocuments";
+import { PolicyAndAgreementDocuments } from "./PolicyAndAgreementDocuments";
 import { User } from "./user";
 
 export interface UserAcceptedPolicyAndAgreements {

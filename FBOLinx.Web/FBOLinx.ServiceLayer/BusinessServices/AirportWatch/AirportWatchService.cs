@@ -41,6 +41,10 @@ using FBOLinx.ServiceLayer.BusinessServices.Contacts;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using Azure.Core;
 using System.Text.RegularExpressions;
+using FBOLinx.ServiceLayer.DTO.SWIM;
+using FBOLinx.ServiceLayer.EntityServices.SWIM;
+using System.Collections;
+using FBOLinx.Core.Utilities.Extensions;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -74,6 +78,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
         private IContactInfoByGroupService _ContactInfoByGroupService;
         private IPricingTemplateService _PricingTemplateService;
+        private readonly SWIMFlightLegEntityService _FlightLegEntityService;
+        private IHistoricalAirportWatchSwimFlightLegEntityService _HistoricalAirportWatchSwimFlightLegEntityService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext,
            IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -90,7 +96,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportService airportService,
             ICustomerInfoByGroupService customerInfoByGroupService,
             ISWIMFlightLegService swimFlightLegService,
-            IAircraftHexTailMappingService aircraftHexTailMappingService, IContactInfoByGroupService contactInfoByGroupService, IPricingTemplateService pricingTemplateService)
+            IAircraftHexTailMappingService aircraftHexTailMappingService, SWIMFlightLegEntityService flightLegEntityService, IHistoricalAirportWatchSwimFlightLegEntityService historicalAirportWatchSwimFlightLegEntityService, IContactInfoByGroupService contactInfoByGroupService, IPricingTemplateService pricingTemplateService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;
@@ -113,6 +119,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AircraftHexTailMappingService = aircraftHexTailMappingService;
             _ContactInfoByGroupService = contactInfoByGroupService;
             _PricingTemplateService = pricingTemplateService;
+            _FlightLegEntityService = flightLegEntityService;
+            _HistoricalAirportWatchSwimFlightLegEntityService = historicalAirportWatchSwimFlightLegEntityService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -370,25 +378,44 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             if (fboId.HasValue)
                 fbos = fbos.Where(f => f.Oid == fboId.Value).ToList();
 
+            List<SWIMFlightLeg> swimFlightLegs = new List<SWIMFlightLeg>();
+            if (!request.KeepParkingEvents)
+            {
+                var airportWatchHistoricalIds = (from h in historicalData select h.AirportWatchHistoricalDataID.ToString()).ToList();
+                foreach (IEnumerable<string> idsBatch in airportWatchHistoricalIds.Batch(500))
+                {
+                    try
+                    {
+                        var swimFlightLegsIds = await _HistoricalAirportWatchSwimFlightLegEntityService.GetSWIMFlightLegsFromHistoricalAirportWatchQueryable(idsBatch.ToList()).ToListAsync();
+                        var swimFlightLegsBatch = await _FlightLegEntityService.GetSWIMFlightLegsByIdsQueryable(swimFlightLegsIds).ToListAsync();
+                        swimFlightLegs.AddRange(swimFlightLegsBatch);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
+
             var customerVisitsData = new List<AirportWatchHistoricalDataResponse>();
 
             customerVisitsData = historicalData
                .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO, ah.AircraftHexCode, ah.AtcFlightNumber })
                .Select(g =>
                {
-                   var latest = g
-                       .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
+               var latest = g
+                   .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
-                   var pastVisitsToAirport = g
-                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Landing).Count();   
+               var pastVisitsToAirport = g
+                   .Where(ah => ah.AircraftStatus == AircraftStatusType.Landing).Count();
 
-                   var visitsToMyFboCount = g.Count(p =>
-                        p.AircraftStatus == AircraftStatusType.Parking &&
-                        (fbos.Where(f => f.AcukwikFBOHandlerId > 0)
-                        .Any(f => 
-                            f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId
-                        ))
-                    );
+               var visitsToMyFboCount = g.Count(p =>
+                    p.AircraftStatus == AircraftStatusType.Parking &&
+                    (fbos.Where(f => f.AcukwikFBOHandlerId > 0)
+                    .Any(f =>
+                        f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId
+                    ))
+                );
 
                    return new AirportWatchHistoricalDataResponse
                    {
@@ -477,6 +504,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               PercentOfVisits = cv?.PercentOfVisits,
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
+                              Originated = request.KeepParkingEvents ? "" : h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : "",
                               CustomerActionStatusEmailRequired = (h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? true : false,
                               CustomerActionStatusSetupRequired = (customerTemplates.Where(c =>c.CustomerId == h.CustomerId) == null) ? true : false,
                               CustomerActionStatusTopCustomer = (topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ? true : false,

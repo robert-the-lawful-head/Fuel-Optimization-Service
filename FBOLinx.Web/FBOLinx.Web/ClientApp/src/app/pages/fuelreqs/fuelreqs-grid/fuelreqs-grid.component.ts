@@ -1,5 +1,5 @@
 import { trigger, state, style } from '@angular/animations';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -42,6 +42,8 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import * as moment from 'moment';
+import { CurrencyPresicionPipe } from 'src/app/shared/pipes/decimal/currencyPresicion.pipe';
+import { Subscription } from 'rxjs';
 
 const initialColumns: ColumnType[] = [
     {
@@ -159,12 +161,12 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     //openedNotes: any[] = [];
     previouslyOpenedOrder: string = "";
     //currentElementId: string = "";
-
+    sortChangeSubscription: Subscription;
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
         private datePipe: DatePipe,
-        private currencyPipe: CurrencyPipe,
+        private currencyPresicion: CurrencyPresicionPipe,
         private fuelreqsService: FuelreqsService,
         private snackBarService: SnackBarService,
         private newServiceOrderDialog: MatDialog,
@@ -192,7 +194,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
 
     async ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
+        this.sortChangeSubscription = this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                 ? { ...column, sort: this.sort.direction }
@@ -220,6 +222,9 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.allColumnsToDisplay = this.getVisibleColumns();
 
         this.refreshTable();
+    }
+    ngOnDestroy() {
+        this.sortChangeSubscription?.unsubscribe();
     }
     getVisibleDataColumns() {
         return this.columns
@@ -298,7 +303,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
     getPPGDisplayString(fuelreq: any): any{
         return fuelreq.source == 'FuelerLinx' || fuelreq.source == ''
-            ? this.currencyPipe.transform(fuelreq.quotedPpg, "USD", "symbol", "1.4-4")
+            ? this.currencyPresicion.transform(fuelreq.quotedPpg)
             : "CONFIDENTIAL";
     }
     openSettings() {
@@ -526,12 +531,15 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
 
     completedServicesChanged(fuelReq: FuelReq, changes: any) {
-        if (fuelReq.serviceOrder.numberOfTotalServices == changes.value)
-            fuelReq.serviceOrder.numberOfCompletedItems = changes.value;
+        let value =  changes?.value ?? changes;
+        if (fuelReq.serviceOrder.numberOfTotalServices == value){
+            fuelReq.serviceOrder.numberOfCompletedItems = value;
+            fuelReq.archived = true;
+        }
         else {
-            if (changes.value > 0)
+            if (value> 0)
                 fuelReq.serviceOrder.numberOfCompletedItems++;
-            else if (changes.value < 0)
+            else if (value < 0)
                 fuelReq.serviceOrder.numberOfCompletedItems--;
             else {
                 fuelReq.serviceOrder.numberOfCompletedItems = 0;
@@ -541,22 +549,31 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         if (fuelReq.serviceOrder.numberOfCompletedItems == 0) {
             fuelReq.serviceOrder.isActive = false;
             fuelReq.serviceOrder.isCompleted = false;
+            fuelReq.archived = false;
         }
         else if (fuelReq.serviceOrder.numberOfCompletedItems == 1 && fuelReq.serviceOrder.numberOfTotalServices > 1) {
             fuelReq.serviceOrder.isActive = true;
             fuelReq.serviceOrder.isCompleted = false;
+            fuelReq.archived = false;
         }
         else if (fuelReq.serviceOrder.numberOfCompletedItems == fuelReq.serviceOrder.numberOfTotalServices) {
             fuelReq.serviceOrder.isCompleted = true;
             fuelReq.serviceOrder.isActive = false;
+            fuelReq.archived = true;
+
         }
         else {
             fuelReq.serviceOrder.isCompleted = false;
             fuelReq.serviceOrder.isActive = true;
+            fuelReq.archived = false;
+
         }
 
         if (changes.fuelreqsServicesAndFeesGridDisplay != null)
             fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
+
+        this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
+        });
     }
 
     totalServicesChanged(fuelReq: FuelReq, changes: any) {
