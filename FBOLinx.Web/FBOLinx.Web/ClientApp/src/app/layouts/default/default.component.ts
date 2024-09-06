@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import * as moment from 'moment';
 import { filter } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
+import { JetNetInformationComponent } from '../../shared/components/jetnet-information/jetnet-information.component';
 
 import * as SharedEvents from '../../constants/sharedEvents';
 // Services
@@ -73,7 +74,8 @@ export class DefaultLayoutComponent implements OnInit {
         private templateDialog: MatDialog,
         private fbosService: FbosService,
         private documentService: DocumentService,
-        private renderer: Renderer2
+        private renderer: Renderer2,
+        private jetNetInformationDialog: MatDialog,
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -101,6 +103,10 @@ export class DefaultLayoutComponent implements OnInit {
     get isNotGroupAdmin() {
         return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
     }
+    get isJetNetIntegrationEnabled() {
+        return this.sharedService.currentUser.isJetNetIntegrationEnabled;
+    }
+
     async ngOnInit() {
         if(this.isConductor) {
             this.isExpiredPricingDialogBlocked = false;
@@ -358,6 +364,20 @@ export class DefaultLayoutComponent implements OnInit {
                     });
                 });
         });
+    }
+
+    tailNumberSearchChanged(tailNumber: any) {
+        if (tailNumber.currentTarget.value.trim() != "") {
+            const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
+                width: '1100px',
+                data: tailNumber.currentTarget.value.trim()
+            });
+            dialogRef
+                .afterClosed()
+                .subscribe((result: any) => {
+
+                });
+        }
     }
 
     private loadFboPreferences() {

@@ -11,7 +11,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
+import { ColumnType } from '../../../shared/components/table-settings/table-settings.component';
+import { JetNetInformationComponent } from '../../../shared/components/jetnet-information/jetnet-information.component';
+
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
@@ -29,10 +31,10 @@ import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
-import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
-import { FbosGridViewModel } from 'src/app/models/FbosGridViewModel';
+import { csvFileOptions, GridBase } from '../../../services/tables/GridBase';
+import { localStorageAccessConstant } from '../../../constants/LocalStorageAccessConstant';
+import { SelectedDateFilter } from '../../../shared/components/preset-date-filter/preset-date-filter.component';
+import { FbosGridViewModel } from '../../../models/FbosGridViewModel';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -81,6 +83,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             id: 'company',
             name: 'Company',
         },
+        //{
+        //    id: 'customerActionStatus',
+        //    name: 'Customer Action Status',
+        //},
         {
             id: 'tailNumber',
             name: 'Tail #',
@@ -144,7 +150,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private fbosService: FbosService
+        private fbosService: FbosService,
+        private jetNetInformationDialog: MatDialog,
     ) {
         super();
         this.icao = this.sharedService.getCurrentUserPropertyValue(
@@ -162,6 +169,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
                 .filter((column) => !column.hidden)
                 .map((column) => column.id) || []
         );
+    }
+
+    get isJetNetIntegrationEnabled() {
+        return this.sharedService.currentUser.isJetNetIntegrationEnabled;
     }
 
     ngOnInit() {
@@ -441,6 +452,22 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.filterStartDate = filter.offsetDate;
         this.refreshData();
     }
+    tailNumberSearch(tailNumber: any) {
+        if (tailNumber.trim() != "") {
+            const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
+                width: '1100px',
+                data: tailNumber.trim()
+            });
+            dialogRef
+                .afterClosed()
+                .subscribe((result: any) => {
+                    if (result != null && result > 0) {
+                        this.refreshData();
+                    }
+                });
+        }
+    }
+
     private setColumns() {
         this.columns = this.filteredColumns;
     }
