@@ -14,7 +14,7 @@
               <p>Company</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p matTooltip="No Information was available on JETNET." matTooltipPosition="before" [matTooltipDisabled]="hasJetNetInformation">{{ hasJetNetInformation ? aircraftWatch?.flightDepartment : "Info N/A on JETNET"}}&nbsp;</p>
+              <p matTooltip="No Information is available for this item on JETNET. You can manually add the information by accessing our customer manager section." matTooltipPosition="below" [matTooltipDisabled]="hasJetNetInformation">{{ hasJetNetInformation ? aircraftWatch?.flightDepartment : "Info N/A on JETNET"}}&nbsp;</p>
           </div>
       </div>
       <div class="row pb-2">
@@ -54,7 +54,7 @@
               <p>Last Quote</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p>{{ aircraftWatch?.lastQuote == "" ? "No previous quote available" : aircraftWatch?.lastQuote }}&nbsp;</p>
+              <p matTooltip="There is no previous quote as this location has not been quoted prior." matTooltipPosition="below" [matTooltipDisabled]="aircraftWatch?.lastQuote != ''">{{ aircraftWatch?.lastQuote == "" ? "NO PREVIOUS QUOTE AVAILABLE" : aircraftWatch?.lastQuote }}&nbsp;</p>
           </div>
       </div>
       <div class="row pb-2">
