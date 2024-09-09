@@ -7,22 +7,25 @@
 <div [ngClass]="layoutClasses" class="site-container">
 
     <div [ngClass]="{ 'full-width': !openedSidebar}" class="container-fluid sticky-panel" *ngIf="isPricePanelVisible()">
-        <div [ngClass]="{ 'row-csr' : isCsr }" class="row">
-            <div class="col-12 text-md-right pt-md-0">
-                <div class="d-inline-block">
-                    <app-fbo-prices-panel
-                                          [enableSaf]="enableSaf"
-                                          [enableJetA]="enableJetA"
-                                          [costSaf]="costSaf"
-                                          [retailSaf]="retailSaf"
-                                          [costJetA]="costJetA"
-                                          [retailJetA]="retailJetA"
-                                          [effectiveToSaf]="effectiveToSaf"
-                                          [effectiveToJetA]="effectiveToJetA"
-                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel>
+        <div [ngClass]="{ 'row-csr' : isCsr }" class="row" style="align-items: center;">
+            <div class="col-2 pl-5" >
+                <app-jetnet-search></app-jetnet-search>
+           </div>
+
+                <div class="col-10 text-md-right pt-md-0">
+                    <div class="d-inline-block">
+                        <app-fbo-prices-panel [enableSaf]="enableSaf"
+                                              [enableJetA]="enableJetA"
+                                              [costSaf]="costSaf"
+                                              [retailSaf]="retailSaf"
+                                              [costJetA]="costJetA"
+                                              [retailJetA]="retailJetA"
+                                              [effectiveToSaf]="effectiveToSaf"
+                                              [effectiveToJetA]="effectiveToJetA"
+                                              (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel>
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
     <ng-container *ngIf="isAdditionNavBarVisible()">
         <div *ngIf="pricingTemplatesData && isNotGroupAdmin">

@@ -12,6 +12,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -53,7 +54,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(contactInfoByGroup);
         }
 
-        // GET: api/ContactInfoByGroups/5
+        // GET: api/ContactInfoByGroups/group/5/fbo/6/customer/7
         [HttpGet("group/{groupId}/fbo/{fboId}/customer/{customerId}")]
         public async Task<IActionResult> GetCustomerContactInfoByGroup([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int customerId)
         {

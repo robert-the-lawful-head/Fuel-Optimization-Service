@@ -4,6 +4,7 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
+using FBOLinx.ServiceLayer.BusinessServices.Contacts;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
 using FBOLinx.ServiceLayer.BusinessServices.Documents;
@@ -137,6 +138,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IUserEntityService, UserEntityService>();
             services.AddTransient<IHistoricalAirportWatchSwimFlightLegEntityService, HistoricalAirportWatchSwimFlightLegEntityService>();
             services.AddTransient<IJetNetService, JetNetService>();
+            services.AddTransient<IContactInfoByGroupService, ContactInfoByGroupService>();
             services.AddTransient<ICustomerInfoByFboService, CustomerInfoByFboService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
