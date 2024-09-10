@@ -50,8 +50,9 @@ export class GroupsService {
         });
     }
 
-    groupsAndFbos() {
-        return this.http.get<GroupFboViewModel>(this.accessPointUrl + '/group-fbo', {
+    groupsAndFbos( groupId = null) {
+        const queryparam = groupId ? `?groupId=${groupId}` : '';
+        return this.http.get<GroupFboViewModel>(this.accessPointUrl + '/group-fbo'+queryparam, {
             headers: this.headers,
         });
     }

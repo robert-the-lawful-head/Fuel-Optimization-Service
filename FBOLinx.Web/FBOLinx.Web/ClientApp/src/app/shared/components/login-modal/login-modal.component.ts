@@ -49,7 +49,7 @@ export class LoginModalComponent {
                     this.loginForm.value.remember
                 )
                 .subscribe(
-                    (data) => {
+                    (data: any) => {
                         this.authenticationService.postAuth().subscribe(async () => {
                             this.dialogRef.close();
                             if (data.role === UserRole.Conductor) {
@@ -85,6 +85,8 @@ export class LoginModalComponent {
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,(fboObj.group.fbos.length > 1));
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fboObj.fbo?.accountType);
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,fboObj.groupId);
 
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
