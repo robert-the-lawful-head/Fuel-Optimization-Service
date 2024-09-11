@@ -45,6 +45,9 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using System.Collections;
 using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
+using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -438,12 +441,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                })
                .ToList();
 
-            var nonFuelerLinxCustomerWithNoEmail = await _ContactInfoByGroupService.GetNonFuelerLinxCustomersWithNoEmailByGroupFbo(groupId, fboId.Value);
+            var nonFuelerLinxCustomerWithNoEmail = new List<CustomerContactsByGroupGridViewModel>();
+            var customerTemplates = new List<CustomerPricingTemplatesModel>();
+            var topCustomers=new List<ChartDataResponse>();
+            if (fboId != null)
+            {
+                nonFuelerLinxCustomerWithNoEmail = await _ContactInfoByGroupService.GetNonFuelerLinxCustomersWithNoEmailByGroupFbo(groupId, fboId.Value);
 
-            var customerTemplates = await _PricingTemplateService.GetCustomerTemplates();
+                customerTemplates = await _PricingTemplateService.GetCustomerTemplates();
 
-            var topCustomers = await _FuelReqService.GetCustomersBreakdown(fboId.GetValueOrDefault(), groupId, null, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault());
-            topCustomers = topCustomers.OrderByDescending(t => t.Orders).Take(10).ToList();
+                topCustomers = await _FuelReqService.GetCustomersBreakdown(fboId.GetValueOrDefault(), groupId, null, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault());
+                topCustomers = topCustomers.OrderByDescending(t => t.Orders).Take(10).ToList();
+            }
 
             var parkingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Parking).Where(x => x.AirportWatchHistoricalParking != null).ToList();
             var landingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Landing).ToList();
@@ -505,10 +514,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
                               Originated = request.KeepParkingEvents ? "" : h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : "",
-                              CustomerActionStatusEmailRequired = (h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? true : false,
-                              CustomerActionStatusSetupRequired = (customerTemplates.Where(c =>c.CustomerId == h.CustomerId) == null) ? true : false,
-                              CustomerActionStatusTopCustomer = (topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ? true : false,
-                              ToolTipText = (h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? "This customer is missing an email address. Add an email to distribute pricing.": (customerTemplates.Where(c => c.CustomerId == h.CustomerId) == null) ? "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address." : (topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ?  "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : null
+                              CustomerActionStatusEmailRequired = (nonFuelerLinxCustomerWithNoEmail.Count > 0 && h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? true : false,
+                              CustomerActionStatusSetupRequired = (customerTemplates.Count > 0 && customerTemplates.Where(c =>c.CustomerId == h.CustomerId) == null) ? true : false,
+                              CustomerActionStatusTopCustomer = (topCustomers.Count > 0 && topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ? true : false,
+                              ToolTipText = (nonFuelerLinxCustomerWithNoEmail.Count > 0 && h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? "This customer is missing an email address. Add an email to distribute pricing.": (customerTemplates.Count > 0 && customerTemplates.Where(c => c.CustomerId == h.CustomerId) == null) ? "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address." : (topCustomers.Count > 0 && topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ?  "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : null
                           }).ToList();
             
             return result;
