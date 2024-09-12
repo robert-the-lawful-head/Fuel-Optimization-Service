@@ -30,6 +30,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     pageTitle = 'Customers';
     customersData: any[];
     aircraftData: any[];
+    fullAicraftDataCpy: any[];
     pricingTemplatesData: any[];
     locationChangedSubscription: any;
     customerGridState: CustomerGridState;
@@ -137,6 +138,18 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     refreshAircrafts() {
         this.loadCustomerAircraft();
     }
+    onCompanyFilterApplied(filter: string[]) {
+        if(this.customersData == null || this.customersData.length == 0) return;
+        
+        this.aircraftData = null;
+
+        if (filter.length == 0 || filter.length == this.customersData.length) {
+            this.aircraftData = [...this.fullAicraftDataCpy];
+            return;
+        }
+        this.aircraftData = this.fullAicraftDataCpy.filter((a) => filter.includes(a.company.toLowerCase()));
+
+    }
     // Private Methods
     private loadCustomers() {
         this.ngxLoader.startLoader(this.charNameCustomer);
@@ -183,12 +196,13 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.sharedService.currentUser.fboId
             )
             .subscribe((data: any) => {
-                this.aircraftData = data;
-                this.aircraftData.forEach((result) => {
+                data.forEach((result) => {
                     if (result.isCompanyPricing) {
                         result.pricingTemplateId = null;
                     }
                 });
+                this.aircraftData = data;
+                this.fullAicraftDataCpy = data;
                 this.ngxLoader.stopLoader(this.charNameAircraft);
             });
     }
@@ -212,7 +226,6 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         )
         .subscribe((data:any) =>
         {
-
            this.tags = data.map((tg) => ({
             label: tg,
             value: tg,

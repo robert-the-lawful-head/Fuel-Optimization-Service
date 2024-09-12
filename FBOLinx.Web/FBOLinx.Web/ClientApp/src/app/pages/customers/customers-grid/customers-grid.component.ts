@@ -124,6 +124,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     @Output() customerPriceClicked = new EventEmitter<any>();
     @Output() exportAircraftClick = new EventEmitter<any>();
     @Output() refreshAircrafts = new EventEmitter<void>();
+    @Output() onCompanyFilterApplied = new EventEmitter<string[]>();
 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
@@ -722,6 +723,11 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     toogleFavorite(favoriteData: any): void {
         if(favoriteData.isFavorite)
             this.refreshAircrafts.emit();
+    }
+    onFilterApplied(filteredDataSource: any): void {
+        let customerFilteredTailNumbers = filteredDataSource.filteredData.map(x => x.company.toLowerCase());
+        
+        this.onCompanyFilterApplied.emit(customerFilteredTailNumbers);
     }
     get getCallBackComponent(): CallbackComponent{
         return CallbackComponent.Company;

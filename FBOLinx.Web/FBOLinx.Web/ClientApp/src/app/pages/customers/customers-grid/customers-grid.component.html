@@ -5,6 +5,7 @@
                 <app-table-global-search
                     [matDataSource]="dataSource"
                     placeholder="Search by Company, Tail, etc."
+                    (filteredDataSource)="onFilterApplied($event)"
                 ></app-table-global-search>
             </div>
             <div class="col-2">
