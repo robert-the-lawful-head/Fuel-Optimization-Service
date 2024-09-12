@@ -8,5 +8,6 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations
     {
         public string Secret { get; set; }
         public string FuelerLinxUrl { get; set; }
+        public int FuelerLinxFboLinxVendorOid { get; set; }
     }
 }

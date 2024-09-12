@@ -97,6 +97,10 @@ const initialColumns: ColumnType[] = [
         id: 'delete',
         name: 'Actions',
     },
+    {
+        id: 'invoiceEmail',
+        name: 'Invoice Email',
+    }
 ];
 
 @Component({
