@@ -12,5 +12,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 
         [JsonProperty("Subject")]
         public string Subject { get; set; }
+
+        [JsonProperty("recipientCompanyName")]
+        public string recipientCompanyName { get; set; }
     }
 }

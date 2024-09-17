@@ -579,6 +579,7 @@ namespace FBOLinx.Web.Services
             {
                 templateEmailBodyMessage = HttpUtility.HtmlDecode(emailContent.EmailContentHtml ?? ""),
                 Subject = HttpUtility.HtmlDecode(emailContent.Subject) ?? "Customers Pricing",
+                recipientCompanyName = info.Count > 0 ? info[0].Company : "",
             };
             mailMessage.SendGridGroupCustomerPricingTemplateData = dynamicTemplateData;
 
