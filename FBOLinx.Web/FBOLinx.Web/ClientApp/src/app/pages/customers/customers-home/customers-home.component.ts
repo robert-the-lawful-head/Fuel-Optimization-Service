@@ -36,6 +36,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     customerGridState: CustomerGridState;
     fuelVendors: any[];
     tags : any[];
+    customersCount = 0;
 
     public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate', 'pricingFormula'];
     public dataSource:       MatTableDataSource<any[]>;
@@ -139,6 +140,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.loadCustomerAircraft();
     }
     onCompanyFilterApplied(filter: string[]) {
+        this.customersCount = filter.length;
         if(this.customersData == null || this.customersData.length == 0) return;
         
         this.aircraftData = null;
@@ -167,6 +169,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                         value: fv,
                     })),
                 }));
+                this.customersCount = this.customersData.length;
                 this.ngxLoader.stopLoader(this.charNameCustomer);
             });
     }

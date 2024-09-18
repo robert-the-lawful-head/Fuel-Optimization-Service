@@ -2,7 +2,7 @@
     <mat-tab-group style="background: white" [selectedIndex]="selectedTabIndex">
         <mat-tab>
             <ng-template mat-tab-label>
-                Customers ({{ customersData?.length }})
+                Customers ({{ customersCount }})
             </ng-template>
             <div class="table-container customers-grid-container">
                 <div *ngIf="customersData && pricingTemplatesData">
