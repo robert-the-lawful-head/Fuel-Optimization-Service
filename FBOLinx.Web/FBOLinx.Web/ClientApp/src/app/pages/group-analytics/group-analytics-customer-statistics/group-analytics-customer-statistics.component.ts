@@ -47,7 +47,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
     fbo: string;
     icaoChangedSubscription: any;
     chartName = 'group-analytics-customer-statistics';
-    dataSource: MatTableDataSource<any[]>;
+    dataSource: MatTableDataSource<any[]> = new MatTableDataSource();
     filtersChanged: Subject<any> = new Subject<any>();
 
     selectedFbos: any[];
@@ -221,7 +221,9 @@ export class GroupAnalyticsCustomerStatisticsComponent
         ).subscribe(
             (data: any) => {
                 this.dataLength = data.length;
-                this.dataSource = new MatTableDataSource(data);
+                
+                this.dataSource.data = data;
+
                 this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':

@@ -7,7 +7,6 @@ import { SharedService } from '../../../layouts/shared-service';
 //Services
 import { AuthenticationService } from '../../../services/authentication.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { GroupsService } from 'src/app/services/groups.service';
 import { UserRole } from 'src/app/enums/user-role';
 
@@ -27,7 +26,6 @@ export class LoginModalComponent {
         private router: Router,
         private authenticationService: AuthenticationService,
         private sharedService: SharedService,
-        private manageFboGroupsService: ManageFboGroupsService,
         private groupsService: GroupsService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -51,7 +49,7 @@ export class LoginModalComponent {
                     this.loginForm.value.remember
                 )
                 .subscribe(
-                    (data) => {
+                    (data: any) => {
                         this.authenticationService.postAuth().subscribe(async () => {
                             this.dialogRef.close();
                             if (data.role === UserRole.Conductor) {
@@ -61,7 +59,6 @@ export class LoginModalComponent {
                             } else if (data.role === UserRole.GroupAdmin) {
                                 this.router.navigate(['/default-layout/fbos/']);
                             } else {
-                                this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
                                 this.setFboSessionVariables(data);
 
                                 if (data.role === UserRole.CSR)
@@ -82,14 +79,14 @@ export class LoginModalComponent {
         }
     }
     private async setFboSessionVariables(fboObj: any) {
-        let icao: string = fboObj.fbo?.fboAirport?.icao ?? this.groupsFbosData.fbos.find((obj) => obj.oid == fboObj.fbo.oid)?.icao;
+        let icao: string = fboObj.icao;
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fboObj.fbo?.accountType);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fbo,fboObj.fbo.fbo);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);
-
-        let isNetworkFbo = this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fboObj.groupId.toString());
-        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,isNetworkFbo.toString());
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,(fboObj.group.fbos.length > 1));
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fboObj.fbo?.accountType);
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,fboObj.groupId);
 
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());

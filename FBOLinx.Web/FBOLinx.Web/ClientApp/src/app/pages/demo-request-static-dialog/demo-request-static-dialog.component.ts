@@ -56,7 +56,7 @@ export class DemoRequestStaticDialogComponent implements OnInit {
     getIsStaticModalVisible(url: string): boolean {
         url = (url.split('/').length > 3) ? (url.split('/').splice(0, 3)).join('/') : url;
 
-        if(this.sharedService.currentUser.accountType == AccountType.Premium)
+        if(this.sharedService.currentUser.accountType == AccountType.Premium || Number.isNaN(this.sharedService.currentUser.accountType))
             return false;
         if(this.freemiumDisableMenuItemsRoutes.includes(url))
             return true;
