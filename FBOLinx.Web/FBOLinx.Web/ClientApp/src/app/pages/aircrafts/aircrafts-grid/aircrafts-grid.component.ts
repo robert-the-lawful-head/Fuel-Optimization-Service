@@ -4,6 +4,7 @@ import {
     Input,
     OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,8 +22,6 @@ import { SharedService } from '../../../layouts/shared-service';
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
-import { FavoritesService } from 'src/app/services/favorites.service';
-import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 import { Subscription } from 'rxjs';
@@ -141,6 +140,11 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
             }
         };
         this.setVirtualScrollVariables(this.paginator, this.sort, this.aircraftsDataSource.data);
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes.aircraftsData) {
+            this.dataSource.data = changes.aircraftsData.currentValue;
+        }
     }
     ngOnDestroy(){
         this.sortChangeSubscription?.unsubscribe();
