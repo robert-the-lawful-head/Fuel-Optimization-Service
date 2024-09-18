@@ -116,23 +116,19 @@
         style="overflow-x: auto; position: relative"
         (scroll)="onTableScroll($event)"
     >
-        <table
-            #customerTable
-            [dataSource]="dataSource"
-            class="col-md-12 mb-0"
-            mat-table
-            matSort
-        >
+        <table #customerTable
+               [dataSource]="dataSource"
+               class="col-md-12 mb-0"
+               mat-table
+               matSort>
             <ng-container matColumnDef="selectAll">
                 <th *matHeaderCellDef mat-header-cell>
-                    <input
-                        (change)="selectAction()"
-                        [(ngModel)]="selectAll"
-                        class="checkboxHeight"
-                        id="a"
-                        style="position: absolute; margin-top: 8px"
-                        type="checkbox"
-                    />
+                    <input (change)="selectAction()"
+                           [(ngModel)]="selectAll"
+                           class="checkboxHeight"
+                           id="a"
+                           style="position: absolute; margin-top: 8px"
+                           type="checkbox" />
                     <div for="a" style="margin-left: 25px; margin-top: 0px">
                         <div>Select</div>
                         <div>All</div>
@@ -154,12 +150,10 @@
             <ng-container matColumnDef="company">
                 <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="company"
-                            propertyName="company"
-                        >
+                        <app-table-column-filter [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="company"
+                                                 propertyName="company">
                             <span>Company</span>
                         </app-table-column-filter>
                     </span>
@@ -170,35 +164,28 @@
             </ng-container>
 
             <ng-container matColumnDef="needsAttention">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="text-left"
-                    mat-header-cell
-
-                >
+                    mat-header-cell>
                     <div class="">Needs Attention</div>
                 </th>
                 <td *matCellDef="let customer" class="text-left" mat-cell>
                     <div>
-                        <ni-badge
-                            *ngIf="customer.needsAttention"
-                            [arrow]="'right'"
-                            [borderRadius]="false"
-                            [color]="'warning'"
-                            matTooltip="{{ customer.needsAttentionReason }}"
-                            matTooltipPosition="after"
-                        >
+                        <ni-badge *ngIf="customer.needsAttention"
+                                  [arrow]="'right'"
+                                  [borderRadius]="false"
+                                  [color]="'warning'"
+                                  matTooltip="{{ customer.needsAttentionReason }}"
+                                  matTooltipPosition="after">
                             Needs Attention
                         </ni-badge>
-                        <a
-                            *ngIf="
+                        <a *ngIf="
                                 !customer.isFuelerLinxCustomer &&
                                 !customer.contactExists
                             "
-                            matTooltip="This customer does not have any contacts setup to receive price distribution."
-                            matTooltipPosition="after"
-                            style="float: right"
-                        >
+                           matTooltip="This customer does not have any contacts setup to receive price distribution."
+                           matTooltipPosition="after"
+                           style="float: right">
                             <i class="fa fa-warning" style="color: red"></i>
                         </a>
                     </div>
@@ -208,55 +195,47 @@
             <ng-container matColumnDef="tags">
                 <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="tags"
-                            propertyName="tags"
-                            optionLabel="label"
-                            optionValue="value"
-                            [columnFormat]="11"
-                            [options]="tags"
-                        >
+                        <app-table-column-filter [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="tags"
+                                                 propertyName="tags"
+                                                 optionLabel="label"
+                                                 optionValue="value"
+                                                 [columnFormat]="11"
+                                                 [options]="tags">
                             <span>Tags</span>
                         </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <p-multiSelect
-                        class="tags-dropdown-filter"
-                        [options]="customer.availableTags"
-                        #multiInput
-                        [(ngModel)]="customer.tags"
-                        display="chip"
-                        placeholder="No tags"
-                        optionLabel="label"
-                        autofocusFilter="true"
-                        [virtualScroll]="true"
-                        (onChange)="onCustomerTagUpdate($event, customer)"
-                        maxSelectedLabels="10"
-                        filterBy="name"
-                        (onPanelShow)="onCustomerTagPanelShow($event, customer)"
-                        [showToggleAll]="false"
-                        itemSize="50"
-                        resetFilterOnHide="true"
-                        (onPanelHide)="checkState()"
-                    >
+                    <p-multiSelect class="tags-dropdown-filter"
+                                   [options]="customer.availableTags"
+                                   #multiInput
+                                   [(ngModel)]="customer.tags"
+                                   display="chip"
+                                   placeholder="No tags"
+                                   optionLabel="label"
+                                   autofocusFilter="true"
+                                   [virtualScroll]="true"
+                                   (onChange)="onCustomerTagUpdate($event, customer)"
+                                   maxSelectedLabels="10"
+                                   filterBy="name"
+                                   (onPanelShow)="onCustomerTagPanelShow($event, customer)"
+                                   [showToggleAll]="false"
+                                   itemSize="50"
+                                   resetFilterOnHide="true"
+                                   (onPanelHide)="checkState()">
                         <ng-template let-value pTemplate="selectedItems">
-                            <div
-                                class="p-multiselect-token"
-                                *ngFor="let tag of customer.tags"
-                            >
+                            <div class="p-multiselect-token"
+                                 *ngFor="let tag of customer.tags">
                                 <span class="p-multiselect-token-label">
                                     {{ tag.name }}
                                 </span>
                             </div>
 
-                            <div
-                                *ngIf="
+                            <div *ngIf="
                                     !customer.tags || customer.tags.length == 0
-                                "
-                            >
+                                ">
                                 Select a Tag
                             </div>
                         </ng-template>
@@ -267,9 +246,7 @@
                         </ng-template>
                         <ng-template pTemplate="footer">
                             <div class="fbo-item addCustom">
-                                <a (click)="newCustomTag(customer)"
-                                    >&lt;Add Custom&gt;</a
-                                >
+                                <a (click)="newCustomTag(customer)">&lt;Add Custom&gt;</a>
                             </div>
                         </ng-template>
                     </p-multiSelect>
@@ -277,20 +254,15 @@
             </ng-container>
 
             <ng-container matColumnDef="isFuelerLinxCustomer">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="overflow-label"
-                    mat-header-cell
-
-                >
+                    mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [columnFormat]="8"
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="isFuelerLinxCustomer"
-                            propertyName="isFuelerLinxCustomer"
-                        >
+                        <app-table-column-filter [columnFormat]="8"
+                                                 [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="isFuelerLinxCustomer"
+                                                 propertyName="isFuelerLinxCustomer">
                             <div>
                                 <div>FuelerLinx</div>
                                 <div>Network</div>
@@ -304,20 +276,15 @@
             </ng-container>
 
             <ng-container matColumnDef="fleetSize">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="overflow-label"
-                    mat-header-cell
-
-                >
+                    mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [columnFormat]="1"
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="fleetSize"
-                            propertyName="fleetSize"
-                        >
+                        <app-table-column-filter [columnFormat]="1"
+                                                 [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="fleetSize"
+                                                 propertyName="fleetSize">
                             <div>
                                 <div>Fleet</div>
                                 <div>Size</div>
@@ -333,32 +300,26 @@
             <ng-container matColumnDef="pricingTemplateName">
                 <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="pricingTemplateId"
-                            propertyName="pricingTemplateId"
-                            [columnFormat]="10"
-                            optionLabel="name"
-                            optionValue="oid"
-                            [options]="pricingTemplatesData"
-                        >
+                        <app-table-column-filter [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="pricingTemplateId"
+                                                 propertyName="pricingTemplateId"
+                                                 [columnFormat]="10"
+                                                 optionLabel="name"
+                                                 optionValue="oid"
+                                                 [options]="pricingTemplatesData">
                             <span>ITP Margin Template</span>
                         </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <select
-                        (ngModelChange)="onMarginChange($event, customer)"
-                        [(ngModel)]="customer.pricingTemplateId"
-                        class="dropdownHeight select-dropdown"
-                        id="pricingtemplates"
-                        name="ddlPricingTemplate"
-                    >
-                        <option
-                            *ngFor="let pricingTemplate of pricingTemplatesData"
-                            value="{{ pricingTemplate.oid }}"
-                        >
+                    <select (ngModelChange)="onMarginChange($event, customer)"
+                            [(ngModel)]="customer.pricingTemplateId"
+                            class="dropdownHeight select-dropdown"
+                            id="pricingtemplates"
+                            name="ddlPricingTemplate">
+                        <option *ngFor="let pricingTemplate of pricingTemplatesData"
+                                value="{{ pricingTemplate.oid }}">
                             {{ pricingTemplate.name }}
                         </option>
                     </select>
@@ -368,53 +329,45 @@
             <ng-container matColumnDef="fuelVendors">
                 <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="fuelVendors"
-                            propertyName="fuelVendors"
-                            optionLabel="label"
-                            optionValue="value"
-                            [columnFormat]="11"
-                            [options]="fuelVendors"
-                        >
+                        <app-table-column-filter [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="fuelVendors"
+                                                 propertyName="fuelVendors"
+                                                 optionLabel="label"
+                                                 optionValue="value"
+                                                 [columnFormat]="11"
+                                                 [options]="fuelVendors">
                             <span>Fuel Vendors</span>
                         </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <p-multiSelect
-                        class="fuelvendors-dropdown-filter"
-                        [options]="customer.fuelVendors"
-                        [(ngModel)]="customer.fuelVendors"
-                        display="chip"
-                        placeholder="No Fuel Vendors"
-                        optionLabel="label"
-                        [virtualScroll]="true"
-                        [disabled]="
+                    <p-multiSelect class="fuelvendors-dropdown-filter"
+                                   [options]="customer.fuelVendors"
+                                   [(ngModel)]="customer.fuelVendors"
+                                   display="chip"
+                                   placeholder="No Fuel Vendors"
+                                   optionLabel="label"
+                                   [virtualScroll]="true"
+                                   [disabled]="
                             !customer.fuelVendors ||
                             !customer.fuelVendors.length
                         "
-                        (onChange)="onFuelVendorUpdate($event, customer)"
-                        [showToggleAll]="false"
-                        itemSize="50"
-                    >
+                                   (onChange)="onFuelVendorUpdate($event, customer)"
+                                   [showToggleAll]="false"
+                                   itemSize="50">
                         <ng-template let-value pTemplate="selectedItems">
-                            <div
-                                class="p-multiselect-token"
-                                *ngFor="let fv of customer.fuelVendors"
-                            >
+                            <div class="p-multiselect-token"
+                                 *ngFor="let fv of customer.fuelVendors">
                                 <span class="p-multiselect-token-label">
                                     {{ fv.value }}
                                 </span>
                             </div>
 
-                            <div
-                                *ngIf="
+                            <div *ngIf="
                                     !customer.fuelVendors ||
                                     customer.fuelVendors.length === 0
-                                "
-                            >
+                                ">
                                 No Fuel Vendors
                             </div>
                         </ng-template>
@@ -428,19 +381,14 @@
             </ng-container>
 
             <ng-container matColumnDef="allInPrice">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="overflow-label"
-                    mat-header-cell
-
-                >
+                    mat-header-cell>
                     <div>All-In</div>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <div
-                        (click)="onCustomerPriceClicked(customer)"
-                        class="allInPrice"
-                    >
+                    <div (click)="onCustomerPriceClicked(customer)"
+                         class="allInPrice">
                         {{ getAllIPriceDisplayString(customer) }}
                     </div>
                 </td>
@@ -464,19 +412,14 @@
     </ng-container>-->
 
             <ng-container matColumnDef="certificateTypeDescription">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="overflow-label"
-                    mat-header-cell
-
-                >
+                    mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="certificateTypeDescription"
-                            propertyName="certificateTypeDescription"
-                        >
+                        <app-table-column-filter [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="certificateTypeDescription"
+                                                 propertyName="certificateTypeDescription">
                             <div>
                                 <div>Certificate</div>
                                 <div>Type</div>
@@ -490,23 +433,18 @@
             </ng-container>
 
             <ng-container matColumnDef="aircraftsVisits">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-
                     [matTooltip]="
                         'Since ' + (airportWatchStartDate | date : 'MM/dd/YYYY')
-                    "
-                >
+                    ">
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [columnFormat]="1"
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="aircraftsVisits"
-                            propertyName="aircraftsVisits"
-                        >
+                        <app-table-column-filter [columnFormat]="1"
+                                                 [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="aircraftsVisits"
+                                                 propertyName="aircraftsVisits">
                             <div>
                                 <div>Previous</div>
                                 <div>Visits</div>
@@ -520,20 +458,15 @@
             </ng-container>
 
             <ng-container matColumnDef="pricingFormula">
-                <th
-                    *matHeaderCellDef
+                <th *matHeaderCellDef
                     class="overflow-label"
-                    mat-header-cell
-
-                >
+                    mat-header-cell>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter
-                            [columnFormat]="0"
-                            [matDataSource]="dataSource"
-                            [matSort]="sort"
-                            columnId="pricingFormula"
-                            propertyName="pricingFormula"
-                        >
+                        <app-table-column-filter [columnFormat]="0"
+                                                 [matDataSource]="dataSource"
+                                                 [matSort]="sort"
+                                                 columnId="pricingFormula"
+                                                 propertyName="pricingFormula">
                             <div>Pricing Formula</div>
                         </app-table-column-filter>
                     </span>
@@ -543,36 +476,41 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="invoiceEmail">
+                <th *matHeaderCellDef
+                    class="overflow-label"
+                    mat-header-cell>
+                    <div>Invoice Email</div>
+                </th>
+                <td *matCellDef="let customer" clickStopPropagation mat-cell>
+                        {{ customer.invoiceUniqueEmail }}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="delete">
                 <th *matHeaderCellDef mat-header-cell></th>
                 <td *matCellDef="let customer" mat-cell>
                     <div class="pull-right">
-                        <button
-                            (click)="
+                        <button (click)="
                                 deleteCustomer(customer);
                                 $event.stopPropagation()
                             "
-                            *ngIf="!customer.isFuelerLinxCustomer"
-                            [view]="'error'"
-                            beforeIcon="fa fa-trash"
-                            ni-button
-                            size="small"
-                        >
+                                *ngIf="!customer.isFuelerLinxCustomer"
+                                [view]="'error'"
+                                beforeIcon="fa fa-trash"
+                                ni-button
+                                size="small">
                             Delete
                         </button>
                     </div>
                 </td>
             </ng-container>
 
-            <tr
-                *matHeaderRowDef="getTableColumns(); sticky: true"
-                mat-header-row
-            ></tr>
-            <tr
-                (click)="editCustomer(row)"
+            <tr *matHeaderRowDef="getTableColumns(); sticky: true"
+                mat-header-row></tr>
+            <tr (click)="editCustomer(row)"
                 *matRowDef="let row; columns: getTableColumns()"
-                mat-row
-            ></tr>
+                mat-row></tr>
         </table>
 
         <div class="invisible">

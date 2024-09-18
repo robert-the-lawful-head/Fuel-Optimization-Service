@@ -1,7 +1,7 @@
 import { Inject, OnInit } from '@angular/core';
 import { Component, } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Company, JetNet } from '../../../models/jetnet-information';
+import { Company, JetNet, AircraftResult } from '../../../models/jetnet-information';
 import { CustomersDialogNewCustomerComponent } from '../../../pages/customers/customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { JetNetService } from '../../../services/jetnet.service';
 
@@ -26,21 +26,94 @@ export class JetNetInformationComponent implements OnInit {
 
     ngOnInit() {
         this.isLoading = true;
-        if (this.data && this.data.startsWith("N")) {
+        if (this.data && this.data.toUpperCase().startsWith("N")) {
             this.jetNetService.getJetNetInformationByTailNumber(this.data).subscribe((response: JetNet) => {
-                this.jetNetInformation = response;
+                if (response.aircraftresult != null) {
+                    this.jetNetInformation = response;
 
-                this.jetNetInformation.aircraftresult.companies.forEach((company) => {
-                    company.companyrelationships.forEach((contact) => {
-                        if (contact.contactemail)
-                            contact.add = true;
-                    });
-                });
+                    if (this.data.toUpperCase() == response.aircraftresult.regnbr) {
+                        this.jetNetInformation.aircraftresult.companies.forEach((company) => {
+                            company.companyrelationships.forEach((contact) => {
+                                if (contact.contactemail)
+                                    contact.add = true;
+                            });
+                        });
+                    }
+                    else {
+                        this.jetNetInformation.aircraftresult.regnbr = this.data;
+                        this.jetNetInformation.aircraftresult.make = "";
+                        this.jetNetInformation.aircraftresult.model = "";
+                        this.jetNetInformation.aircraftresult.companies = null;
+                    }
+                }
+                else {
+                    // Example values for AircraftResult
+                    const aircraftResult: AircraftResult = {
+                        regnbr: this.data,
+                        make: "",
+                        model: "",
+                        companies: null,
+                        aircraftid: 0,
+                        modelid: 0,
+                        airframetype: "",
+                        maketype: "",
+                        icaotype: "",
+                        serialnbr: "",
+                        yearmfr: "",
+                        yeardlv: "",
+                        weightclass: "",
+                        categorysize: "",
+                        baseicao: "",
+                        baseairport: "",
+                        ownership: "",
+                        usage: "",
+                        maintained: "",
+                        companyrelationships: null
+                    };
+                    const jetNetInstance: JetNet = {
+                        responseid: "",
+                        responsestatus: "",
+                        aircraftresult: aircraftResult
+                    };
+
+                    this.jetNetInformation = jetNetInstance;
+                }
                 this.isLoading = false;
             });
         }
-        else
-            return;
+        else {
+            // Example values for AircraftResult
+            const aircraftResult: AircraftResult = {
+                regnbr: this.data,
+                make: "",
+                model: "",
+                companies: null,
+                aircraftid: 0,
+                modelid: 0,
+                airframetype: "",
+                maketype: "",
+                icaotype: "",
+                serialnbr: "",
+                yearmfr: "",
+                yeardlv: "",
+                weightclass: "",
+                categorysize: "",
+                baseicao: "",
+                baseairport: "",
+                ownership: "",
+                usage: "",
+                maintained: "",
+                companyrelationships: null
+            };
+            const jetNetInstance: JetNet = {
+                responseid: "",
+                responsestatus: "",
+                aircraftresult: aircraftResult
+            };
+
+            this.jetNetInformation = jetNetInstance;
+            this.isLoading = false;
+        }
     }
 
     onChange(company: Company, state: string) {
