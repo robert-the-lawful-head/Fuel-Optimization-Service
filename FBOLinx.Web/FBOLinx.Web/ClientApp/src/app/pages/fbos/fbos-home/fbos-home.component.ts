@@ -42,7 +42,8 @@ export class FbosHomeComponent implements OnInit {
 
         let fboDataPromise =  this.loadAllFbosForGroup();
 
-        let groupsFbosDataPromise = this.groupsService.groupsAndFbos().toPromise();
+        const groupId = this.sharedService.currentUser.groupId;
+        let groupsFbosDataPromise = this.groupsService.groupsAndFbos(groupId).toPromise();
         
         Promise.all([fboDataPromise, groupsFbosDataPromise]).then(results => {
             this.fbosData = results[0];
