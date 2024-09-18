@@ -5,24 +5,24 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class SnackBarService {
-
+    
     constructor(private snackBar: MatSnackBar) { }
-    public showErrorSnackBar(message: string): void {
+    public showErrorSnackBar(message: string, duration = 2000): void {
         this.snackBar.open(
             message,
             '',
             {
-                duration: 2000,
+                duration: duration,
                 panelClass: ['error-snackbar'],
             }
         );
     }
-    public showSuccessSnackBar(message: string): void {
+    public showSuccessSnackBar(message: string,duration = 2000): void {
         this.snackBar.open(
             message,
             '',
             {
-                duration: 2000,
+                duration: duration,
                 panelClass: ['blue-snackbar'],
             }
         );

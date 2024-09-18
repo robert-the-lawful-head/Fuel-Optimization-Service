@@ -6,6 +6,8 @@ import { FboairportsService } from '../../../services/fboairports.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { GroupFboViewModel } from 'src/app/models/groups';
+import { GroupsService } from 'src/app/services/groups.service';
 
 @Component({
     selector: 'app-fbos-home',
@@ -21,20 +23,32 @@ export class FbosHomeComponent implements OnInit {
     public currentFbo: any;
     public currentFboAirport: any;
     public chartName = 'FBOs';
+    public groupsFbosData: GroupFboViewModel;
 
     constructor(
         private router: Router,
         private fboService: FbosService,
         private fboAirportsService: FboairportsService,
         private sharedService: SharedService,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        private groupsService: GroupsService
     ) {
         this.currentFbo = null;
         this.currentFboAirport = null;
     }
 
-    ngOnInit() {
-        this.loadAllFbosForGroup();
+    async ngOnInit() {
+        this.ngxLoader.startLoader(this.chartName);
+
+        let fboDataPromise =  this.loadAllFbosForGroup();
+
+        let groupsFbosDataPromise = this.groupsService.groupsAndFbos().toPromise();
+        
+        Promise.all([fboDataPromise, groupsFbosDataPromise]).then(results => {
+            this.fbosData = results[0];
+            this.groupsFbosData = results[1];
+            this.ngxLoader.stopLoader(this.chartName);
+        });
     }
 
     public editFboClicked(record) {
@@ -52,11 +66,11 @@ export class FbosHomeComponent implements OnInit {
         }
     }
 
-    public saveFboEditClicked() {
+    public async saveFboEditClicked() {
         this.currentFboAirport = null;
         this.currentFbo = null;
         this.fbosData = null;
-        this.loadAllFbosForGroup();
+        this.fbosData =  await this.loadAllFbosForGroup(); 
     }
 
     public cancelFboEditClicked() {
@@ -64,22 +78,8 @@ export class FbosHomeComponent implements OnInit {
     }
 
     // Private Methods
-    private loadAllFbosForGroup() {
-        this.ngxLoader.startLoader(this.chartName);
-        if (!this.groupInfo) {
-            this.fboService
-                .getForGroup(this.sharedService.currentUser.groupId)
-                .subscribe((data: any) => {
-                    this.fbosData = data;
-                    this.ngxLoader.stopLoader(this.chartName);
-                });
-        } else {
-            this.fboService
-                .getForGroup(this.groupInfo.oid)
-                .subscribe((data: any) => {
-                    this.fbosData = data;
-                    this.ngxLoader.stopLoader(this.chartName);
-                });
-        }
-    }
+    private async loadAllFbosForGroup() :Promise<any> {
+        let groupId  = (!this.groupInfo) ? this.sharedService.currentUser.groupId : this.groupInfo.oid;
+         return this.fboService.getForGroup(groupId).toPromise();
+    } 
 }

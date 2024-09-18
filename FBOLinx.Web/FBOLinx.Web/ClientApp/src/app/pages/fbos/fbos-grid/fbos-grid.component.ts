@@ -42,6 +42,8 @@ export class FbosGridComponent implements OnInit {
     @Output() editFboClicked = new EventEmitter<any>();
     @Input() fbosData: Array<any>;
     @Input() groupInfo: any;
+    @Input() groupsFbosData: GroupFboViewModel;
+
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -61,7 +63,6 @@ export class FbosGridComponent implements OnInit {
     public tableSortFbos = 'icao';
     public tableSortOrderFbos = 'asc';
 
-    public groupsFbosData: GroupFboViewModel;
     sortChangeSubscription: Subscription;
     constructor(
         private newFboDialog: MatDialog,
@@ -93,13 +94,9 @@ export class FbosGridComponent implements OnInit {
         } else {
             this.displayedColumns = ['icao', 'fbo', 'price', 'active', 'edit'];
         }
-
-        this.groupsService
-            .groupsAndFbos()
-            .subscribe((data: GroupFboViewModel) => { this.groupsFbosData = data; });
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         if (!this.fbosData) {
             return;
         }
@@ -331,14 +328,14 @@ export class FbosGridComponent implements OnInit {
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
 
-        if (this.groupsFbosData == undefined) {
-            this.groupsService
-                .groupsAndFbos()
-                .subscribe((data: GroupFboViewModel) => {
-                    this.groupsFbosData = data;
-                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo, this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData, fbo.groupId).toString());                });
-        }
+        this.sharedService.setCurrentUserPropertyValue(
+            localStorageAccessConstant.isNetworkFbo,
+            this.manageFboGroupsService
+                .isNetworkFbo(this.groupsFbosData, fbo.groupId)
+                .toString()
+        );
 
+        this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo);
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
