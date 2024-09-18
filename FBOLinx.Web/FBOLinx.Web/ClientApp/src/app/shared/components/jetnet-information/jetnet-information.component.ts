@@ -31,7 +31,7 @@ export class JetNetInformationComponent implements OnInit {
                 if (response.aircraftresult != null) {
                     this.jetNetInformation = response;
 
-                    if (this.data == response.aircraftresult.regnbr) {
+                    if (this.data.toUpperCase() == response.aircraftresult.regnbr) {
                         this.jetNetInformation.aircraftresult.companies.forEach((company) => {
                             company.companyrelationships.forEach((contact) => {
                                 if (contact.contactemail)

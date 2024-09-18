@@ -9,18 +9,26 @@ import { JetNetInformationComponent } from '../jetnet-information/jetnet-informa
 })
 export class JetNetSearchComponent { 
     constructor(private jetNetInformationDialog: MatDialog,) { }
+    private isLoading: boolean = false;
 
     public tailNumberSearchChanged(tailNumber: any) {
-        if (tailNumber.currentTarget.value.trim() != "") {
-            const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
-                width: '1100px',
-                data: tailNumber.currentTarget.value.trim()
-            });
-            dialogRef
-                .afterClosed()
-                .subscribe((result: any) => {
+        if (!this.isLoading) {
+            this.isLoading = true;
+        if (tailNumber.toString() == "[object PointerEvent]")
+            tailNumber.currentTarget.value = (document.getElementById("tailNumber") as HTMLInputElement).value;
 
+            if (tailNumber.currentTarget.value.trim() != "") {
+                const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
+                    width: '1100px',
+                    data: tailNumber.currentTarget.value.trim()
                 });
+                dialogRef
+                    .afterClosed()
+                    .subscribe((result: any) => {
+
+                    });
+            }
+            this.isLoading = false;
         }
     }
 }
