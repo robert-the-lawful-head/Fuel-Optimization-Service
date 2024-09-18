@@ -11,7 +11,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
-import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
+import { MatSort, SortDirection } from '@angular/material/sort';
 import { ActivatedRoute } from '@angular/router';
 import { find, forEach, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
@@ -84,15 +84,6 @@ const initialColumns: ColumnType[] = [
         id: 'certificateTypeDescription',
         name: 'Certificate Type',
     },
-    //{
-    //    id: 'customerCompanyTypeName',
-    //    name: 'Customer Type',
-    //},
-
-    //{
-    //    id: 'aircraftsVisits',
-    //    name: 'Previous Visits',
-    //},
     {
         id: 'delete',
         name: 'Actions',
@@ -385,148 +376,6 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     }
 
     //[#hz0jtd] FlatFile importer was requested to be removed
-    //async launchImporter() {
-    //    if (!this.LICENSE_KEY) {
-    //        return alert('Set LICENSE_KEY on Line 13 before continuing.');
-    //    }
-    //    try {
-    //        const results = await this.importer.requestDataFromUser();
-    //        this.importer.displayLoader();
-
-    //        if (results) {
-    //            results.data.forEach((result) => {
-    //                result.groupid = this.sharedService.currentUser.groupId;
-    //            });
-
-    //            this.customersService
-    //                .importcustomers(results.data)
-    //                .subscribe((data: any) => {
-    //                    if (data) {
-    //                        this.importer.displaySuccess(
-    //                            'Data successfully imported!'
-    //                        );
-    //                        setTimeout(() => {
-    //                            this.customerDeleted.emit();
-    //                        }, 1500);
-    //                    }
-    //                });
-    //        }
-    //    } catch (e) { }
-    //}
-
-    //initializeImporter() {
-    //    FlatFileImporter.setVersion(2);
-    //    this.importer = new FlatFileImporter(this.LICENSE_KEY, {
-    //        allowCustom: true,
-    //        allowInvalidSubmit: true,
-    //        disableManualInput: false,
-    //        fields: [
-    //            {
-    //                alternates: ['Id', 'CompanyId'],
-    //                description: 'Company Id Value',
-    //                key: 'CompanyId',
-    //                label: 'Company Id',
-    //            },
-    //            {
-    //                alternates: ['Company Name', 'Name'],
-    //                description: 'Company Name Value',
-    //                key: 'CompanyName',
-    //                label: 'CompanyName',
-    //                validators: [
-    //                    {
-    //                        error: 'this field is required',
-    //                        validate: 'required',
-    //                    },
-    //                ],
-    //            },
-    //            {
-    //                alternates: ['activate'],
-    //                description: 'Activate Flag',
-    //                key: 'Activate',
-    //                label: 'Activate',
-    //            },
-    //            {
-    //                alternates: ['tail', 'plane tail', 'N-number', 'Nnumber'],
-    //                description: 'Tail',
-    //                key: 'Tail',
-    //                label: 'Tail',
-    //            },
-    //            {
-    //                alternates: [
-    //                    'Make',
-    //                    'make',
-    //                    'aircraft make',
-    //                    'aircraft',
-    //                    'Manufacturer',
-    //                    'Aircraft Manufacturer',
-    //                ],
-    //                description: 'Aircraft Make',
-    //                key: 'AircraftMake',
-    //                label: 'Aircraft Make',
-    //            },
-    //            {
-    //                alternates: [
-    //                    'Aircraft Model',
-    //                    'aircraft model',
-    //                    'model',
-    //                    'aircraft type',
-    //                    'type',
-    //                ],
-    //                description: 'Aircraft Model',
-    //                key: 'AircraftModel',
-    //                label: 'Model',
-    //            },
-    //            {
-    //                alternates: ['Aircraft Size', 'Plane Size'],
-    //                description: 'Aircraft Size',
-    //                key: 'AircraftSize',
-    //                label: 'Size',
-    //            },
-    //            {
-    //                alternates: ['first name', 'name'],
-    //                description: 'First Name',
-    //                key: 'FirstName',
-    //                label: 'First Name',
-    //            },
-    //            {
-    //                alternates: ['last name', 'lname'],
-    //                description: 'Last Name',
-    //                key: 'LastName',
-    //                label: 'Last Name',
-    //            },
-    //            {
-    //                alternates: ['title'],
-    //                description: 'Title',
-    //                key: 'Title',
-    //                label: 'Title',
-    //            },
-    //            {
-    //                alternates: ['email address', 'email'],
-    //                description: 'Email',
-    //                key: 'Email',
-    //                label: 'Email',
-    //            },
-    //            {
-    //                alternates: ['mobile', 'cell', 'cell phone'],
-    //                description: 'Mobile',
-    //                key: 'Mobile',
-    //                label: 'Mobile',
-    //            },
-    //            {
-    //                alternates: ['phone'],
-    //                description: 'Phone',
-    //                key: 'Phone',
-    //                label: 'Phone',
-    //            },
-    //        ],
-    //        managed: true,
-    //        type: 'Customers',
-    //    });
-    //    this.importer.setCustomer({
-    //        name: 'WebsiteImport',
-    //        userId: '1',
-    //    });
-    //}
 
     getTableColumns() {
         return this.columns
