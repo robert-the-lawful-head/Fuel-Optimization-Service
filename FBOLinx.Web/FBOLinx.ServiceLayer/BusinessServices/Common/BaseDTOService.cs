@@ -8,8 +8,6 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.EntityServices;
-using FBOLinx.ServiceLayer.Logging;
-using FBOLinx.ServiceLayer.Mapping;
 using Mapster;
 using NetTopologySuite.IO;
 
@@ -31,7 +29,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
     public class BaseDTOService<TDTO, T, TContext> : IBaseDTOService<TDTO, T> where T : class
     {
         protected IRepository<T, TContext> _EntityService;
-        private readonly ILoggingService _loggingService;
 
         public IUserService EntityService { get; }
 
@@ -81,7 +78,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             }
             catch (Exception ex)
             {
-                _loggingService.LogError("Add Async error: " + ex.Message + " Inner exception: " + ex.InnerException, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
                 return default(TDTO);
             }
         }
