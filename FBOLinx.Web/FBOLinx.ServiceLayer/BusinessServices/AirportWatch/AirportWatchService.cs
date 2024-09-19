@@ -520,7 +520,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               ToolTipText = (nonFuelerLinxCustomerWithNoEmail.Count > 0 && h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? "This customer is missing an email address. Add an email to distribute pricing.": (customerTemplates.Count > 0 && customerTemplates.Where(c => c.CustomerId == h.CustomerId) == null) ? "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address." : (topCustomers.Count > 0 && topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ?  "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : null
                           }).ToList();
             
-            return result;
+            return result.Where(r => r.Company != null && r.Company != "").ToList();
         }
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate, string icao)
         {
