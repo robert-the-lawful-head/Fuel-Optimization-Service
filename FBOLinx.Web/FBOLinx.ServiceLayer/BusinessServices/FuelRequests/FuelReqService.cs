@@ -49,6 +49,8 @@ using System.Text.RegularExpressions;
 using Azure.Data.Tables;
 using FBOLinx.DB.Specifications.CustomerInfoByFbo;
 using Npgsql.Logging;
+using FBOLinx.ServiceLayer.Logging;
+using LogLevel = FBOLinx.ServiceLayer.Logging.LogLevel;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -110,6 +112,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly IOrderDetailsEntityService _orderDetailsEntityService;
         private readonly ICustomerInfoByFboEntityService _customerInfoByFboEntityService;
         private readonly ICustomerInfoByFboService _customerInfoByFboService;
+        private readonly ILoggingService _loggingService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -130,7 +133,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             ICustomerAircraftService customerAircraftService,
             IAircraftService aircraftService,
             IFboService fboService,
-            IFuelReqConfirmationEntityService fuelReqConfirmationEntityService, ICustomerService customerService, IOrderDetailsEntityService orderDetailsEntityService, ICustomerInfoByFboEntityService customerInfoByFboEntityService, ICustomerInfoByFboService customerInfoByFboService) : base(fuelReqEntityService)
+            IFuelReqConfirmationEntityService fuelReqConfirmationEntityService, ICustomerService customerService, IOrderDetailsEntityService orderDetailsEntityService, ICustomerInfoByFboEntityService customerInfoByFboEntityService, ICustomerInfoByFboService customerInfoByFboService, ILoggingService loggingService) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
             _serviceOrderService = serviceOrderService;
@@ -158,6 +161,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _orderDetailsEntityService = orderDetailsEntityService;
             _customerInfoByFboEntityService = customerInfoByFboEntityService;
             _customerInfoByFboService = customerInfoByFboService;
+            _loggingService = loggingService;
         }
 
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
@@ -873,16 +877,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     // ADD A WAY TO CREATE FBO IF NOT IN SYSTEM? On hold until we come across any scenarios that'd require us to do so
 
-                    orderDetails = new OrderDetailsDto();
-                    orderDetails.ConfirmationEmail = fuelerlinxTransaction.Email == "" ? " " : fuelerlinxTransaction.Email;
-                    orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
-                    orderDetails.FuelerLinxTransactionId = fuelerlinxTransaction.SourceId.GetValueOrDefault();
-                    orderDetails.PaymentMethod = fuelerlinxTransaction.PaymentMethod;
-                    orderDetails.QuotedVolume = fuelerlinxTransaction.FuelEstWeight;
-                    orderDetails.Eta = fuelerlinxTransaction.Eta;
-                    orderDetails.FboHandlerId = fuelerlinxTransaction.FboHandlerId;
-                    orderDetails.IsOkToEmail = fuelerlinxTransaction.IsOkToSendEmail;
-                    await _orderDetailsService.AddAsync(orderDetails);
+                    try
+                    {
+                        orderDetails = new OrderDetailsDto();
+                        orderDetails.ConfirmationEmail = fuelerlinxTransaction.Email == "" ? " " : fuelerlinxTransaction.Email;
+                        orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
+                        orderDetails.FuelerLinxTransactionId = fuelerlinxTransaction.SourceId.GetValueOrDefault();
+                        orderDetails.PaymentMethod = fuelerlinxTransaction.PaymentMethod;
+                        orderDetails.QuotedVolume = fuelerlinxTransaction.FuelEstWeight;
+                        orderDetails.Eta = fuelerlinxTransaction.Eta;
+                        orderDetails.FboHandlerId = fuelerlinxTransaction.FboHandlerId;
+                        orderDetails.IsOkToEmail = fuelerlinxTransaction.IsOkToSendEmail;
+                        await _orderDetailsService.AddAsync(orderDetails);
+                    }
+                    catch(Exception ex)
+                    {
+                        _loggingService.LogError("Add Async error: " + ex.Message + " Inner exception: " + ex.InnerException, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                    }
 
                     var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
                     var customer = await _customerService.GetCustomerByFuelerLinxId(fuelerlinxTransaction.CompanyId.GetValueOrDefault());
