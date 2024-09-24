@@ -869,7 +869,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var orderDetails = orderDetailsList.Where(o => o.FboHandlerId == fuelerlinxTransaction.FboHandlerId).FirstOrDefault();
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
 
-            if (orderDetails == null)
+            if (orderDetails == null && fbo != null && fbo.Oid > 0)
             {
                 if (fuelerlinxTransaction.FuelEstWeight == null || fuelerlinxTransaction.FuelEstWeight == 0)
                     return;
@@ -880,7 +880,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     try
                     {
                         orderDetails = new OrderDetailsDto();
-                        orderDetails.ConfirmationEmail = fuelerlinxTransaction.Email == "" ? " " : fuelerlinxTransaction.Email;
+                        orderDetails.ConfirmationEmail = fuelerlinxTransaction.Email == null || fuelerlinxTransaction.Email == "" ? " " : fuelerlinxTransaction.Email;
                         orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
                         orderDetails.FuelerLinxTransactionId = fuelerlinxTransaction.SourceId.GetValueOrDefault();
                         orderDetails.PaymentMethod = fuelerlinxTransaction.PaymentMethod;
@@ -890,7 +890,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         orderDetails.IsOkToEmail = fuelerlinxTransaction.IsOkToSendEmail;
                         await _orderDetailsService.AddAsync(orderDetails);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         _loggingService.LogError("Add Async error: " + ex.Message + " Inner exception: " + ex.InnerException, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
                     }
@@ -914,36 +914,36 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         customerInfoByFbo.FboId = fbo.Oid;
                         customerInfoByFbo.CustomFboEmail = fuelerlinxTransaction.FboEmail;
                         await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
+
+                        var serviceReq = new ServiceOrderDto()
+                        {
+                            Fboid = fbo.Oid,
+                            CustomerAircraftId = customerAircraft.Oid,
+                            FuelerLinxTransactionId = fuelerlinxTransaction.SourceId,
+                            AssociatedFuelOrderId = 0,
+                            ServiceOn = fuelerlinxTransaction.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
+                            CustomerInfoByGroupId = customerInfoByGroupId,
+                            GroupId = fbo.GroupId
+                        };
+
+                        if (fuelerlinxTransaction.TimeStandard == "Local" || fuelerlinxTransaction.TimeStandard == "L")
+                        {
+                            var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, fuelerlinxTransaction.Eta.GetValueOrDefault());
+                            var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, fuelerlinxTransaction.Etd.GetValueOrDefault());
+
+                            serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
+                            serviceReq.ArrivalDateTimeUtc = etaUtc;
+                            serviceReq.DepartureDateTimeUtc = etdUtc;
+                        }
+                        else
+                        {
+                            serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? fuelerlinxTransaction.Eta.GetValueOrDefault() : fuelerlinxTransaction.Etd.GetValueOrDefault();
+                            serviceReq.ArrivalDateTimeUtc = fuelerlinxTransaction.Eta;
+                            serviceReq.DepartureDateTimeUtc = fuelerlinxTransaction.Etd;
+                        }
+
+                        serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
                     }
-
-                    var serviceReq = new ServiceOrderDto()
-                    {
-                        Fboid = fbo.Oid,
-                        CustomerAircraftId = customerAircraft.Oid,
-                        FuelerLinxTransactionId = fuelerlinxTransaction.SourceId,
-                        AssociatedFuelOrderId = 0,
-                        ServiceOn = fuelerlinxTransaction.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
-                        CustomerInfoByGroupId = customerInfoByGroupId,
-                        GroupId = fbo.GroupId
-                    };
-
-                    if (fuelerlinxTransaction.TimeStandard == "Local" || fuelerlinxTransaction.TimeStandard == "L")
-                    {
-                        var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, fuelerlinxTransaction.Eta.GetValueOrDefault());
-                        var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, fuelerlinxTransaction.Etd.GetValueOrDefault());
-
-                        serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
-                        serviceReq.ArrivalDateTimeUtc = etaUtc;
-                        serviceReq.DepartureDateTimeUtc = etdUtc;
-                    }
-                    else
-                    {
-                        serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? fuelerlinxTransaction.Eta.GetValueOrDefault() : fuelerlinxTransaction.Etd.GetValueOrDefault();
-                        serviceReq.ArrivalDateTimeUtc = fuelerlinxTransaction.Eta;
-                        serviceReq.DepartureDateTimeUtc = fuelerlinxTransaction.Etd;
-                    }
-
-                    serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
                 }
             }
 
@@ -980,33 +980,36 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
-                    if (fuelReq != null && fuelReq.Oid > 0 && orderDetails.FuelVendor.ToLower().Contains("fbolinx"))
+                    if(serviceOrder!=null)
                     {
-                        var fuelReqPrice = fuelerlinxTransaction.FuelEstCost;
-
-                        fuelReq.QuotedVolume = fuelReqGallons;
-                        fuelReq.QuotedPpg = fuelReqPrice;
-                        await UpdateAsync(fuelReq);
-
-                        var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
-                        fuelServiceLineItem.ServiceName = "Fuel: " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "") + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C");
-                        await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
-                    }
-                    else
-                    {
-                        if (serviceOrder.ServiceOrderItems.Count > 0 && serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).Any())
+                        if (fuelReq != null && fuelReq.Oid > 0 && orderDetails.FuelVendor.ToLower().Contains("fbolinx"))
                         {
+                            var fuelReqPrice = fuelerlinxTransaction.FuelEstCost;
+
+                            fuelReq.QuotedVolume = fuelReqGallons;
+                            fuelReq.QuotedPpg = fuelReqPrice;
+                            await UpdateAsync(fuelReq);
+
                             var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
-                            fuelServiceLineItem.ServiceName = "Fuel: " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
+                            fuelServiceLineItem.ServiceName = "Fuel: " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "") + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C");
                             await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
                         }
                         else
                         {
-                            ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
-                            fuelServiceOrderItem.ServiceOrderId = serviceOrder.Oid;
-                            fuelServiceOrderItem.ServiceName = "Fuel: " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
-                            fuelServiceOrderItem.IsCompleted = false;
-                            await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
+                            if (serviceOrder.ServiceOrderItems.Count > 0 && serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).Any())
+                            {
+                                var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
+                                fuelServiceLineItem.ServiceName = "Fuel: " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
+                                await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
+                            }
+                            else
+                            {
+                                ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                                fuelServiceOrderItem.ServiceOrderId = serviceOrder.Oid;
+                                fuelServiceOrderItem.ServiceName = "Fuel: " + orderDetails.QuotedVolume + " gal" + (orderDetails.QuotedVolume > 1 ? "s" : "");
+                                fuelServiceOrderItem.IsCompleted = false;
+                                await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
+                            }
                         }
                     }
                 }
