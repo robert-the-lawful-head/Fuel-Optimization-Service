@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { ExchangeRefreshTokenResponse } from '../models/authorization/tokenRefres';
+import { User } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
 export class OAuthService {
@@ -23,5 +25,20 @@ export class OAuthService {
             },
             { headers: this.headers }
         );
+    }
+    public refreshToken(user : User) {
+        let exhcangeTokenBody: ExchangeRefreshTokenResponse = {
+            authToken : user.token,
+            refreshToken: user.refreshToken,
+            authTokenExpiration: user.tokenExpirationDate,
+            refreshTokenExpiration: user.refreshTokenExpirationDate
+        }
+        return this.http.post<ExchangeRefreshTokenResponse>(
+            `${this.accessPointUrl}/app-refresh-token`,
+            exhcangeTokenBody,
+            {
+                headers: this.headers,
+            }
+        )
     }
 }

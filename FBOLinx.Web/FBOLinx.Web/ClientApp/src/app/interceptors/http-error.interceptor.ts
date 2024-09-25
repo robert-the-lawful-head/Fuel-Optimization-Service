@@ -21,12 +21,15 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
 
         if (error.status === 401) {
-          this.authenticationService.logout();
-          location.reload();
-          return;
+          if(!this.authenticationService.currentUserValue.remember){
+            this.authenticationService.logout();
+            location.reload();
+            return;
+          }
+          return throwError(error);
         }
 
-        let displayError = error.error.message ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support';
+        let displayError = error.error?.message ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support';
 
         if(error.error.message != "Username or password is incorrect"){
           displayError = error.error.message;

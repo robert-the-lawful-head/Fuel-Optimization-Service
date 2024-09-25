@@ -30,13 +30,14 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string, remember = false) {
+    login(username: string, password: string, remember:boolean) {
         return this.http
             .post<any>(
                 this.accessPointUrl + '/authenticate',
                 {
                     password,
                     username,
+                    remember
                 },
                 {
                     headers: this.headers,
@@ -48,13 +49,14 @@ export class AuthenticationService {
                     if (user && user.token) {
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
                         localStorage.setItem(
-                            'currentUser',
+                            localStorageAccessConstant.currentUser,
                             JSON.stringify(user)
                         );
                         localStorage.setItem(
-                            'groupId',
+                            localStorageAccessConstant.groupId,
                             JSON.stringify(user.groupId)
                         );
+   
                         this.currentUserSubject.next(user);
                     }
 
@@ -92,7 +94,7 @@ export class AuthenticationService {
                         user.token = token;
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
                         localStorage.setItem(
-                            'currentUser',
+                            localStorageAccessConstant.currentUser,
                             JSON.stringify(user)
                         );
                         this.currentUserSubject.next(user);
