@@ -2,13 +2,12 @@
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
-using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
 {
@@ -16,6 +15,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
     {
         Task<AccessTokensDto> GenerateAccessToken(int userId, int expireMinutes = 60);
         Task<RefreshTokensDto> GenerateRefreshToken(int userId, int tokenId);
+        Task SetAppUserRefreshTokens(UserDTO user);
+
     }
 
     public class OAuthService : IOAuthService
@@ -70,5 +71,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
                 return Convert.ToBase64String(randomNumber);
             }
         }
+
+        public async Task SetAppUserRefreshTokens(UserDTO user)
+        {
+            DB.Models.RefreshTokens oldRefreshToken = await _context.RefreshTokens.Where( r => r.UserId == user.Oid && r.Token == user.RefreshToken).FirstOrDefaultAsync();
+            
+            if (oldRefreshToken != null) _context.RefreshTokens.Remove(oldRefreshToken);
+            
+            RefreshTokensDto refreshToken = await GenerateRefreshToken(user.Oid, user.Oid);
+
+            await _context.SaveChangesAsync();
+            
+            user.RefreshToken = refreshToken.Token;
+            user.Remember = true;
+        }
+
     }
 }

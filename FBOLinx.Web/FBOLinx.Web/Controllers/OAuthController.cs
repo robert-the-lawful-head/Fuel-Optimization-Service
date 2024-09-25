@@ -13,6 +13,7 @@ using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.Dto.Responses;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -82,6 +83,15 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
             var response = await _oAuthService.ExchangeRefreshToken(request);
+            return Ok(response);
+        }
+        [HttpPost("app-refresh-token")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ExchangeRefreshTokenResponse>> RefreshAppAccessToken([FromBody] ExchangeRefreshTokenRequest request)
+        {
+            var response = await _oAuthService.ExchangeRefreshToken(request);
+            if (!response.Success)
+                return Unauthorized();
             return Ok(response);
         }
     }

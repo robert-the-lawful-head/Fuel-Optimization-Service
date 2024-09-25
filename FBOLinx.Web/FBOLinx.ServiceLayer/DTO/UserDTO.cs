@@ -28,5 +28,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public ICollection<AccessTokensDto> AccessTokens { get; set; }
         public string RoleDescription { get; set; }
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
+        public bool Remember { get; set; } = false;
     }
 }

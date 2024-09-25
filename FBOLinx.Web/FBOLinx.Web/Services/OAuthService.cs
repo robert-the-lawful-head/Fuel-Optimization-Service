@@ -30,6 +30,8 @@ namespace FBOLinx.Web.Services
         private readonly IOAuthService _IOAuthService;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
 
+        private readonly int _tokenExpirationInMinutes = 10080;
+
         public OAuthService(FboLinxContext context, JwtManager jwtManager, IGroupService groupService, IFboService fboService, IOAuthService oAuthService, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService)
         {
             _context = context;
@@ -59,13 +61,13 @@ namespace FBOLinx.Web.Services
             var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(token.User.GroupId.Value));
             var fbo = await _fboService.GetFbo(token.User.FboId);
 
-            return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, token.User.Username, token.User.FboId, group.GroupName, token.User.GroupId.Value, token.User.Role, fbo.FboAirport.Icao, fbo.Fbo);
+            return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_tokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, token.User.Username, token.User.FboId, group.GroupName, token.User.GroupId.Value, token.User.Role, fbo.FboAirport.Icao, fbo.Fbo);
         }
 
         public async Task<ExchangeRefreshTokenResponse> ExchangeRefreshToken(ExchangeRefreshTokenRequest request)
         {
             var claimsPrincipal = _jwtManager.GetPrincipal(request.AuthToken);
-
+            
             if (claimsPrincipal == null)
             {
                 return new ExchangeRefreshTokenResponse(false, "Invalid refresh token.  Please re-authenticate the user.");
@@ -84,20 +86,20 @@ namespace FBOLinx.Web.Services
 
             AccessTokens oldToken = await _context.AccessTokens.FindAsync(oldRefreshToken.AccessTokenId);
 
-            AccessTokensDto accessToken = await _IOAuthService.GenerateAccessToken(user.Oid, 10080);
+            AccessTokensDto accessToken = await _IOAuthService.GenerateAccessToken(user.Oid, _tokenExpirationInMinutes);
 
             string authToken = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 
-            RefreshTokensDto refreshToken = await _IOAuthService.GenerateRefreshToken(user.Oid, accessToken.Oid);
+            RefreshTokensDto refreshToken = await _IOAuthService.GenerateRefreshToken(user.Oid, accessToken?.Oid ?? user.Oid);
 
-            _context.AccessTokens.Remove(oldToken);
+            if(oldToken != null) _context.AccessTokens.Remove(oldToken);
             _context.RefreshTokens.Remove(oldRefreshToken);
             await _context.SaveChangesAsync();
 
             var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(user.GroupId.Value));
             var fbo = await _fboService.GetFbo(user.FboId);
 
-            return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, group.GroupName, user.GroupId.Value, user.Role, fbo.FboAirport.Icao, fbo.Fbo, true);
+            return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_tokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, group.GroupName, user.GroupId.Value, user.Role, fbo?.FboAirport?.Icao, fbo?.Fbo, true);
         }
     }
 }

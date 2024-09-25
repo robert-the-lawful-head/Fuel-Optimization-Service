@@ -18,6 +18,8 @@ using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.DB.Specifications.User;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using Mapster;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -27,6 +29,7 @@ namespace FBOLinx.Web.Controllers
     public class UsersController : FBOLinxControllerBase
     {
         private readonly Services.IUserService _userService;
+        private readonly IOAuthService _iOAuthService;
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboService _fboService;
@@ -34,7 +37,7 @@ namespace FBOLinx.Web.Controllers
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
         private readonly ServiceLayer.BusinessServices.User.IUserService _userBusinessService;
-        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService) : base(logger)
+        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService,IOAuthService iOAuthService) : base(logger)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -44,6 +47,7 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _pricingTemplateService = pricingTemplateService;
             _userBusinessService = userBusinessService;
+            _iOAuthService = iOAuthService;
         }
 
         [HttpGet("prepare-token-auth")]
@@ -71,15 +75,17 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = await _userService.GetUserByCredentials(userParam.Username, userParam.Password, true);
-
+            var user = (await _userService.GetUserByCredentials(userParam.Username, userParam.Password, authenticate: true)).Adapt<UserDTO>();
             if (user == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            user.Fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
-
+            user.Fbo = (await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault())).Adapt<FbosDto>();
+            if (userParam.Remember)
+            {
+                await _iOAuthService.SetAppUserRefreshTokens(user);
+            }
             return Ok(user);
         }
 
