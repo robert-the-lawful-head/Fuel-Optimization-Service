@@ -1665,7 +1665,6 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("analysis/customer-capture-rate/group/{groupId}/fbo/{fboId}")]
         public async Task<ActionResult<List<CustomerCaptureRateResponse>>> GetCustomerCaptureRate([FromRoute] int groupId, [FromRoute] int fboId, [FromQuery] DateTime startDateTime, [FromQuery] DateTime endDateTime)
         {
-
                 var icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, null).ToListAsync();
@@ -1675,7 +1674,7 @@ namespace FBOLinx.Web.Controllers
                 var fbo = await _fboService.GetFbo(fboId);
                 var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, startDateTime, endDateTime);
 
-                //Fill-in customers that don't exist in the group anymore
+                //Fill-in customers that don't exist in the group anymorer
                 List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
                     .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
                 var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
@@ -1724,8 +1723,9 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                List<string> icaos = await _context.Fboairports.Where(f => request.FboIds.Contains(f.Fboid)).Select(f => f.Icao).ToListAsync();
-                List<int> airportfbos = await _context.Fboairports.Where(f => icaos.Contains(f.Icao)).Select(f => f.Fboid).ToListAsync();
+                var airportquery = _context.Fboairports.Where(f => request.FboIds.Contains(f.Fboid));
+                List<string> icaos = await airportquery.Select(f => f.Icao).ToListAsync();
+                List<int> airportfbos = await airportquery.Select(f => f.Fboid).ToListAsync();
                 var validTransactions = await _context.FuelReq.Where(fr =>
                     (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid > 0 &&
                     airportfbos.Contains(fr.Fboid ?? 0)).ToListAsync();
@@ -1745,7 +1745,9 @@ namespace FBOLinx.Web.Controllers
                 var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                        join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
                                        join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
-                                       where cibg.GroupId == groupId && icaos.Contains(cpl.ICAO)
+                                       join fa in airportquery on cpl.ICAO equals fa.Icao
+                                       where cibg.GroupId == groupId 
+                                             //&& icaos.Contains(cpl.ICAO)
                                        select new
                                        {
                                            cibg.CustomerId,
