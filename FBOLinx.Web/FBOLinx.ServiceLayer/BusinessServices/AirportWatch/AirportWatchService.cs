@@ -632,8 +632,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             foreach (var distinctBoxFromData in distinctBoxesFromData)
             {
-                if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToLower() == distinctBoxFromData.ToLower()) == null)
-                    airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToLower() });
+                if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToUpper() == distinctBoxFromData.ToUpper()) == null)
+                    airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToUpper() });
             }
             await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd);
         }
@@ -744,7 +744,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToInsert)
             {
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
-                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName.ToUpper() == airportWatchHistoricalDataDto.BoxName.ToUpper()).FirstOrDefault();
 
                 if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport?.Icao)
                     airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
@@ -753,7 +753,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToUpdate)
             {
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
-                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName.ToUpper() == airportWatchHistoricalDataDto.BoxName.ToUpper()).FirstOrDefault();
 
                 if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport?.Icao)
                     airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
@@ -839,7 +839,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 var fbos = await (from f in _context.Fbos where f.GroupId > 1 select new { Fbo = f.Fbo, AntennaName = f.AntennaName }).ToListAsync();
                 foreach (AirportWatchAntennaStatusGrid distinctBox in distinctBoxes)
                 {
-                    var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToLower().Trim() == distinctBox.BoxName.ToLower().Trim()).FirstOrDefault();
+                    var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToUpper().Trim() == distinctBox.BoxName.ToUpper().Trim()).FirstOrDefault();
                     if (fbo != null && fbo.Fbo != null)
                         distinctBox.FbolinxAccount = fbo.Fbo;
                 }
