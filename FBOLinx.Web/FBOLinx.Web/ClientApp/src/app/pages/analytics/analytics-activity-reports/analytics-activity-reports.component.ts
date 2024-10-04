@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AnaliticsReportType } from '../analytics-report-popup/analytics-report-popup.component';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 export interface AnatylticsReports {
     type: AnaliticsReportType;

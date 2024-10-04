@@ -8,12 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Models.Responses;
 using System;
 using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.Dto.Responses;
 
 namespace FBOLinx.Web.Controllers
 {

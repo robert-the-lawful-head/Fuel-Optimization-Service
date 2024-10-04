@@ -19,7 +19,7 @@ import {
     customerUpdatedEvent,
     fboChangedEvent,
 } from '../../../constants/sharedEvents';
-import { AuthenticationService } from '../../../services/authentication.service';
+import { AuthenticationService } from '../../../services/security/authentication.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { FboairportsService } from '../../../services/fboairports.service';
 import { FbopricesService } from '../../../services/fboprices.service';
