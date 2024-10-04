@@ -234,7 +234,7 @@ export class DefaultLayoutComponent implements OnInit {
             '/default-layout/dashboard-fbo',
             '/default-layout/dashboard-fbo-updated'
         ];
-        if(this.isCsr) return false;
+        //if(this.isCsr) return false;
 
         if (
             whitelist.findIndex((v) =>
