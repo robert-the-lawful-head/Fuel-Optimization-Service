@@ -41,16 +41,12 @@ using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.DB.Specifications.OrderDetails;
 using FBOLinx.DB.Specifications.Fbo;
-using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.OrderNotes;
-using FBOLinx.DB.Specifications.ServiceOrderItem;
-using FBOLinx.ServiceLayer.DTO.Responses.ServiceOrder;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.DB.Specifications.CustomerInfoByFbo;
-using FBOLinx.DB.Specifications.FboAirport;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -1745,25 +1741,22 @@ namespace FBOLinx.Web.Controllers
                 var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                        join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
                                        join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
-                                       join fa in airportquery on cpl.ICAO equals fa.Icao
                                        where cibg.GroupId == groupId 
-                                             //&& icaos.Contains(cpl.ICAO)
+                                       && icaos.Contains(cpl.ICAO)
                                        select new
                                        {
                                            cibg.CustomerId,
                                            cpl.CreatedDate
                                        }).ToListAsync();
 
-                var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroup(groupId);
-
-                var customers = customerInfoByGroup
-                                .Select(c => new
-                                {
-                                    c.CustomerId,
-                                    Company = c.Company.Trim(),
-                                    Customer = c.Customer
-                                })
-                                .Distinct().ToList();
+                var customers = (await _customerInfoByGroupService.GetCustomersByGroup(groupId,0,true))
+                    .Select(c => new
+                    {
+                        c.CustomerId,
+                        Company = c.Company.Trim(),
+                        Customer = c.Customer
+                    })
+                                .Distinct().ToList(); 
 
                 FBOLinxOrdersForMultipleAirportsRequest fbolinxOrdersRequest = new FBOLinxOrdersForMultipleAirportsRequest();
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
@@ -1780,14 +1773,28 @@ namespace FBOLinx.Web.Controllers
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = response.Result;
 
                 List<object> tableData = new List<object>();
+
+                var customerFuelerLinxIds = customers.ToDictionary(c => c.CustomerId, c => c.Customer?.FuelerlinxId);
+                var selectedCompanyFuelReqsDict = fuelReqs.ToDictionary(f => f.CustomerId, f => f);
+                var companyQuotesDict = pricingLogs
+                    .Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime)
+                    .GroupBy(c => c.CustomerId)
+                    .ToDictionary(g => g.Key, g => g.Count());
+                var companyPricingLogDict = pricingLogs
+                    .GroupBy(c => c.CustomerId)
+                    .ToDictionary(g => g.Key, g => g.OrderByDescending(c => c.CreatedDate).FirstOrDefault());
+                var totalOrdersDict = fuelerlinxCustomerOrdersCount
+                    .GroupBy(c => c.FuelerLinxCustomerId)
+                    .ToDictionary(g => g.Key, g => g.Select(f => f.TransactionsCount).FirstOrDefault());
+
                 foreach (var customer in customers)
                 {
-                    //var fuelerLinxCustomerID = _context.Customers.Where(c => c.Oid.Equals(customer.CustomerId)).Select(c => c.FuelerlinxId).FirstOrDefault();
-                    var fuelerLinxCustomerID = customer.Customer?.FuelerlinxId;
-                    var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
-                    var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
-                    var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
-                    var totalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+                    var customerId = customer.CustomerId;
+                    var fuelerLinxCustomerID = customerFuelerLinxIds[customerId]; 
+                    var selectedCompanyFuelReqs = selectedCompanyFuelReqsDict.TryGetValue(customerId, out var req) ? req : null; 
+                    var companyQuotes = companyQuotesDict.TryGetValue(customerId, out var quotes) ? quotes : 0;
+                    var companyPricingLog = companyPricingLogDict.TryGetValue(customerId, out var log) ? log : null;
+                    var totalOrders = totalOrdersDict.TryGetValue(fuelerLinxCustomerID ?? 0, out var orders) ? orders : 0;
 
                     tableData.Add(new
                     {
