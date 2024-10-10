@@ -688,7 +688,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 if (oldAirportWatchLiveData != null &&
                 oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5))
                 {
-                    if ((record.AircraftPositionDateTimeUtc - oldAirportWatchLiveData.AircraftPositionDateTimeUtc).TotalMinutes > 1)
+                    if (oldAirportWatchHistoricalData == null || (oldAirportWatchHistoricalData != null && (record.AircraftPositionDateTimeUtc - oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc).TotalMinutes > 1))
                         _HistoricalDataToInsert.Add(airportWatchHistoricalData);
                 }
                 //Finally go through the conditions that make this a valid parking occurrence
