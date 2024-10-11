@@ -484,6 +484,22 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbo);
         }
 
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpGet("all-premium-fbo-icaos")]
+        public async Task<ActionResult<List<string>>> GetAllPremiumFbos()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbosQuery = _fboService.GetAllFbos();
+            var fboIcaos = await fbosQuery.Where(x => x.AccountType == Core.Enums.AccountTypes.RevFbo).Include(x => x.FboAirport).Select(f => f.FboAirport.Icao).Distinct().ToListAsync();
+
+            return Ok(fboIcaos);
+        }
+
         [HttpGet("by-akukwik-handlerId/{handlerId}")]
         public async Task<ActionResult<Fbos>> GetFboByAcukwikHandlerId([FromRoute] int handlerId)
         {
