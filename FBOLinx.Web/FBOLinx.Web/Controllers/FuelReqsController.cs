@@ -1749,7 +1749,7 @@ namespace FBOLinx.Web.Controllers
                                            cpl.CreatedDate
                                        }).ToListAsync();
 
-                var customers = (await _customerInfoByGroupService.GetCustomersByGroup(groupId,0,true))
+                var customers = (await _customerInfoByGroupService.GetCustomersByGroup(groupId))
                     .Select(c => new
                     {
                         c.CustomerId,
