@@ -498,7 +498,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var fbosQuery = _fboService.GetAllFbos();
-            var fboIcaos = await fbosQuery.Where(x => x.AccountType == Core.Enums.AccountTypes.RevFbo).Include(x => x.FboAirport).Select(f => f.FboAirport.Icao).Distinct().ToListAsync();
+            var fboIcaos = await fbosQuery.Where(x => x.AccountType == Core.Enums.AccountTypes.RevFbo && x.Active == true).Include(x => x.FboAirport).Select(f => f.FboAirport.Icao).Distinct().ToListAsync();
 
             var acukwikAirports = await _airportService.GetGeneralAirportInformationList();
             var acukwikAirportIds = (from a in acukwikAirports
