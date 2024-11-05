@@ -61,6 +61,8 @@ namespace FBOLinx.Web.Services
         private readonly ICustomerContactsEntityService _customerContactsEntityService;
         private PriceBreakdownDisplayTypes _PriceBreakdownDisplayType;
         private IFboPreferencesService _fboPreferencesService;
+        private List<PricingTemplate> _AllCustomersPricingTemplates;
+        private List<ContactInfoByGroup> _Recipients;
 
 
         #region Constructors
@@ -236,7 +238,7 @@ namespace FBOLinx.Web.Services
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
             {
-                var validPricingTemplates = await GetValidPricingTemplates(customer);
+                var validPricingTemplates = GetValidPricingTemplates(customer);
                 if (validPricingTemplates == null || validPricingTemplates.Count == 0)
                 {
                     return;
@@ -253,7 +255,7 @@ namespace FBOLinx.Web.Services
                     distributionQueueRecord = distributionQueueRecords.FirstOrDefault();
                 }
 
-                var recipients = await _customerContactsEntityService.GetRecipientsForCustomer(customer, _DistributePricingRequest.FboId, _DistributePricingRequest.GroupId);
+                var recipients = _Recipients.Where(r => r.CustomerContact.CustomerId == customer.CustomerId).ToList();
                 if (!_IsPreview && recipients.Count == 0)
                 {
                     await MarkDistributionRecordAsComplete(distributionQueueRecord);
@@ -400,20 +402,18 @@ namespace FBOLinx.Web.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroupDto customer)
+        private List<PricingTemplate> GetValidPricingTemplates(CustomerInfoByGroupDto customer)
         {
+            var result = _AllCustomersPricingTemplates.Where(a => a.CustomerId == customer.CustomerId && a.Oid == _DistributePricingRequest.PricingTemplate.Oid).ToList();
 
-            var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
-                _DistributePricingRequest.GroupId, _DistributePricingRequest.PricingTemplate.Oid);
+            //var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
+            //    _DistributePricingRequest.GroupId, _DistributePricingRequest.PricingTemplate.Oid);
 
             return result;
         }
 
         private async Task<Dictionary<string, byte[]>> GetPriceBreakdownImage(CustomerInfoByGroupDto customer, List<PricingTemplate> pricingTemplates)
         {
-            _PriceBreakdownDisplayType =
-                await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
-
             Dictionary<string, byte[]> productImages = new Dictionary<string, byte[]>();
             foreach (var pricingTemplate in pricingTemplates)
             {
@@ -737,6 +737,13 @@ namespace FBOLinx.Web.Services
             _PricingTemplateFileAttachment = await _pricingTemplateAttachmentService.GetFileAttachmentObject(_DistributePricingRequest.PricingTemplate.Oid);
 
             _EmailContentAttachment = await _EmailContentService.GetFileAttachmentObject(_EmailContent.Oid);
+
+            _AllCustomersPricingTemplates = await _PricingTemplateService.GetAllPricingTemplatesForFbo(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId);
+
+            _Recipients = await _customerContactsEntityService.GetRecipientsForGroupFbo(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId);
+
+            _PriceBreakdownDisplayType =
+               await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
         }
 
         private async Task GetEmailContent()

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
@@ -46,5 +47,8 @@ namespace FBOLinx.DB.Models
         [InverseProperty("ContactInfoByGroup")]
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
+
+        [InverseProperty("ContactInfoByGroup")]
+        public CustomerContacts CustomerContact { get; set; }
     }
 }
