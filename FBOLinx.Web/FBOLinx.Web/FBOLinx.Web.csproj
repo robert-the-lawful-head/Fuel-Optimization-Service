@@ -69,6 +69,7 @@
     <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
     <None Remove="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\customer-account-status-types.ts" />
     <None Remove="ClientApp\src\app\models\customer-aircraft-note.ts" />
     <None Remove="ClientApp\src\app\models\customer-aircraft.ts" />
     <None Remove="ClientApp\src\app\models\customer-info-by-group-note.ts" />
@@ -135,6 +136,7 @@
     <None Remove="ClientApp\src\app\services\serviceorder.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
+    <None Remove="ClientApp\src\app\shared\components\customer-action-status\customer-action-status.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\jetnet-information\jetnet-information.component.ts" />
@@ -257,6 +259,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\serviceorder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\customer-action-status\customer-action-status.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\jetnet-information\jetnet-information.component.ts" />

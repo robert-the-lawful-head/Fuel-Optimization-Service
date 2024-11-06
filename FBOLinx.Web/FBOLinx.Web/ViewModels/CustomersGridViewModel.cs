@@ -54,6 +54,7 @@ namespace FBOLinx.Web.ViewModels
         public string PricingFormula { get; set; }
         public List<CustomerGridContactsViewModel> Contacts { get; set; }
         public FboFavoriteCompany FavoriteCompany { get; set; }
+        public string InvoiceUniqueEmail { get; set; }
     }
     public class CustomerGridContactsViewModel
     {

@@ -121,8 +121,9 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         }
     }
     async setFlightWatchMapCenter(){
-        if(this.selectedICAO)
+        if(this.selectedICAO && this.selectedICAO != undefined && this.selectedICAO != 'undefined'){
             this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
+        }
     }
     applyDateFilterChange() {
         this.statisticsTotalOrders.refreshData();

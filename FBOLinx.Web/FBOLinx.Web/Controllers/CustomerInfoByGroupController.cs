@@ -30,6 +30,8 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
+using Microsoft.Extensions.Options;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -54,6 +56,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerAircraftService _customerAircraftService;
         private ICustomerInfoByGroupNoteService _CustomerInfoByGroupNoteService;
         private readonly IFboPreferencesService _fboPreferencesService;
+        private IOptions<AppSettings> _appSettings;
 
         public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context,
             ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService,
@@ -63,7 +66,7 @@ namespace FBOLinx.Web.Controllers
             IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService,
             ILoggingService logger, ICustomerAircraftService customerAircraftService,
             ICustomerInfoByGroupNoteService customerInfoByGroupNoteService,
-            IFboPreferencesService fboPreferencesService) : base(logger)
+            IFboPreferencesService fboPreferencesService, IOptions<AppSettings> appSettings) : base(logger)
         {
             _CustomerInfoByGroupNoteService = customerInfoByGroupNoteService;
             _hostingEnvironment = hostingEnvironment;
@@ -81,6 +84,7 @@ namespace FBOLinx.Web.Controllers
             _customerInfoByGroupService = customerInfoByGroupService;
             _customerAircraftService = customerAircraftService;
             _fboPreferencesService = fboPreferencesService;
+            _appSettings = appSettings;
         }
 
 
@@ -1127,7 +1131,6 @@ namespace FBOLinx.Web.Controllers
 
                 var decimalStringFormat = await _fboPreferencesService.GetDecimalPrecisionStringFormat(fboId);
 
-
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
                         join ca in allCustomerAircraftsGrouped on cg.CustomerId equals ca.CustomerId into leftJoinCA
@@ -1214,7 +1217,8 @@ namespace FBOLinx.Web.Controllers
                                 .ToList(),
                             Tags = resultsGroup.Key.Tags,
                             PricingFormula = resultsGroup.Key.PricingFormula,
-                            FavoriteCompany = resultsGroup.Key.FavoriteCompany
+                            FavoriteCompany = resultsGroup.Key.FavoriteCompany,
+                            InvoiceUniqueEmail = resultsGroup.Key.FuelerLinxId > 0 ? "invoice_" + resultsGroup.Key.FuelerLinxId.ToString() + "_" + _appSettings.Value.FuelerLinxFboLinxVendorOid + "@fuelerlinx.com" : "",
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())

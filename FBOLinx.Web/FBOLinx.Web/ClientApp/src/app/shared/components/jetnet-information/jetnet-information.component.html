@@ -21,24 +21,28 @@
         <!--<div class="row">
         <h4 class="ml-3">Company Relationships</h4>
     </div>-->
-
-        <div class="row-header"><hr class="info-values" /></div>
-
-        <div class="row">
-            <div class="col-4 pl-5">
-                <h5 class="row-header">Company</h5>
-            </div>
-            <div class="col-4">
-                <h5 class="row-header">Relationship</h5>
-            </div>
-            <div class="col-4">
-                <h5 class="row-header">Contact</h5>
-            </div>
+        <div *ngIf="!jetNetInformation.aircraftresult.companies">
+            Info N/A on JETNET
         </div>
 
-        <div class="row info-values">
-            <div class="col-12">
-                    <mat-accordion>
+            <div *ngIf="jetNetInformation.aircraftresult.companies">
+                <div class="row-header"><hr class="info-values" /></div>
+
+                <div class="row">
+                    <div class="col-4 pl-5">
+                        <h5 class="row-header">Company</h5>
+                    </div>
+                    <div class="col-4">
+                        <h5 class="row-header">Relationship</h5>
+                    </div>
+                    <div class="col-4">
+                        <h5 class="row-header">Contact</h5>
+                    </div>
+                </div>
+
+                <div class="row info-values">
+                    <div class="col-12">
+                        <mat-accordion>
                             <mat-expansion-panel hideToggle *ngFor="let company of jetNetInformation.aircraftresult.companies" [expanded]="company.companyDetailOpenState"
                                                  (opened)="onChange(company, 'opened');" (closed)="onChange(company, 'closed')">
                                 <mat-expansion-panel-header>
@@ -81,26 +85,27 @@
                                     </div>
                                 </ng-container>
                             </mat-expansion-panel>
-                    </mat-accordion>
-            </div>
-        </div>
+                        </mat-accordion>
+                    </div>
+                </div>
 
-            <div class="row pt-5">
-                <div class="col-10 text-right pr-0">
-                    <button (click)="onClickCloseJetNetModal()"
-                            [view]="'blank'"
-                            ni-button>
-                        Cancel
-                    </button>
-                </div>
-                <div class="col-1">
-                    <button (click)="addCustomer()"
-                            [view]="'accent'"
-                            [disabled]="!isExpanded"
-                            ni-button>
-                        Add to CRM
-                    </button>
+                <div class="row pt-5">
+                    <div class="col-10 text-right pr-0">
+                        <button (click)="onClickCloseJetNetModal()"
+                                [view]="'blank'"
+                                ni-button>
+                            Cancel
+                        </button>
+                    </div>
+                    <div class="col-1">
+                        <button (click)="addCustomer()"
+                                [view]="'accent'"
+                                [disabled]="!isExpanded"
+                                ni-button>
+                            Add to CRM
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-</div>
+    </div>

@@ -49,6 +49,7 @@ import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-n
 import { AppPipesModule } from "../app-pipes.module";
 import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-dialog/demo-request-static-dialog.component';
 import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
+import {JetNetSearchComponent } from "../shared/components/jetnet-search/jetnet-search.component";
 
 @NgModule({
     declarations: [
@@ -59,7 +60,8 @@ import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-fav
         MenuComponent,
         FooterComponent,
         DemoRequestStaticDialogComponent,
-        IncomingFavoriteAircraftInfoComponent
+        IncomingFavoriteAircraftInfoComponent,
+        JetNetSearchComponent
     ],
     exports: [
         HorizontalNavbarComponent,
@@ -69,7 +71,8 @@ import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-fav
         MenuComponent,
         FooterComponent,
         DemoRequestStaticDialogComponent,
-        IncomingFavoriteAircraftInfoComponent
+        IncomingFavoriteAircraftInfoComponent,
+        JetNetSearchComponent
     ],
     imports: [
         HttpClientModule,

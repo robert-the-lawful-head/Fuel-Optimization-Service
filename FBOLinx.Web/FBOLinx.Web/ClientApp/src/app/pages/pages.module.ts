@@ -242,6 +242,7 @@ import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
 import { DecimalPrecisionPipe } from '../shared/pipes/decimal/decimal-precision.pipe';
 import { JetNetInformationComponent } from '../shared/components/jetnet-information/jetnet-information.component';
+import {CustomerActionStatusComponent} from '../shared/components/customer-action-status/customer-action-status.component';
 import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
 
 @NgModule({
@@ -412,8 +413,9 @@ import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion
         ItemInputComponent,
         FuelreqsGridServicesComponent,
         FuelreqsNotesComponent,
-        DecimalPrecisionPipe,
         JetNetInformationComponent,
+        CustomerActionStatusComponent,
+        DecimalPrecisionPipe,
         CurrencyPresicionPipe
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],

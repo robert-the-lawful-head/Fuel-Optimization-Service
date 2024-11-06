@@ -184,6 +184,7 @@ export class TableGlobalSearchComponent implements OnInit {
         if (this.page != "") {
             localStorage.removeItem(this.page);
         }
+        this.filteredDataSource.emit(this.matDataSource);
     }
 
     // PRIVATE METHODS

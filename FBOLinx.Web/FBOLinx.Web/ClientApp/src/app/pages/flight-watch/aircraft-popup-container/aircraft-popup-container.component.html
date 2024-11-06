@@ -14,7 +14,7 @@
               <p>Company</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p>{{ aircraftWatch?.flightDepartment | NullOrEmptyToDefault }}&nbsp;</p>
+              <p matTooltip="No Information is available for this item on JETNET. You can manually add the information by accessing our customer manager section." matTooltipPosition="below" [matTooltipDisabled]="hasJetNetInformation">{{ hasJetNetInformation ? aircraftWatch?.flightDepartment : "Info N/A on JETNET"}}&nbsp;</p>
           </div>
       </div>
       <div class="row pb-2">
@@ -54,7 +54,7 @@
               <p>Last Quote</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p>{{ aircraftWatch?.lastQuote}}&nbsp;</p>
+              <p matTooltip="There is no previous quote as this location has not been quoted prior." matTooltipPosition="below" [matTooltipDisabled]="aircraftWatch?.lastQuote != ''">{{ aircraftWatch?.lastQuote == "" ? "NO PREVIOUS QUOTE AVAILABLE" : aircraftWatch?.lastQuote }}&nbsp;</p>
           </div>
       </div>
       <div class="row pb-2">
@@ -70,7 +70,7 @@
               <p>Destination</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p>{{ aircraftWatch?.destination}}&nbsp;</p>
+              <p>{{ aircraftWatch?.destination == null ? "N/A" : aircraftWatch?.destination}}&nbsp;</p>
           </div>
       </div>
       <div class="row actions">
@@ -78,7 +78,7 @@
               <button ni-button [view]="'gray'" class="customer-manager-button" [disabled]="isCustomerManagerButtonDisabled" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
           </div>
           <div class="col-6" *ngIf="isJetNetIntegrationEnabled && hasJetNetInformation">
-              <button ni-button [view]="'accent'" [disabled]="(aircraftWatch?.customerInfoByGroupId != null && aircraftWatch?.customerInfoByGroupId > 0) || !aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation" (click)="openJetNetInformation()">Access JETNET</button>
+              <button ni-button [view]="'accent'" [disabled]="(aircraftWatch?.customerInfoByGroupId != null && aircraftWatch?.customerInfoByGroupId > 0) || !aircraftWatch?.tailNumber.startsWith('N') || !hasJetNetInformation || isJetNetOpened" (click)="openJetNetInformation()">Access JETNET</button>
           </div>
           <div class="col-6" *ngIf="!isJetNetIntegrationEnabled || !hasJetNetInformation">
               <button ni-button [disabled]="!isCustomerManagerButtonDisabled" [view]="'accent'" (click)="addAircraft()">Add Aircraft</button>

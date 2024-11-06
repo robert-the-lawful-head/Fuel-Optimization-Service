@@ -37,10 +37,17 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.BusinessServices.Contacts;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using Azure.Core;
+using System.Text.RegularExpressions;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using System.Collections;
 using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
+using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -72,6 +79,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private ISWIMFlightLegService _SwimFlightLegService;
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
+        private IContactInfoByGroupService _ContactInfoByGroupService;
+        private IPricingTemplateService _PricingTemplateService;
         private readonly SWIMFlightLegEntityService _FlightLegEntityService;
         private IHistoricalAirportWatchSwimFlightLegEntityService _HistoricalAirportWatchSwimFlightLegEntityService;
 
@@ -90,7 +99,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportService airportService,
             ICustomerInfoByGroupService customerInfoByGroupService,
             ISWIMFlightLegService swimFlightLegService,
-            IAircraftHexTailMappingService aircraftHexTailMappingService, SWIMFlightLegEntityService flightLegEntityService, IHistoricalAirportWatchSwimFlightLegEntityService historicalAirportWatchSwimFlightLegEntityService)
+            IAircraftHexTailMappingService aircraftHexTailMappingService, SWIMFlightLegEntityService flightLegEntityService, IHistoricalAirportWatchSwimFlightLegEntityService historicalAirportWatchSwimFlightLegEntityService, IContactInfoByGroupService contactInfoByGroupService, IPricingTemplateService pricingTemplateService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;
@@ -111,6 +120,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
             _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
             _AircraftHexTailMappingService = aircraftHexTailMappingService;
+            _ContactInfoByGroupService = contactInfoByGroupService;
+            _PricingTemplateService = pricingTemplateService;
             _FlightLegEntityService = flightLegEntityService;
             _HistoricalAirportWatchSwimFlightLegEntityService = historicalAirportWatchSwimFlightLegEntityService;
         }
@@ -430,6 +441,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                })
                .ToList();
 
+            var nonFuelerLinxCustomerWithNoEmail = new List<CustomerContactsByGroupGridViewModel>();
+            var customerTemplates = new List<CustomerPricingTemplatesModel>();
+            var topCustomers=new List<ChartDataResponse>();
+            if (fboId != null)
+            {
+                nonFuelerLinxCustomerWithNoEmail = await _ContactInfoByGroupService.GetNonFuelerLinxCustomersWithNoEmailByGroupFbo(groupId, fboId.Value);
+
+                customerTemplates = await _PricingTemplateService.GetCustomerTemplates();
+
+                topCustomers = await _FuelReqService.GetCustomersBreakdown(fboId.GetValueOrDefault(), groupId, null, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault());
+                topCustomers = topCustomers.OrderByDescending(t => t.Orders).Take(10).ToList();
+            }
+
             var parkingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Parking).Where(x => x.AirportWatchHistoricalParking != null).ToList();
             var landingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Landing).ToList();
             var parkingAndLandingAssociationList = (from parkingEvent in parkingEvents
@@ -475,7 +499,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               CompanyId = h.CustomerId,
                               Company = string.IsNullOrEmpty(h.Company) ? hextail?.FAARegisteredOwner : h.Company,
                               DateTime = h.AircraftPositionDateTimeUtc,
-                              TailNumber = h.TailNumber,
+                              TailNumber = h.TailNumber == null ? "" : h.TailNumber,
                               FlightNumber = h.AtcFlightNumber,
                               HexCode = h.AircraftHexCode,
                               AircraftType = string.IsNullOrEmpty(h.Make) ?
@@ -489,10 +513,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               PercentOfVisits = cv?.PercentOfVisits,
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
-                              Originated = request.KeepParkingEvents ? "" : h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : ""
+                              Originated = request.KeepParkingEvents ? "" : h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : "",
+                              CustomerActionStatusEmailRequired = (nonFuelerLinxCustomerWithNoEmail.Count > 0 && h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? true : false,
+                              CustomerActionStatusSetupRequired = (customerTemplates.Count > 0 && customerTemplates.Where(c =>c.CustomerId == h.CustomerId) == null) ? true : false,
+                              CustomerActionStatusTopCustomer = (topCustomers.Count > 0 && topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ? true : false,
+                              ToolTipText = (nonFuelerLinxCustomerWithNoEmail.Count > 0 && h.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == h.CustomerId).FirstOrDefault() != null) ? "This customer is missing an email address. Add an email to distribute pricing.": (customerTemplates.Count > 0 && customerTemplates.Where(c => c.CustomerId == h.CustomerId) == null) ? "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address." : (topCustomers.Count > 0 && topCustomers.Where(t => t.Name == h.Company).FirstOrDefault() != null) ?  "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : null
                           }).ToList();
             
-            return result;
+            return result.Where(r => r.Company != null && r.Company != "").ToList();
         }
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate, string icao)
         {
@@ -505,6 +533,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var customerInfoByGroup = await _CustomerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupByGroupIdSpecification(fbo.GroupId));
             var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftByGroupSpecification(fbo.GroupId));
 
+            var nonFuelerLinxCustomerWithNoEmail = await _ContactInfoByGroupService.GetNonFuelerLinxCustomersWithNoEmailByGroupFbo(fbo.GroupId, fboId);
+
+            var customerTemplates = await _PricingTemplateService.GetCustomerTemplates();
+            var topCustomers = await _FuelReqService.GetCustomersBreakdown(fboId, fbo.GroupId, null, minDate, maxDate);
+            topCustomers = topCustomers.OrderByDescending(t => t.Orders).Take(10).ToList();
             var response = new List<AirportWatchHistoricalDataResponse>();
             response = (from s in swimFlightLegs
                         join ca in customerAircrafts on new { TailNumber = s.AircraftIdentification, GroupId = fbo.GroupId } equals new { ca.TailNumber, ca.GroupId }
@@ -525,7 +558,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             Originated = a != null ? s.DepartureICAO : "",
                             Company = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Company.ToUpper()).FirstOrDefault() : s.FAARegisteredOwner,
                             CompanyId = ca != null && ca.CustomerId > 0 ? ca.CustomerId : 0,
-                            CustomerInfoByGroupID = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0
+                            CustomerInfoByGroupID = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0,
+                            CustomerActionStatusEmailRequired = (ca != null && ca.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == ca.CustomerId).FirstOrDefault() != null) ? true : false,
+                            CustomerActionStatusSetupRequired = (ca != null && customerTemplates.Where(c => c.CustomerId == ca.CustomerId) == null) ? true : false,
+                            CustomerActionStatusTopCustomer = (ca != null && topCustomers.Where(t => t.Name == customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Company).FirstOrDefault()).FirstOrDefault() != null) ? true : false,
+                            ToolTipText = (ca != null && ca.CustomerId > 0 && nonFuelerLinxCustomerWithNoEmail.Where(n => n.CustomerId == ca.CustomerId).FirstOrDefault() != null) ? "This customer is missing an email address. Add an email to distribute pricing." : (ca != null && customerTemplates.Where(c => c.CustomerId == ca.CustomerId) == null) ? "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address." : (ca != null && topCustomers.Where(t => t.Name == customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Company).FirstOrDefault()).FirstOrDefault() != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : null
                         }).ToList();
 
             return response.Where(r => r.Company != "" && r.TailNumber != "").ToList();
@@ -595,8 +632,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             foreach (var distinctBoxFromData in distinctBoxesFromData)
             {
-                if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToLower() == distinctBoxFromData.ToLower()) == null)
-                    airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToLower() });
+                if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToUpper() == distinctBoxFromData.ToUpper()) == null)
+                    airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToUpper() });
             }
             await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd);
         }
@@ -707,7 +744,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToInsert)
             {
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
-                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName.ToUpper() == airportWatchHistoricalDataDto.BoxName.ToUpper()).FirstOrDefault();
 
                 if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport?.Icao)
                     airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
@@ -716,7 +753,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToUpdate)
             {
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
-                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName.ToUpper() == airportWatchHistoricalDataDto.BoxName.ToUpper()).FirstOrDefault();
 
                 if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport?.Icao)
                     airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
@@ -802,7 +839,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 var fbos = await (from f in _context.Fbos where f.GroupId > 1 select new { Fbo = f.Fbo, AntennaName = f.AntennaName }).ToListAsync();
                 foreach (AirportWatchAntennaStatusGrid distinctBox in distinctBoxes)
                 {
-                    var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToLower().Trim() == distinctBox.BoxName.ToLower().Trim()).FirstOrDefault();
+                    var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToUpper().Trim() == distinctBox.BoxName.ToUpper().Trim()).FirstOrDefault();
                     if (fbo != null && fbo.Fbo != null)
                         distinctBox.FbolinxAccount = fbo.Fbo;
                 }

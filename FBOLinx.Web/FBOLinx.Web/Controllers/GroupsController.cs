@@ -66,7 +66,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("group-fbo")]
-        public async Task<IActionResult> GetGroupsAndFbos()
+        public async Task<IActionResult> GetGroupsAndFbos([FromQuery] int groupId)
         {
             await DisableExpiredAccounts();
 
@@ -77,7 +77,7 @@ namespace FBOLinx.Web.Controllers
 
             var fuelReqs = await (from fr in _context.FuelReq
                                   join f in _context.Fbos on fr.Fboid equals f.Oid
-                                  where (fr.Cancelled == null || fr.Cancelled == false) && fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                  where (fr.Cancelled == null || fr.Cancelled == false) && fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true && (groupId == 0 || f.GroupId == groupId)
                                   select new
                                   {
                                       fr.Oid,
@@ -87,6 +87,7 @@ namespace FBOLinx.Web.Controllers
 
             var groups = await _context.Group
                             .Where(x => !string.IsNullOrEmpty(x.GroupName))
+                            .Where(e => groupId == 0  || e.Oid == groupId)
                             .Include(x => x.Users)
                             .Include(x => x.Fbos)
                             .OrderBy((x => x.GroupName))
@@ -103,8 +104,7 @@ namespace FBOLinx.Web.Controllers
                                 IsLegacyAccount = x.IsLegacyAccount,
                                 Users = x.Users,
                                 LastLogin = x.Fbos.Max(f => f.LastLogin),
-                                FboCount = x.Fbos.Count(),
-                                Fbos = x.Fbos,
+                                FboCount = x.Fbos.Count()
                             })
                             .ToListAsync();
 
@@ -129,7 +129,8 @@ namespace FBOLinx.Web.Controllers
                               join fa in _context.Fboairports on f.Oid equals fa.Fboid into fas
                               from fairports in fas.DefaultIfEmpty()
                               join fp in fboPrices on f.Oid equals fp.fboId into fps
-                              from fprices in fps.DefaultIfEmpty()
+                              from fprices in fps.DefaultIfEmpty() 
+                              where groupId == 0 || f.GroupId == groupId
                               select new FbosGridViewModel
                               {
                                   Active = f.Active,

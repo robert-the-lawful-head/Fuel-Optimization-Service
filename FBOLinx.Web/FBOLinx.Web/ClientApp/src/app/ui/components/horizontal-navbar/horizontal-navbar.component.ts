@@ -200,8 +200,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.mapLoadSubscription = timer(0,  environment.flightWatch.apiCallInterval).subscribe(() =>{
             if(this.isMapVisible) return;
-            if(this.selectedICAO)
-                this.loadAirportWatchData();
+            this.loadAirportWatchData();
         });
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
 
@@ -598,7 +597,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadAirportWatchData() {
-        if(this.selectedICAO == null) return;
+        if(!this.selectedICAO || this.selectedICAO == 'undefined' || this.selectedICAO === undefined) return;
         
         this.flightWatchService
         .getAirportLiveData(
