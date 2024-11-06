@@ -888,7 +888,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         orderDetails.Eta = fuelerlinxTransaction.Eta;
                         orderDetails.FboHandlerId = fuelerlinxTransaction.FboHandlerId;
                         orderDetails.IsOkToEmail = fuelerlinxTransaction.IsOkToSendEmail;
-                        await _orderDetailsService.AddAsync(orderDetails);
+                        
+                        var addedOrderDetails = await _orderDetailsService.AddAsync(orderDetails);
+                        orderDetails.Oid = addedOrderDetails.Oid;
                     }
                     catch (Exception ex)
                     {
@@ -913,7 +915,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
                         customerInfoByFbo.FboId = fbo.Oid;
                         customerInfoByFbo.CustomFboEmail = fuelerlinxTransaction.FboEmail;
-                        await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
+                        if (customerInfoByFbo.Oid == 0)
+                            await _customerInfoByFboService.AddAsync(customerInfoByFbo);
+                        else
+                            await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
 
                         var serviceReq = new ServiceOrderDto()
                         {
