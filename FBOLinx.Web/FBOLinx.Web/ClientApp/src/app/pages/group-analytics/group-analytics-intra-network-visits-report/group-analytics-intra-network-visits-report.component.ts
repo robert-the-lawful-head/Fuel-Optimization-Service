@@ -30,6 +30,7 @@ import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
 import { isCommercialAircraftInFlightNumbers } from 'src/utils/aircraft';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'app-group-analytics-intra-network-visits-report',
@@ -80,7 +81,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     ) {
         super();
         this.filtersChangeSubscription = this.filtersChanged
-            .debounceTime(500)
+            .pipe(debounceTime(500))
             .subscribe(() => this.refreshDataSource());
 
         this.icao = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
@@ -157,7 +158,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         if(typeof value == "boolean")
             this.isCommercialInvisible = value;
 
-        this.filtersChanged.next();
+        this.filtersChanged.next({});
     }
 
     public exportCsv() {
