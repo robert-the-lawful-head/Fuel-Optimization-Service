@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Enums.TableStorage;
 using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
 using FBOLinx.DB.Models.ServiceLogs;
-using FBOLinx.DB.Projections.AirportWatch;
 using FBOLinx.DB.Specifications.AirportWatchData;
-using FBOLinx.DB.Specifications.ServiceLogs;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
-using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.TableStorage.Entities;
 using FBOLinx.TableStorage.EntityServices;
-using Fuelerlinx.SDK;
 using Geolocation;
-using Mapster;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StackifyLib;
@@ -54,21 +47,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IFboService _FboService;
         private readonly AirportWatchDataTableEntityService _airportWatchDataTableEntityService;
         private readonly TableStorageLogEntityService _TableStorageLogEntityService;
-        private static ILogger<AirportWatchLiveDataService> _logger { get; set; }
+        private readonly ILoggingService _loggingService;
+
 
         public AirportWatchLiveDataService(IRepository<DB.Models.AirportWatchLiveData, 
                 FboLinxContext> entityService,
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
                 IAirportService airportService,
-            IFboService fboService, AirportWatchDataTableEntityService airportWatchDataTableEntityService, TableStorageLogEntityService tableStorageLogEntityService,
-            ILogger<AirportWatchLiveDataService> logger) : base(entityService)
+            IFboService fboService, AirportWatchDataTableEntityService airportWatchDataTableEntityService, TableStorageLogEntityService tableStorageLogEntityService, ILoggingService loggingService) : base(entityService)
         {
             _FboService = fboService;
             _AirportService = airportService;
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _airportWatchDataTableEntityService = airportWatchDataTableEntityService;
             _TableStorageLogEntityService = tableStorageLogEntityService;
-            _logger = logger;
+            _loggingService = loggingService;
         }
 
         public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1)
@@ -189,6 +182,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             List<AirportWatchLiveDataDto> result = new List<AirportWatchLiveDataDto>();
             if (!string.IsNullOrEmpty(airportIdentifier))
             {
+                _loggingService.LogError("GetLiveData -> airportIdentifier", airportIdentifier, Logging.LogLevel.Info, LogColorCode.Red);
                 var airportPosition = await _AirportService.GetAirportPositionByAirportIdentifier(airportIdentifier);
                 CoordinateBoundaries boundaries = new CoordinateBoundaries(airportPosition.GetFboCoordinate(), _DistanceInNauticalMiles, DistanceUnit.Miles);
                 result = await GetListbySpec(new AirportWatchLiveDataByBoundarySpecification(
