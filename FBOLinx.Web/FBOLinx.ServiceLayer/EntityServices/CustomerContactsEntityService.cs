@@ -15,7 +15,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 {
     public interface ICustomerContactsEntityService : IRepository<ContactInfoByGroup, FboLinxContext>
     {
-        Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroupDto customer, int fboId, int groupId);
+        Task<List<ContactInfoByGroup>> GetRecipientsForGroupFbo(int fboId, int groupId);
     }
     public class CustomerContactsEntityService : Repository<ContactInfoByGroup, FboLinxContext>, ICustomerContactsEntityService
     {
@@ -26,7 +26,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             _context = context;
         }
 
-        public async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroupDto customer, int fboId, int groupId)
+        public async Task<List<ContactInfoByGroup>> GetRecipientsForGroupFbo(int fboId, int groupId)
         {
             var result = await (from cc in _context.Set<CustomerContacts>()
                                 join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
@@ -34,10 +34,10 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                 join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
                                 from cibf in leftJoinCIBF.DefaultIfEmpty()
                                 where cibg.GroupId == groupId
-                                      && cc.CustomerId == customer.CustomerId
                                       && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                       && !string.IsNullOrEmpty(cibg.Email)
-                                select cibg).ToListAsync();
+                                select new ContactInfoByGroup { Email = cibg.Email, CustomerContact = new CustomerContacts() { CustomerId = cc.CustomerId} }).ToListAsync();
+
             return result;
         }
     }

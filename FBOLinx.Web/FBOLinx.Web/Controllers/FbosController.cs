@@ -26,6 +26,7 @@ using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.DB.Specifications.User;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -513,6 +514,21 @@ namespace FBOLinx.Web.Controllers
                 return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken));
 
             return Ok(authentication.FboEmails);
+        }
+
+        // GET: api/Fbos/all-fbos-with-jetnet-enabled
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpGet("all-fbos-with-jetnet-enabled")]
+        public async Task<ActionResult<List<string>>> AllFbosWithJetNetEnabled()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
+            return fbos.Where(f => f.IsJetNetIntegrationEnabled == true).Select(f => f.Fbo).ToList();
         }
 
         [HttpGet("sendengagementemails")]

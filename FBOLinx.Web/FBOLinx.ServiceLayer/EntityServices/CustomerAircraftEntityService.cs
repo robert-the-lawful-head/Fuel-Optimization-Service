@@ -7,12 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.Core.Extensions;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
     public interface ICustomerAircraftEntityService : IRepository<CustomerAircrafts, FboLinxContext>
     {
-        Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId);
+        Task<List<CustomerAircraftsViewModel>> GetTailNumbers(int groupId, int aircraftPricingTemplateId = 0, int customerId = 0);
         Task<IList<Tuple<int, string, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers);
         Task<IEnumerable<Tuple<int, string, string>>> GetPricingTemplates(IList<string> tailNumbers);
         Task<List<AircraftLocation>> GetAircraftLocations(int fuelerlinxCustomerId);
@@ -25,16 +26,18 @@ namespace FBOLinx.ServiceLayer.EntityServices
             _context = context;
         }
 
-        public async Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId)
+        public async Task<List<CustomerAircraftsViewModel>> GetTailNumbers(int groupId, int aircraftPricingTemplateId = 0, int customerId = 0)
         {
-            var tailNumberList = from ca in _context.CustomerAircrafts
+            var tailNumberList = await
+                                (from ca in _context.CustomerAircrafts
                                  join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
-                                 where ap.PriceTemplateId == aircraftPricingTemplateId
-                                       && ca.CustomerId == customerId
+                                 where (aircraftPricingTemplateId == 0 || ap.PriceTemplateId == aircraftPricingTemplateId)
+                                       && (customerId == 0 || ca.CustomerId == customerId)
                                        && ca.GroupId == groupId
                                        && !string.IsNullOrEmpty(ca.TailNumber)
-                                 select ca.TailNumber.Trim();
-            return await tailNumberList.ToListAsync();
+                                 select new CustomerAircraftsViewModel { TailNumber = ca.TailNumber.Trim(), CustomerId = ca.CustomerId, PricingTemplateId = ap.PriceTemplateId }).ToListAsync();
+
+            return tailNumberList;
         }
 
         public async Task<IList<Tuple<int, string, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers)
