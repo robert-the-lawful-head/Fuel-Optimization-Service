@@ -30,6 +30,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         {
             var fboProducts = new List<string>();
             var fboPreferences = await GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+
+            if (fboPreferences == null)
+            {
+                fboPreferences = new FboPreferencesDTO() { Fboid = fboId, EnableJetA = true, EnableSaf = false };
+                await AddAsync(fboPreferences);
+            }
+
             if (fboPreferences.EnableJetA.GetValueOrDefault())
                 fboProducts.Add("JetA");
             if (fboPreferences.EnableSaf.GetValueOrDefault())
@@ -45,7 +52,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         }
         public async Task<string> GetDecimalPrecisionStringFormat(int? fboId)
         {
-            var decimalPrecision = (fboId == null) ? 4 : (await this.GetByFboId((int)fboId)).DecimalPrecision;
+            var decimalPrecision = (fboId == null) ? 4 : (await this.GetByFboId((int)fboId))?.DecimalPrecision;
 
             return $"{{0:C{decimalPrecision}}}";
         }
