@@ -981,7 +981,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var fuelReqGallons = fuelerlinxTransaction.FuelEstWeight;
                     orderDetails.QuotedVolume = fuelReqGallons;
                     orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
-                    await _orderDetailsService.UpdateAsync(orderDetails);
+                    try
+                    {
+                        await _orderDetailsService.UpdateAsync(orderDetails);
+                    }
+                    catch(Exception ex)
+                    {
+                        _loggingService.LogError("UpdateAsync error: " + ex.Message + " Inner exception: " + ex.InnerException, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                    }
 
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
