@@ -25,6 +25,7 @@ import {
 import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
+import { debounceTime } from 'rxjs/operators';
 
 const initialColumns: ColumnType[] = [
     {
@@ -132,7 +133,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
         }
 
         this.filtersChangedSubscription = this.filtersChanged
-            .debounceTime(500)
+            .pipe(debounceTime(500))
             .subscribe(() => this.refreshTable());
 
         this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
