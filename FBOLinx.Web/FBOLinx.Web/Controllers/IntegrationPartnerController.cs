@@ -36,6 +36,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.DB.Specifications.CustomerInfoByFbo;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using System.Collections;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -226,6 +227,21 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ex);
             }
+        }
+
+        // GET: api/Fbos/all-fbos-with-jetnet-enabled
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.OtherSoftware)]
+        [HttpGet("all-fbos-with-jetnet-enabled")]
+        public async Task<ActionResult<List<string>>> AllFbosWithJetNetEnabled()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
+            return fbos.Where(f => f.IsJetNetIntegrationEnabled == true).OrderBy(f => f.FboAirport.Icao).Select(f => f.FboAirport.Icao + " - " + f.Fbo).ToList();
         }
     }
 }
