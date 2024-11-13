@@ -540,21 +540,6 @@ namespace FBOLinx.Web.Controllers
             return Ok(authentication.FboEmails);
         }
 
-        // GET: api/Fbos/all-fbos-with-jetnet-enabled
-        [AllowAnonymous]
-        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
-        [HttpGet("all-fbos-with-jetnet-enabled")]
-        public async Task<ActionResult<List<string>>> AllFbosWithJetNetEnabled()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
-            return fbos.Where(f => f.IsJetNetIntegrationEnabled == true).Select(f => f.Fbo).ToList();
-        }
-
         [HttpGet("sendengagementemails")]
         public async Task EngagementEmails()
         {

@@ -12,7 +12,7 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
     {
         public AllFbosFromAllGroupsSpecification() : base(x => x.GroupId > 1)
         {
-
+            AddInclude(x => x.FboAirport);
         }
     }
 }
