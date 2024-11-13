@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
@@ -20,5 +21,10 @@ namespace FBOLinx.DB.Models
         [InverseProperty("CustomerContacts")]
         [ForeignKey("CustomerId")]
         public Customers Customer { get; set; }
+
+        [InverseProperty("CustomerContact")]
+        [ForeignKey("ContactId")]
+        public ContactInfoByGroup ContactInfoByGroup { get; set; }
+       
     }
 }

@@ -2,6 +2,7 @@
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.Dto.Requests;
@@ -11,6 +12,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.Mapping;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,7 +86,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             await _customerMarginsEntityService.AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
         }
 
-        public async Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0,bool isAnalytics = false)
+        public async Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForFbo(int fboId, int groupId)
+        {
+            List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
+
+            var standardTemplates = await _pricingTemplateEntityService.GetStandardTemplatesForAllCustomers(fboId, groupId);
+            
+            var aircraftPricesResult = await _pricingTemplateEntityService.GetTailSpecificPricingTemplatesForAllCustomers(groupId, fboId);
+            
+            result.AddRange(standardTemplates);
+
+            var allCustomersTailNumberList = await _customerAircraftEntityService.GetTailNumbers(groupId);
+
+            //Set the applicable tail numbers for the aircraft-specific templates
+            foreach (DB.Models.PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
+            {
+                if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
+                    continue;
+                
+                var tailNumberList=allCustomersTailNumberList.Where(x => x.CustomerId== aircraftPricingTemplate.CustomerId && x.PricingTemplateId == aircraftPricingTemplate.Oid).Select(x => x.TailNumber).ToList();
+                if (tailNumberList == null || tailNumberList.Count == 0)
+                    continue;
+                aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
+                aircraftPricingTemplate.TailNumbers = tailNumberList;
+                result.Add(aircraftPricingTemplate);
+            }
+            //Set the applicable tail numbers for the standard/default templates
+            var customerAircrafts = await _customerAircraftEntityService.Where(x => x.GroupId == groupId).ToListAsync();
+            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !string.IsNullOrEmpty(c.TailNumber) && !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber.Trim()).ToList());
+
+            return result;
+        }
+
+        public async Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false)
         {
             List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
 
@@ -99,7 +133,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             {
                 if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
                     continue;
-                var tailNumberList = await _customerAircraftEntityService.GetTailNumbers(aircraftPricingTemplate.Oid, customer.CustomerId, groupId);
+                var tailNumberCollection = await _customerAircraftEntityService.GetTailNumbers(groupId, aircraftPricingTemplate.Oid, customer.CustomerId);
+                var tailNumberList = tailNumberCollection.Select(x => x.TailNumber).ToList();
  
                 if (tailNumberList == null || tailNumberList.Count == 0)
                     continue;

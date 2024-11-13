@@ -342,7 +342,7 @@ namespace FBOLinx.ServiceLayer.Test.Services
             services.AddSingleton(distributionErrorsEntityServiceMock.Object);
 
             var customerContactsEntityServiceMock = new Mock<ICustomerContactsEntityService>();
-            customerContactsEntityServiceMock.Setup(x => x.GetRecipientsForCustomer(It.IsAny<CustomerInfoByGroupDto>(), It.IsAny<int>(), It.IsAny<int>()));
+            customerContactsEntityServiceMock.Setup(x => x.GetRecipientsForGroupFbo(It.IsAny<int>(), It.IsAny<int>()));
             services.AddSingleton(customerContactsEntityServiceMock.Object);
         }
     }

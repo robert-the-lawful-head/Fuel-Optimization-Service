@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FBOLinx.Core.Extensions;
 using System.Threading.Tasks;
@@ -11,7 +10,6 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.EntityServices;
-using System.Text.RegularExpressions;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
@@ -90,7 +88,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0)
         {
             //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
+
             var customers = new List<CustomerInfoByGroupDto>();
+
             if (customerInfoByGroupId == 0)
                 customers = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
             else
@@ -99,7 +99,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 
             return customers;
         }
-
+        
         public async Task<CustomerInfoByGroupDto> GetById(int customerInfoByGroupId)
         {
             var queryOptions = new QueryableOptions<CustomerInfoByGroup>();

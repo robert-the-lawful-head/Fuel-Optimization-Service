@@ -31,6 +31,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId);
         Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0);
         Task<List<PricingTemplate>> GetAllPricingTemplates();
+        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForAllCustomers(int fboId, int groupId);
     }
     
     public class PricingTemplateEntityService : Repository<PricingTemplate, FboLinxContext>, IPricingTemplateEntityService
@@ -495,6 +496,29 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                                  MarginType = groupedPrices.Key.MarginType
 
                                              }).ToListAsync();
+            return aircraftPricesResult;
+        }
+
+        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForAllCustomers(int fboId, int groupId)
+        {
+            var aircraftPricesResult = await (from ap in _context.AircraftPrices
+                                              join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
+                                              join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                              where ca.GroupId == groupId
+                                                    && pt.Fboid == fboId
+                                              group pt by new { pt.Oid, pt.Name, pt.Fboid, pt.CustomerId, pt.Notes, pt.Type, pt.MarginType }
+                into groupedPrices
+                                              select new DB.Models.PricingTemplate()
+                                              {
+                                                  Oid = groupedPrices.Key.Oid,
+                                                  Name = groupedPrices.Key.Name,
+                                                  Fboid = groupedPrices.Key.Fboid,
+                                                  CustomerId = groupedPrices.Key.CustomerId,
+                                                  Notes = groupedPrices.Key.Notes,
+                                                  Type = groupedPrices.Key.Type,
+                                                  MarginType = groupedPrices.Key.MarginType
+
+                                              }).ToListAsync();
             return aircraftPricesResult;
         }
 
