@@ -39,6 +39,5 @@ export class AgreementsAndDocumentsModalComponent implements OnInit {
     decline(){
         this.dialogRef.close(false);
         this.authenticationService.logout();
-        this.router.navigate(['/landing-site-layout']);
     }
 }

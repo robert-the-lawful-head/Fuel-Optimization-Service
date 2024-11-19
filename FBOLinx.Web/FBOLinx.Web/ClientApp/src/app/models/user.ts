@@ -6,10 +6,6 @@ export class User {
     password: string;
     firstName: string;
     lastName: string;
-    token?: string;
-    refreshToken?: string;
-    tokenExpirationDate?: Date;
-    refreshTokenExpirationDate?: Date;
     role: number;
     fboId: number;
     groupId: number;

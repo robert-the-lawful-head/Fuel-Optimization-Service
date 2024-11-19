@@ -272,7 +272,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     logout() {
         this.authenticationService.logout();
-        this.router.navigate(['/landing-site-layout']);
     }
 
     accountProfileClicked() {

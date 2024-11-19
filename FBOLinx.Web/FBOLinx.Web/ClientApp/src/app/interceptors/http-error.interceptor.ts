@@ -14,6 +14,7 @@ import { AuthenticationService } from '../services/security/authentication.servi
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   private errorSnackBarDuration: number = 4000;
+  private refreshtokenUrl: string = 'app-refresh-token';
   constructor(private snackbarService: SnackBarService,private authenticationService: AuthenticationService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -21,9 +22,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
 
         if (error.status === 401) {
-          if(!this.authenticationService.currentUserValue.remember){
+          if(!this.authenticationService.currentUserValue.remember || error.url.includes(this.refreshtokenUrl)){
             this.authenticationService.logout();
-            location.reload();
             return;
           }
           return throwError(error);

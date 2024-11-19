@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { User } from '../../models/user';
 import { localStorageAccessConstant } from '../../constants/LocalStorageAccessConstant';
-import { AppCookieService } from './cookie.service';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -19,7 +19,7 @@ export class AuthenticationService {
     constructor(
         private http: HttpClient,
         @Inject('BASE_URL') baseUrl: string,
-        private cookieService: AppCookieService
+        private router: Router
     ) {
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json; charset=utf-8',
@@ -35,7 +35,7 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username: string, password: string, remember: boolean) {
+    login(username: string, password: string, remember: boolean): Observable<any> {
         return this.http
             .post<any>(
                 this.accessPointUrl + '/authenticate',
@@ -51,10 +51,7 @@ export class AuthenticationService {
             .pipe(
                 map((user) => {
                     // login successful if there's a jwt token in the response
-                    if (user && user.token) {
-                        // store user details and jwt token in local storage to keep user logged in between page refreshes
-                        this.cookieService.set(localStorageAccessConstant.token, user.token);
-                        this.cookieService.set(localStorageAccessConstant.refreshToken, user.refreshToken);
+                    if (user) {
                         localStorage.setItem(
                             localStorageAccessConstant.currentUser,
                             JSON.stringify(user)
@@ -72,7 +69,7 @@ export class AuthenticationService {
             );
     }
 
-    getAuthToken(token) {
+    getAuthToken(token): Observable<any> {
         const tempToken = { accessToken: token };
         return this.http
             .post<any>(
@@ -82,10 +79,8 @@ export class AuthenticationService {
             .pipe(map((authToken) => authToken));
     }
 
-    preAuth(token) {
+    preAuth(token): Observable<any> {
         const tempUser: User = new User();
-        if (token) this.cookieService.set(localStorageAccessConstant.token,token);
-
         this.currentUserSubject.next(tempUser);
 
         //call prepare session controller method
@@ -98,10 +93,6 @@ export class AuthenticationService {
                 map((user) => {
                     // login successful if there's a jwt token in the response
                     if (user) {
-                        this.cookieService.set(localStorageAccessConstant.token, user.token);
-                        this.cookieService.set(localStorageAccessConstant.refreshToken, user.refreshToken);
-
-                        console.log("🚀 ~ AuthenticationService ~ map ~ this.cookieService.set(localStorageAccessConstant.token, user.token);:", this.cookieService.get(localStorageAccessConstant.token));
 
                         // store user details and jwt token in local storage to keep user logged in between page refreshes
                         localStorage.setItem(
@@ -116,13 +107,13 @@ export class AuthenticationService {
             );
     }
 
-    postAuth() {
+    postAuth(): Observable<any> {
         return this.http.post(this.accessPointUrl + '/run-login-checks', {
             headers: this.headers,
         });
     }
 
-    logout() {
+    logout(): void {
         // remove user from local storage to log user out
         localStorage.removeItem(localStorageAccessConstant.currentUser);
         localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
@@ -136,5 +127,20 @@ export class AuthenticationService {
         localStorage.removeItem(localStorageAccessConstant.isSingleSourceFbo);
 
         this.currentUserSubject.next(null);
+
+        this.http.post(this.accessPointUrl + '/logout', {}).subscribe(() => {
+            console.log('User logged out');
+        });
+
+        this.router.navigate(['/landing-site-layout']);
+
+    }
+    public refreshToken() {
+        return this.http.post(
+            `${this.accessPointUrl}/app-refresh-token`,
+            {
+                headers: this.headers,
+            }
+        )
     }
 }

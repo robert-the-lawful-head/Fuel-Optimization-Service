@@ -58,7 +58,6 @@ import { AircraftpricesService } from './services/aircraftprices.service';
 import { AircraftsService } from './services/aircrafts.service';
 import { AirportWatchService } from './services/airportwatch.service';
 import { AppService } from './services/app.service';
-import { AuthenticationService } from './services/authentication.service';
 import { ContactinfobyfboService } from './services/contactinfobyfbo.service';
 import { ContactinfobygroupsService } from './services/contactinfobygroups.service';
 import { ContactsService } from './services/contacts.service';
@@ -119,6 +118,7 @@ import { ManageFboGroupsService } from './services/managefbo.service';
 import { StringHelperService } from './helpers/strings/stringHelper.service';
 import {JetNetService} from './services/jetnet.service';
 import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
+import { AuthenticationService } from './services/security/authentication.service';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [

@@ -2,18 +2,16 @@ import {
     HttpErrorResponse,
     HttpEvent,
     HttpHandler,
+    HttpHeaders,
     HttpInterceptor,
     HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 
-import { AuthenticationService } from '../services/authentication.service';
-import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
 import { catchError, filter, switchMap, take } from 'rxjs/operators';
-import { OAuthService } from '../services/oauth.service';
 import { User } from '../models/user';
-import { ExchangeRefreshTokenResponse } from '../models/authorization/tokenRefres';
+import { AuthenticationService } from '../services/security/authentication.service';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -22,8 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
         new BehaviorSubject<any>(null);
 
     constructor(
-        private authenticationService: AuthenticationService,
-        private oAuthService: OAuthService
+        private authenticationService: AuthenticationService
     ) {}
 
     intercept(
@@ -33,8 +30,8 @@ export class JwtInterceptor implements HttpInterceptor {
         // add authorization header with jwt token if available
         const currentUser = this.authenticationService.currentUserValue;
 
-        if (currentUser && currentUser.token) {
-            request = this.addTokenToRequest(request, currentUser.token);
+        if (currentUser) {
+            request = this.addRequiredHeadersToRequest(request);
         }
 
         return next.handle(request).pipe(
@@ -47,14 +44,14 @@ export class JwtInterceptor implements HttpInterceptor {
         );
     }
     // Attach the token to the request
-    private addTokenToRequest(
-        req: HttpRequest<any>,
-        token: string
+    private addRequiredHeadersToRequest(
+        req: HttpRequest<any>
     ): HttpRequest<any> {
         return req.clone({
-            setHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true,
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json; charset=utf-8',
+            })
         });
     }
     // Handle 401 errors and refresh the token if necessary
@@ -67,14 +64,13 @@ export class JwtInterceptor implements HttpInterceptor {
             this.isRefreshing = true;
             this.refreshTokenSubject.next(null);
 
-            return this.oAuthService.refreshToken(user).pipe(
+            return this.authenticationService.refreshToken().pipe(
                 switchMap((newToken: any) => {
                     this.isRefreshing = false;
-                    this.updateUserTokens(user, newToken);
                     this.refreshTokenSubject.next(newToken);
 
                     return next.handle(
-                        this.addTokenToRequest(req, newToken.authToken)
+                        this.addRequiredHeadersToRequest(req)
                     );
                 }),
                 catchError((error) => {
@@ -86,21 +82,10 @@ export class JwtInterceptor implements HttpInterceptor {
             return this.refreshTokenSubject.pipe(
                 filter((token: any) => token != null),
                 take(1),
-                switchMap((token) =>
-                    next.handle(this.addTokenToRequest(req, token.authToken))
-                )
+                switchMap((token) => {
+                    return next.handle(this.addRequiredHeadersToRequest(req))
+                })
             );
         }
-    }
-    private updateUserTokens(user: User, tokens: ExchangeRefreshTokenResponse) {
-        user.token = tokens.authToken;
-        user.refreshToken = tokens.refreshToken;
-        user.tokenExpirationDate = tokens.authTokenExpiration;
-        user.refreshTokenExpirationDate = tokens.refreshTokenExpiration;
-
-        localStorage.setItem(
-            localStorageAccessConstant.currentUser,
-            JSON.stringify(user)
-        );
     }
 }
