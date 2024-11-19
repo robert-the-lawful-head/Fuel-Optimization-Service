@@ -15,8 +15,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
     {
         Task<AccessTokensDto> GenerateAccessToken(int userId, int expireMinutes = 60);
         Task<RefreshTokensDto> GenerateRefreshToken(int userId, int tokenId);
-        Task SetAppUserRefreshTokens(UserDTO user);
-
     }
 
     public class OAuthService : IOAuthService
@@ -71,20 +69,5 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
                 return Convert.ToBase64String(randomNumber);
             }
         }
-
-        public async Task SetAppUserRefreshTokens(UserDTO user)
-        {
-            DB.Models.RefreshTokens oldRefreshToken = await _context.RefreshTokens.Where( r => r.UserId == user.Oid && r.Token == user.RefreshToken).FirstOrDefaultAsync();
-            
-            if (oldRefreshToken != null) _context.RefreshTokens.Remove(oldRefreshToken);
-            
-            RefreshTokensDto refreshToken = await GenerateRefreshToken(user.Oid, user.Oid);
-
-            await _context.SaveChangesAsync();
-            
-            user.RefreshToken = refreshToken.Token;
-            user.Remember = true;
-        }
-
     }
 }

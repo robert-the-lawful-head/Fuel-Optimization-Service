@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Auth;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.Service.Mapping.Dto;
+using Mapster;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using System;
 
 namespace FBOLinx.Web.Services
 {
@@ -15,6 +19,7 @@ namespace FBOLinx.Web.Services
         Task<FBOLinx.DB.Models.User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
         Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord);
         Task<FBOLinx.DB.Models.User> CreateGroupLoginIfNeeded(Group groupRecord);
+        Task SetAppUserRefreshTokens(User user);
     }
 
     public class UserService : IUserService
@@ -24,14 +29,17 @@ namespace FBOLinx.Web.Services
         private readonly JwtManager _jwtManager;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
         private IRepository<Group, FboLinxContext> _groupRepo;
+        private IOAuthService _oAuthService;
 
-        public UserService(FboLinxContext context, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService, IRepository<Group, FboLinxContext> groupRepo)
+
+        public UserService(FboLinxContext context, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService, IRepository<Group, FboLinxContext> groupRepo, IOAuthService oAuthService)
         {
             _EncryptionService = encryptionService;
             _Context = context;
             _jwtManager = jwtManager;
             _userService = userService;
             _groupRepo = groupRepo;
+            _oAuthService = oAuthService;
         }
         
         public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
@@ -131,7 +139,18 @@ namespace FBOLinx.Web.Services
 
             return user;
         }
+        public async Task SetAppUserRefreshTokens(User user)
+        {
+            DB.Models.RefreshTokens oldRefreshToken = (user.RefreshToken == null)? null : await _Context.RefreshTokens.Where(r => r.UserId == user.Oid && r.Token == user.RefreshToken.Token ).FirstOrDefaultAsync();
 
+            if (oldRefreshToken != null) _Context.RefreshTokens.Remove(oldRefreshToken);
+
+            RefreshTokensDto refreshToken = await _oAuthService.GenerateRefreshToken(user.Oid, user.Oid);
+
+            await _Context.SaveChangesAsync();
+
+            user.RefreshToken = refreshToken.Adapt<RefreshTokens>();
+        }
         #region Private Methods
         private void SetAuthToken(User user)
         {

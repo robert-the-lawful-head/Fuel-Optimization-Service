@@ -1,13 +1,9 @@
 ﻿using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -18,6 +14,9 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.Service.Mapping.Dto;
+using Microsoft.Extensions.Options;
+using FBOLinx.Web.Configurations;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 
 namespace FBOLinx.Web.Services
 {
@@ -29,10 +28,10 @@ namespace FBOLinx.Web.Services
         private readonly IFboService _fboService;
         private readonly IOAuthService _IOAuthService;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
+        private SecuritySettings _securitySettings;
 
-        private readonly int _tokenExpirationInMinutes = 10080;
 
-        public OAuthService(FboLinxContext context, JwtManager jwtManager, IGroupService groupService, IFboService fboService, IOAuthService oAuthService, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService)
+        public OAuthService(FboLinxContext context, JwtManager jwtManager, IGroupService groupService, IFboService fboService, IOAuthService oAuthService, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService, IOptions<SecuritySettings> securitySettings)
         {
             _context = context;
             _jwtManager = jwtManager;
@@ -40,6 +39,7 @@ namespace FBOLinx.Web.Services
             _fboService = fboService;
             _IOAuthService = oAuthService;
             _userService = userService;
+            _securitySettings = securitySettings.Value;
         }
 
         public async Task<AuthTokenResponse> GenerateAuthToken(string accessToken)
@@ -61,7 +61,7 @@ namespace FBOLinx.Web.Services
             var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(token.User.GroupId.Value));
             var fbo = await _fboService.GetFbo(token.User.FboId);
 
-            return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_tokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, token.User.Username, token.User.FboId, group.GroupName, token.User.GroupId.Value, token.User.Role, fbo.FboAirport.Icao, fbo.Fbo);
+            return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_securitySettings.TokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, token.User.Username, token.User.FboId, group.GroupName, token.User.GroupId.Value, token.User.Role, fbo.FboAirport.Icao, fbo.Fbo);
         }
 
         public async Task<ExchangeRefreshTokenResponse> ExchangeRefreshToken(ExchangeRefreshTokenRequest request)
@@ -86,7 +86,7 @@ namespace FBOLinx.Web.Services
 
             AccessTokens oldToken = await _context.AccessTokens.FindAsync(oldRefreshToken.AccessTokenId);
 
-            AccessTokensDto accessToken = await _IOAuthService.GenerateAccessToken(user.Oid, _tokenExpirationInMinutes);
+            AccessTokensDto accessToken = await _IOAuthService.GenerateAccessToken(user.Oid, _securitySettings.TokenExpirationInMinutes);
 
             string authToken = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 
@@ -99,7 +99,7 @@ namespace FBOLinx.Web.Services
             var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(user.GroupId.Value));
             var fbo = await _fboService.GetFbo(user.FboId);
 
-            return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_tokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, group.GroupName, user.GroupId.Value, user.Role, fbo?.FboAirport?.Icao, fbo?.Fbo, true);
+            return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_securitySettings.TokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, group.GroupName, user.GroupId.Value, user.Role, fbo?.FboAirport?.Icao, fbo?.Fbo, true);
         }
     }
 }

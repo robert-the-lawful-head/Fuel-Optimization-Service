@@ -20,6 +20,8 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using Mapster;
+using Microsoft.Extensions.Options;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -28,8 +30,10 @@ namespace FBOLinx.Web.Controllers
     [Route("api/[controller]")]
     public class UsersController : FBOLinxControllerBase
     {
+        private SecuritySettings _securitySettings;
         private readonly Services.IUserService _userService;
         private readonly IOAuthService _iOAuthService;
+        private readonly Services.OAuthService _oAuthService;
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboService _fboService;
@@ -37,7 +41,7 @@ namespace FBOLinx.Web.Controllers
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
         private readonly ServiceLayer.BusinessServices.User.IUserService _userBusinessService;
-        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService,IOAuthService iOAuthService) : base(logger)
+        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService,IOAuthService iOAuthService, Services.OAuthService oAuthService, IOptions<SecuritySettings> securitySettings) : base(logger)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -48,6 +52,8 @@ namespace FBOLinx.Web.Controllers
             _pricingTemplateService = pricingTemplateService;
             _userBusinessService = userBusinessService;
             _iOAuthService = iOAuthService;
+            _oAuthService = oAuthService;
+            _securitySettings = securitySettings.Value;
         }
 
         [HttpGet("prepare-token-auth")]
@@ -75,20 +81,39 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = (await _userService.GetUserByCredentials(userParam.Username, userParam.Password, authenticate: true)).Adapt<UserDTO>();
+            var user = await _userService.GetUserByCredentials(userParam.Username, userParam.Password, authenticate: true);
             if (user == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            user.Fbo = (await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault())).Adapt<FbosDto>();
+            user.Fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
+
+            SetHttpOnlyCookie(_securitySettings.TokenKey, user.Token, _securitySettings.TokenExpirationInMinutes);
+
             if (userParam.Remember)
             {
-                await _iOAuthService.SetAppUserRefreshTokens(user);
+                await _userService.SetAppUserRefreshTokens(user);
+                SetHttpOnlyCookie(_securitySettings.RefreshTokenKey, user.RefreshToken.Token, _securitySettings.RefreshTokenExpirationInMinutes);
             }
-            return Ok(user);
-        }
 
+            var userDto = user.Adapt<UserDTO>();
+            userDto.Remember = userParam.Remember;
+
+            return Ok(userDto);
+        }
+        private void SetHttpOnlyCookie(string cookieName, string value, int expirationInMinutes)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes)
+            };
+
+            Response.Cookies.Append(cookieName, value, cookieOptions);
+        }
         // GET: api/users/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser([FromRoute] int id)
@@ -407,6 +432,43 @@ namespace FBOLinx.Web.Controllers
             }
             return Ok(new { message = "Clear" });
         }
+
+        [HttpPost("logout")]
+        [AllowAnonymous]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete(_securitySettings.TokenKey);
+            Response.Cookies.Delete(_securitySettings.RefreshTokenKey);
+
+            return Ok(new { message = "Logout successful" });
+        }
+
+        [HttpPost("app-refresh-token")]
+        [AllowAnonymous]
+        public async Task<ActionResult> RefreshAppAccessToken()
+        {
+            Response.Cookies.Delete(_securitySettings.TokenKey);
+            Response.Cookies.Delete(_securitySettings.RefreshTokenKey);
+
+            var authToken = Request.Cookies[_securitySettings.TokenKey];
+            var refreshToken = Request.Cookies[_securitySettings.RefreshTokenKey];
+
+            var request = new ExchangeRefreshTokenRequest
+            {
+                AuthToken = authToken,
+                RefreshToken = refreshToken
+            };
+            var response = await _oAuthService.ExchangeRefreshToken(request);
+
+            if (!response.Success)
+                return Unauthorized();
+
+            SetHttpOnlyCookie(_securitySettings.RefreshTokenKey, response.RefreshToken, _securitySettings.RefreshTokenExpirationInMinutes);
+            SetHttpOnlyCookie(_securitySettings.TokenKey, response.AuthToken, _securitySettings.TokenExpirationInMinutes);
+
+            return Ok();
+        }
+
 
         private bool UserExists(int id)
         {

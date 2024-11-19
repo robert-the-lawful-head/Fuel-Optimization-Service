@@ -46,6 +46,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             IConfiguration configuration)
         {
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+            services.Configure<SecuritySettings>(configuration.GetSection("Security"));
             var appParnterSDKSettings = configuration.GetSection("AppPartnerSDKSettings");
             services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
             var demoDataSection = configuration.GetSection("DemoData");
