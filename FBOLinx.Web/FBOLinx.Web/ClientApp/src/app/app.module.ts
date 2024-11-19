@@ -45,7 +45,7 @@ import {
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ErrorInterceptor, JwtInterceptor } from './helpers';
+import { JwtInterceptor } from './helpers';
 import { DefaultLayoutComponent } from './layouts/default/default.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
 import { OutsideTheGateLayoutComponent } from './layouts/outside-the-gate/outside-the-gate.component';
