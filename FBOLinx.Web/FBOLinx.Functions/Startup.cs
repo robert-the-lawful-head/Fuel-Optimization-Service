@@ -46,7 +46,7 @@ namespace FBOLinx.Functions
         {
             string conStr = System.Environment.GetEnvironmentVariable($"AzureFunctionsSettings_{name}", EnvironmentVariableTarget.Process); // Azure Functions App Service naming convention
             if (string.IsNullOrEmpty(conStr))
-                conStr = System.Environment.GetEnvironmentVariable($"AzureFunctionsSettings:{name}", EnvironmentVariableTarget.Process);
+                conStr = System.Environment.GetEnvironmentVariable($"ConnectionStrings:{name}", EnvironmentVariableTarget.Process);
             return conStr;
         }
 
