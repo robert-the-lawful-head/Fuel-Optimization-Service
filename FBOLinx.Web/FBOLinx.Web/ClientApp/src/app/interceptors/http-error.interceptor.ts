@@ -19,18 +19,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-
+        
         if (error.status === 401) {
           this.authenticationService.logout();
-          location.reload();
           return;
         }
 
-        let displayError = error.error.message ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support';
-
-        if(error.error.message != "Username or password is incorrect"){
-          displayError = error.error.message;
-        }
+        let displayError = error.error.message ?? 
+        (error.error.ErrorMessage ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support');
 
         if (error.status === 403) {
           displayError = 'You are not authorized to access this resource';
@@ -38,7 +34,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           displayError = 'The resource you are looking for is not found';
         }
 
-        console.error(displayError);
+        console.error(error);
         this.snackbarService.showErrorSnackBar(displayError,this.errorSnackBarDuration);
         return throwError(displayError);
       })
