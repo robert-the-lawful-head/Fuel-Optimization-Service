@@ -5,7 +5,6 @@ using FBOLinx.Core.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices
@@ -23,6 +22,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task<List<AircraftHexTailMappingDTO>> GetAircraftHexTailMappingsForTails(List<string> tailNumbers)
         {
+            //rety error
             var result = await (from hexTailMapping in context.AircraftHexTailMapping
                 join tail in context.AsTable(tailNumbers) on hexTailMapping.TailNumber equals tail.Value
                     join faaMakeModel in context.FAAAircraftMakeModelReference on hexTailMapping.FAAAircraftMakeModelCode equals faaMakeModel.CODE

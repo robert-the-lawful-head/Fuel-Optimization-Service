@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Models.Responses;
 using System;
 using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.Service.Mapping.Dto;
+using Microsoft.Extensions.Options;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -25,13 +26,15 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly Services.OAuthService _oAuthService;
         private readonly IOAuthService _iOAuthService;
+        private SecuritySettings _securitySettings;
 
-        public OAuthController(IUserService userService, Services.OAuthService oAuthService, FboLinxContext context, ILoggingService logger, IOAuthService iOAuthService) : base(logger)
+        public OAuthController(IUserService userService, Services.OAuthService oAuthService, FboLinxContext context, ILoggingService logger, IOAuthService iOAuthService, IOptions<SecuritySettings> securitySettings) : base(logger)
         {
             _userService = userService;
             _context = context;
             _iOAuthService = iOAuthService;
             _oAuthService = oAuthService;
+            _securitySettings = securitySettings.Value;
         }
 
         [AllowAnonymous]
@@ -54,7 +57,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokensDto accessToken = await _iOAuthService.GenerateAccessToken(user.Oid, 10080);
+            AccessTokensDto accessToken = await _iOAuthService.GenerateAccessToken(user.Oid, _securitySettings.TokenExpirationInMinutes);
 
             return Ok(accessToken);
         }

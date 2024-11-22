@@ -9,11 +9,12 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SnackBarService } from '../services/utils/snackBar.service';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../services/security/authentication.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   private errorSnackBarDuration: number = 4000;
+  private refreshtokenUrl: string = 'app-refresh-token';
   constructor(private snackbarService: SnackBarService,private authenticationService: AuthenticationService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -21,12 +22,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
 
         if (error.status === 401) {
-          this.authenticationService.logout();
-          location.reload();
-          return;
+          if(!this.authenticationService.currentUserValue.remember || error.url.includes(this.refreshtokenUrl)){
+            this.authenticationService.logout();
+            return;
+          }
+          return throwError(error);
         }
 
-        let displayError = error.error.message ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support';
+        let displayError = error.error?.message ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support';
 
         if(error.error.message != "Username or password is incorrect"){
           displayError = error.error.message;

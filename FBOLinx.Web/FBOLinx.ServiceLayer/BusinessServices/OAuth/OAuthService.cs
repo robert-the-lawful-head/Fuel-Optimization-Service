@@ -2,13 +2,12 @@
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
-using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
 {

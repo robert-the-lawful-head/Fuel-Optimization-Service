@@ -9,6 +9,6 @@ namespace FBOLinx.DB.Models
         public string Token { get; set; }
         public DateTime? Expired { get; set; }
         public int UserId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
