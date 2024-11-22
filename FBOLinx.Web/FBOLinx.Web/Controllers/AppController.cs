@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using FBOLinx.Web.DTO;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppController : ControllerBase
+    public class AppController : FBOLinxControllerBase
     {
-        public AppController()
+        public AppController(ILoggingService logger) : base(logger)
         {
         }
 
@@ -26,6 +25,13 @@ namespace FBOLinx.Web.Controllers
                 Version = $"{year}.{appVersion}.{buildNumber}"
             };
             return Ok(result);
+        }
+        // GET: api/app/log-data
+        [HttpPost("log-data")]
+        public IActionResult logData([FromBody] AppLogs log)
+        {
+            LogRetrace(log.Title,log.Data,log.logLevel, log.logColorCode);
+            return Ok();
         }
     }
 }
