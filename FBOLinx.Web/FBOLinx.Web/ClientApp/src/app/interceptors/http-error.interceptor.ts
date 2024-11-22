@@ -10,16 +10,21 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SnackBarService } from '../services/utils/snackBar.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { AppService } from '../services/app.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   private errorSnackBarDuration: number = 4000;
-  constructor(private snackbarService: SnackBarService,private authenticationService: AuthenticationService) {}
+  private logTitle: string = 'HttpErrorInterceptor';
+  constructor(private snackbarService: SnackBarService,
+    private authenticationService: AuthenticationService,
+    private appService: AppService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-
+        this.appService.logData(this.logTitle,JSON.stringify(error)).subscribe();
+        
         if (error.status === 401) {
           this.authenticationService.logout();
           location.reload();
