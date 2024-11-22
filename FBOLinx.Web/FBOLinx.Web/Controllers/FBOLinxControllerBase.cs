@@ -1,9 +1,6 @@
 ﻿using FBOLinx.ServiceLayer.Logging;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -19,6 +16,10 @@ namespace FBOLinx.Web.Controllers
         protected void HandleException(Exception exception)
         {
             _logger.LogError(exception.Message + (exception.InnerException != null ? ". Inner exception: " + exception.InnerException.Message + "***" + exception.InnerException.StackTrace : ""), exception.Message + (exception.InnerException != null ? ". Inner exception: " + exception.InnerException.Message + "***" + exception.InnerException.StackTrace : ""), ServiceLayer.Logging.LogLevel.Error, LogColorCode.Red);
+        }
+        protected void LogRetrace(string title, string data, ServiceLayer.Logging.LogLevel loglevel = LogLevel.Info, LogColorCode logColorCode = LogColorCode.Blue)
+        {
+            _logger.LogError(title,data, loglevel, logColorCode);
         }
     }
 }

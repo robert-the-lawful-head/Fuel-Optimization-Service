@@ -9,18 +9,24 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SnackBarService } from '../services/utils/snackBar.service';
+import { AppService } from '../services/app.service';
 import { AuthenticationService } from '../services/security/authentication.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   private errorSnackBarDuration: number = 4000;
   private refreshtokenUrl: string = 'app-refresh-token';
-  constructor(private snackbarService: SnackBarService,private authenticationService: AuthenticationService) {}
+  private logTitle: string = 'HttpErrorInterceptor';
+  
+  constructor(private snackbarService: SnackBarService,
+    private authenticationService: AuthenticationService,
+    private appService: AppService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-
+        this.appService.logData(this.logTitle,JSON.stringify(error)).subscribe();
+        
         if (error.status === 401) {
           if(!this.authenticationService.currentUserValue.remember || error.url.includes(this.refreshtokenUrl)){
             this.authenticationService.logout();
