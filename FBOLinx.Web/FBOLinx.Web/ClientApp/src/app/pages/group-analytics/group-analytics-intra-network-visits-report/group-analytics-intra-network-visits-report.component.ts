@@ -27,9 +27,9 @@ import { FbosService } from '../../../services/fbos.service';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { IntraNetworkVisitsReportItem } from 'src/app/models/intra-network-visits-report-item';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
 import { isCommercialAircraftInFlightNumbers } from 'src/utils/aircraft';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 @Component({
     selector: 'app-group-analytics-intra-network-visits-report',

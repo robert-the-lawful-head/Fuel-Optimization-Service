@@ -29,6 +29,12 @@ namespace FBOLinx.Web.Models.Responses
             Message = message;
         }
 
+        public AuthTokenResponse(string refreshToken, string token)
+        {
+            RefreshToken = refreshToken;
+            AuthToken = token;
+        }
+
         public AuthTokenResponse(string authToken, DateTime authTokenExpiration, string refreshToken, DateTime? refreshTokenExpiration, string username, int userId, string groupName, int groupId, UserRoles role, string icao, string fbo, bool success = true, string message = null)
         {
             Success = success;

@@ -3,11 +3,12 @@ using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FlightWatchController : FBOLinxControllerBase

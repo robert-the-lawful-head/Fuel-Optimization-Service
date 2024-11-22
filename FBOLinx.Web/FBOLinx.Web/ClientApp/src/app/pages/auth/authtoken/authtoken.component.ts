@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
-import { AuthenticationService } from '../../../services/authentication.service';
+import { AuthenticationService } from '../../../services/security/authentication.service';
 import { Subscription } from 'rxjs';
 
 @Component({

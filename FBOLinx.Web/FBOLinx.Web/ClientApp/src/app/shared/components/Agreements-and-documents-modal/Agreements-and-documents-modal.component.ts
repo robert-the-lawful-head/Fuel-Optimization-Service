@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService } from 'src/app/services/security/authentication.service';
 import { DocumentService } from 'src/app/services/documents.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -39,6 +39,5 @@ export class AgreementsAndDocumentsModalComponent implements OnInit {
     decline(){
         this.dialogRef.close(false);
         this.authenticationService.logout();
-        this.router.navigate(['/landing-site-layout']);
     }
 }

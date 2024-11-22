@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { User } from '../models/user';
-import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticationService } from '../services/security/authentication.service';
 import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
 import { UserRole } from '../enums/user-role';
 
