@@ -26,6 +26,7 @@ using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.DB.Specifications.User;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 
 namespace FBOLinx.Web.Controllers
@@ -50,6 +51,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboCompaniesFavoritesService _fboCompaniesFavoritesService;
+        private readonly IAirportService _airportService;
 
         public FbosController(
             FboLinxContext context,
@@ -62,7 +64,7 @@ namespace FBOLinx.Web.Controllers
             IFboPricesService fbopricesService,
             IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             IUserService userService,
-            IHttpContextAccessor httpContextAccessor, IFboCompaniesFavoritesService fboCompaniesFavoritesService) : base(logger)
+            IHttpContextAccessor httpContextAccessor, IFboCompaniesFavoritesService fboCompaniesFavoritesService, IAirportService airportService) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -79,6 +81,7 @@ namespace FBOLinx.Web.Controllers
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
             _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
+            _airportService = airportService;
         }
 
         // GET: api/Fbos/group/5
@@ -485,6 +488,27 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbo);
         }
 
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpGet("all-premium-fbo-airportids")]
+        public async Task<ActionResult<List<int>>> GetAllPremiumFbos()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fbosQuery = _fboService.GetAllFbos();
+            var fboIcaos = await fbosQuery.Where(x => x.AccountType == Core.Enums.AccountTypes.RevFbo && x.Active == true).Include(x => x.FboAirport).Select(f => f.FboAirport.Icao).Distinct().ToListAsync();
+
+            var acukwikAirports = await _airportService.GetGeneralAirportInformationList();
+            var acukwikAirportIds = (from a in acukwikAirports
+                                     join f in fboIcaos on a.Icao equals f
+                                     select a.AirportId).ToList();
+
+            return Ok(acukwikAirportIds);
+        }
+
         [HttpGet("by-akukwik-handlerId/{handlerId}")]
         public async Task<ActionResult<Fbos>> GetFboByAcukwikHandlerId([FromRoute] int handlerId)
         {
@@ -514,21 +538,6 @@ namespace FBOLinx.Web.Controllers
                 return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken));
 
             return Ok(authentication.FboEmails);
-        }
-
-        // GET: api/Fbos/all-fbos-with-jetnet-enabled
-        [AllowAnonymous]
-        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
-        [HttpGet("all-fbos-with-jetnet-enabled")]
-        public async Task<ActionResult<List<string>>> AllFbosWithJetNetEnabled()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
-            return fbos.Where(f => f.IsJetNetIntegrationEnabled == true).Select(f => f.Fbo).ToList();
         }
 
         [HttpGet("sendengagementemails")]
