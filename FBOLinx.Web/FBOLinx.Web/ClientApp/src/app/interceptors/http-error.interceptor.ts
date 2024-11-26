@@ -47,9 +47,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           displayError = 'The resource you are looking for is not found';
         }
 
-        console.error(displayError);
+        console.log(error);
         this.snackbarService.showErrorSnackBar(displayError,this.errorSnackBarDuration);
-        return throwError(displayError);
+        return throwError(error);
       })
     );
   }

@@ -72,8 +72,8 @@ export class LoginModalComponent {
                             }
                         });
                     },
-                    (error) => {
-                        this.error = error;
+                    (error: any) => {
+                        this.error = error.error.message;
                     }
                 );
         }

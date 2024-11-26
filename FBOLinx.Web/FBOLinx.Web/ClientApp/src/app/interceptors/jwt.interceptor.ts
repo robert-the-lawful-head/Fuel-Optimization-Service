@@ -39,7 +39,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 if (error.status === 401 && currentUser.remember) {
                     return this.handle401Error(request, next, currentUser);
                 }
-                return throwError(() => error);
+                return throwError(error);
             })
         );
     }
@@ -75,7 +75,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 }),
                 catchError((error) => {
                     this.isRefreshing = false;
-                    return throwError(() => error);
+                    return throwError(error);
                 })
             );
         } else {
