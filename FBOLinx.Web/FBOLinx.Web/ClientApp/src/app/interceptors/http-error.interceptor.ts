@@ -35,7 +35,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           return throwError(error);
         }
 
-        let displayError = error.error?.message ?? 'An unexpected error occurred, try reloading the page, if the problem persists contact support';
+        let displayError = error.error?.message ?? 'An unexpected error occurred, try reloading the page. If the problem persists, please contact support.';
 
         if(error.error.message != "Username or password is incorrect"){
           displayError = error.error.message;
