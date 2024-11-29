@@ -19,13 +19,12 @@ import {
 } from '../../models/flight-watch';
 import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatTableDataSource } from '@angular/material/table';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
 import { Subscription } from 'rxjs';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 @Component({
     selector: 'app-flight-watch',
     styleUrls: ['./flight-watch.component.scss'],

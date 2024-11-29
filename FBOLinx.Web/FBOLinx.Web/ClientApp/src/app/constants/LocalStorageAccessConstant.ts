@@ -14,5 +14,6 @@ export const localStorageAccessConstant = {
     isNetworkFbo: 'isNetworkFbo',
     currentUser: 'currentUser',
     decimalPrecision: 'decimalPrecision',
-    isJetNetIntegrationEnabled: 'isJetNetIntegrationEnabled'
+    isJetNetIntegrationEnabled: 'isJetNetIntegrationEnabled',
+    refreshToken : 'refreshToken'
 }

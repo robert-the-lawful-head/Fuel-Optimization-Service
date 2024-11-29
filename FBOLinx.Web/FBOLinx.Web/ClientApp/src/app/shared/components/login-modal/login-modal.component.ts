@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
 //Services
-import { AuthenticationService } from '../../../services/authentication.service';
+import { AuthenticationService } from '../../../services/security/authentication.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { GroupsService } from 'src/app/services/groups.service';
 import { UserRole } from 'src/app/enums/user-role';
@@ -72,8 +72,8 @@ export class LoginModalComponent {
                             }
                         });
                     },
-                    (error) => {
-                        this.error = error;
+                    (error: any) => {
+                        this.error = error.error.message;
                     }
                 );
         }

@@ -18,11 +18,6 @@ export interface ContactUsMessage {
     message: string;
 }
 
-export interface LoginRequest {
-    username: string;
-    password: string;
-}
-
 @Component({
     providers: [SharedService],
     selector: 'landing-site-layout',
@@ -30,9 +25,6 @@ export interface LoginRequest {
     templateUrl: './landing-site.component.html',
 })
 export class LandingSiteLayoutComponent {
-    rememberMeUsernameKey = 'rememberMeUsername';
-    rememberMePasswordKey = 'rememberMePassword';
-
     // Images
     slideHalfImage1URL = '../../../assets/content/slide-half-1.png';
     slideHalfImage2URL = '../../../assets/content/slide-half-2.png';
@@ -67,8 +59,6 @@ export class LandingSiteLayoutComponent {
 
     integrationPartnerView = 0;
     contactUsMessage: ContactUsMessage;
-    loginRequest: LoginRequest;
-    rememberMe: any;
     isLoggingIn = false;
     error = '';
     isSticky = false;
@@ -164,25 +154,6 @@ export class LandingSiteLayoutComponent {
                 }
             );
         });
-    }
-
-    setRememberMeVariables() {
-        if (!localStorage) {
-            return;
-        }
-        if (!this.rememberMe) {
-            localStorage.setItem(this.rememberMeUsernameKey, '');
-            localStorage.setItem(this.rememberMePasswordKey, '');
-        } else {
-            localStorage.setItem(
-                this.rememberMeUsernameKey,
-                this.loginRequest.username
-            );
-            localStorage.setItem(
-                this.rememberMePasswordKey,
-                this.loginRequest.password
-            );
-        }
     }
 
     changeIntegrationPartnerView(event: MatButtonToggleChange) {
