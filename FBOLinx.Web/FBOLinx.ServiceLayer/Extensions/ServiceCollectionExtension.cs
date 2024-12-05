@@ -141,6 +141,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IJetNetService, JetNetService>();
             services.AddTransient<IContactInfoByGroupService, ContactInfoByGroupService>();
             services.AddTransient<ICustomerInfoByFboService, CustomerInfoByFboService>();
+            services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 

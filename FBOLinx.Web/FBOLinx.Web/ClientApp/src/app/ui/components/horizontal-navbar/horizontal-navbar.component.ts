@@ -96,7 +96,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     selectedICAO: string = "";
     favoriteAircraftsData : FlightWatchModelResponse[];
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
-    notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
+    notifiedFavoriteAircraft: FlightWatchModelResponse[] = [];
+    integrationStatus: boolean = false;
 
 
     routeSubscription: Subscription;
@@ -145,14 +146,16 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         return (
             this.sharedService.currentUser?.fboId > 0 &&
             this.sharedService.currentUser?.role !== 5 &&
-            this.sharedService.currentUser?.accountType == AccountType.Premium
+            this.sharedService.currentUser?.accountType == AccountType.Premium &&
+            !this.integrationStatus
         );
     }
 
     get favoriteNotificationVisible() {
         return (
             this.sharedService.currentUser?.fboId > 0 &&
-            !this.isLobbyViewPage
+            !this.isLobbyViewPage &&
+            !this.integrationStatus
             );
     }
 
@@ -481,6 +484,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
                     this.fbo = _.assign({}, data);
                     localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
+                    this.integrationStatus = this.sharedService.currentUser.integrationStatus;
 
                     if (this.sharedService.currentUser.role != 3) {
                         this.fbosService.updateLastLogin(this.currentUser.fboId).subscribe((data: any) => {
@@ -581,8 +585,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
             });
     }
-    public isLobbyViewVisible():boolean {
-        if(this.currentUser.accountType === AccountType.Freemium) return false;
+    public isLobbyViewVisible(): boolean {
+        if (this.currentUser.accountType === AccountType.Freemium || this.currentUser.integrationStatus) return false;
         return this.currentUser &&
         (this.currentUser.role ===  UserRole.Primary ||
             this.currentUser.role ===  UserRole.CSR ||
