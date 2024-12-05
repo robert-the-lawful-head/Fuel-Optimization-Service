@@ -19,4 +19,5 @@ export class User {
     isJetNetIntegrationEnabled?: boolean;
     decimalPrecision: number;
     remember: boolean;
+    integrationStatus: boolean;
 }

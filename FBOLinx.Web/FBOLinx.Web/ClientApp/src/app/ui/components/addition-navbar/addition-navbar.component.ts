@@ -70,6 +70,7 @@ export class AdditionNavbarComponent
     changeSortSubscription: Subscription;
     currentMessageSubscription: Subscription;
     loadingPrices: boolean = false;
+    private integrationStatus: boolean = false;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -507,8 +508,10 @@ export class AdditionNavbarComponent
         this.marginTemplateDataSource.sort = this.sort;
         this.marginTemplateDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
+        this.integrationStatus = this.sharedService.currentUser.integrationStatus;
     }
+
     isEmailDrawerEnabled() {
-        return this.sharedService.currentUser.accountType == AccountType.Premium;
+        return !this.integrationStatus && this.sharedService.currentUser.accountType == AccountType.Premium;
     }
 }
