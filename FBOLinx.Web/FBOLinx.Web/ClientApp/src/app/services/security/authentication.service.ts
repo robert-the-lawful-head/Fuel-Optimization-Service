@@ -55,7 +55,7 @@ export class AuthenticationService {
                         if (user.fbo != null)
                             user.integrationStatus = user.fbo.integrationStatus;
 
-                        if (user.role === 'X1')
+                        if (user.role === 7)
                             user.integrationStatus = true;
 
                         localStorage.setItem(

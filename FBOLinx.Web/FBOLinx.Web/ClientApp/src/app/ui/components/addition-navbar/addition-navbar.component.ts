@@ -90,7 +90,7 @@ export class AdditionNavbarComponent
         );
     }
 
-    ngOnInit() {}
+    ngOnInit() { this.integrationStatus = this.sharedService.currentUser.integrationStatus; }
 
     ngAfterViewInit() {
         this.currentMessageSubscription = this.sharedService.currentMessage.subscribe((message) => {
@@ -508,7 +508,6 @@ export class AdditionNavbarComponent
         this.marginTemplateDataSource.sort = this.sort;
         this.marginTemplateDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
-        this.integrationStatus = this.sharedService.currentUser.integrationStatus;
     }
 
     isEmailDrawerEnabled() {

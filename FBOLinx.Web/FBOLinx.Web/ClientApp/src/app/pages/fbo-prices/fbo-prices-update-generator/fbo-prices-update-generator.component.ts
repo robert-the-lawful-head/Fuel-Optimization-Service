@@ -112,6 +112,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     expirationDate: any;
     localDateTime: any;
 
+    integrationStatus: boolean = false;
+
     constructor(
        private feesAndTaxesService: FbofeesandtaxesService,
        private fboPricesService: FbopricesService,
@@ -162,6 +164,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         this.loadFeesAndTaxes();
         this.fixCustomCustomerTypes();
         this.checkDefaultTemplate();
+        this.integrationStatus = this.sharedService.currentUser.integrationStatus;
     }
 
     // Methods
