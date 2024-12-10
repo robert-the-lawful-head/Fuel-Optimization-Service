@@ -1,5 +1,3 @@
-import 'rxjs/add/operator/debounceTime';
-
 import {
     AfterViewInit,
     Component,
