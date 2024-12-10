@@ -70,6 +70,7 @@ export class AdditionNavbarComponent
     changeSortSubscription: Subscription;
     currentMessageSubscription: Subscription;
     loadingPrices: boolean = false;
+    private integrationStatus: boolean = false;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -89,7 +90,7 @@ export class AdditionNavbarComponent
         );
     }
 
-    ngOnInit() {}
+    ngOnInit() { this.integrationStatus = this.sharedService.currentUser.integrationStatus; }
 
     ngAfterViewInit() {
         this.currentMessageSubscription = this.sharedService.currentMessage.subscribe((message) => {
@@ -508,7 +509,8 @@ export class AdditionNavbarComponent
         this.marginTemplateDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
     }
+
     isEmailDrawerEnabled() {
-        return this.sharedService.currentUser.accountType == AccountType.Premium;
+        return !this.integrationStatus && this.sharedService.currentUser.accountType == AccountType.Premium;
     }
 }

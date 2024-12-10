@@ -53,10 +53,17 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     valueChangedSubscription: Subscription;
     changeEmittedSubscription: Subscription;
 
+    integrationStatus: boolean = false;
+
     constructor(private sharedService: SharedService,
         private router: Router,
         private flightWatchMapService: FlightWatchMapService
-        ) {
+    ) {
+        this.fboid = this.sharedService.currentUser.fboId;
+        this.groupid = this.sharedService.currentUser.groupId;
+        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+        this.integrationStatus = this.sharedService.currentUser.integrationStatus;
+
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
         );
@@ -64,11 +71,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.pastThirtyDaysStartDate = new Date(
             moment().add(-30, 'days').format('MM/DD/YYYY')
         );
-        this.fboid = this.sharedService.currentUser.fboId;
-        this.groupid = this.sharedService.currentUser.groupId;
-        
-
-        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
 
         this.isSingleSourceFbo = JSON.parse(
             this.sharedService

@@ -59,6 +59,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public string AntennaName { get; set; }
         public AccountTypes AccountType { get; set; }
         public bool? IsJetNetIntegrationEnabled { get; set; } = false;
+        public bool? IntegrationStatus { get; set; } = false;
         public GroupDTO Group { get; set; }
         public FboairportsDto FboAirport { get; set; }
         public ICollection<FuelReqDto> FuelReqs { get; set; }

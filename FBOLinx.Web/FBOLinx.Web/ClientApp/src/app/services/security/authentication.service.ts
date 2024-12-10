@@ -52,6 +52,12 @@ export class AuthenticationService {
                 map((user) => {
                     // login successful if there's a jwt token in the response
                     if (user) {
+                        if (user.fbo != null)
+                            user.integrationStatus = user.fbo.integrationStatus;
+
+                        if (user.role === 7)
+                            user.integrationStatus = true;
+
                         localStorage.setItem(
                             localStorageAccessConstant.currentUser,
                             JSON.stringify(user)

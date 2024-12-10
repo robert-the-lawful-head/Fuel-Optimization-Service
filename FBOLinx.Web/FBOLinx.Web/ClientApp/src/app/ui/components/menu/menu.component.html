@@ -18,7 +18,7 @@
 
             <!-- Default item -->
             <ng-template #default>
-                <div>
+                <div *ngIf="isHidden(item) != true" >
                     <a
                         (click)="toggle($event, item, this)"
                         *ngIf="item.routing"
@@ -27,7 +27,7 @@
                         href="#"
                         routerLink="{{ item.routing }}"
                     >
-                        <span *ngIf="isHidden(item) != true" class="text">
+                        <span class="text">
                             {{ item.title }}
 
                             <mat-icon *ngIf="item.disabled"
