@@ -54,8 +54,8 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var groupRecord = await _groupRepo.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
-
+                var groupRecord = await _Context.Group.Include(x => x.Fbos).FirstOrDefaultAsync(x => x.Oid == user.GroupId);
+                
                 //return null if Paragon
                 if (groupRecord.Isfbonetwork.GetValueOrDefault())
                     return null;

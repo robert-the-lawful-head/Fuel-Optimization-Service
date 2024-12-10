@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FBOLinx.Service.Mapping.Dto
 {
     public partial class GroupDto
@@ -11,5 +13,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public bool Active { get; set; }
         public bool? IsLegacyAccount { get; set; }
         public int Oid { get; set; }
+        public ICollection<FbosDto> Fbos { get; set; }
     }
 }
