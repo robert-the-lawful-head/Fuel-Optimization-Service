@@ -42,7 +42,6 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         immediateModeDelay: 1000,
         mode: 'Immediate',
     };
-    public sortSettings: any;
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsGenerateDialogComponent>,
@@ -58,7 +57,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.dataSources = this.data.customers;
         this.selectOptions = { persistSelection: true };
         this.editSettings = { allowDeleting: true };
-        this.sortSettings = { columns: [{ field: 'company' }] };
+
         this.toolbar = ['Delete'];
     }
 
