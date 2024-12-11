@@ -1,17 +1,21 @@
 <div class="row">
     <div class="col-6 col-md-10">
         <mat-form-field class="filter">
-            <input (keyup)="applyFilter($event.target.value)"
-                   [value]="searchValue"
-                   matInput
-                   placeholder="Search by Group, FBO, User, ..." />
+            <input
+                (keyup)="applyFilter($event.target.value)"
+                [value]="searchValue"
+                matInput
+                placeholder="Search by Group, FBO, User, ..."
+            />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
         <mat-form-field class="account-filter">
             <mat-label>Group Status</mat-label>
-            <mat-select [(ngModel)]="groupAccountType"
-                        (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="groupAccountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
@@ -20,8 +24,10 @@
 
         <mat-form-field class="account-filter">
             <mat-label>FBO Active Status</mat-label>
-            <mat-select [(ngModel)]="fboActiveAccountType"
-                        (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="fboActiveAccountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
@@ -30,18 +36,22 @@
 
         <mat-form-field class="account-filter">
             <mat-label>FBO Account Type</mat-label>
-            <mat-select [(ngModel)]="fboAccountType"
-                        (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="fboAccountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="premium">Premium</mat-option>
                 <mat-option value="freemium">Freemium</mat-option>
             </mat-select>
         </mat-form-field>
 
-        <button (click)="mergeGroups()"
-                color="warn"
-                mat-flat-button
-                [disabled]="selectedRows.length < 2">
+        <button
+            (click)="mergeGroups()"
+            color="warn"
+            mat-flat-button
+            [disabled]="selectedRows.length < 2"
+        >
             <mat-icon>merge_type</mat-icon>
             Merge Groups
         </button>
@@ -58,7 +68,7 @@
                 aria-hidden="true"
                 class="mat-icon material-icons"
                 role="img"
-               >settings</mat-icon
+                >settings</mat-icon
             >
         </button>
         <mat-menu
@@ -91,17 +101,16 @@
         <e-column field="groupName" headerText="Group"></e-column>
         <e-column field="expiredFboPricingCount" headerText="Pricing Expired">
             <ng-template #template let-data>
-                <span [ngClass]="{ good: isValidPricing(data) }"
-                      class="status">
+                <span [ngClass]="{ good: isValidPricing(data) }" class="status">
                     {{
                         isValidPricing(data)
                             ? "All Pricing Live"
-                            : (data.activeFboCount > 0
-                            ? (data.expiredFboPricingCount +
+                            : data.activeFboCount > 0
+                            ? data.expiredFboPricingCount +
                               " of " +
                               data.activeFboCount +
-                              " Expired")
-                            : "No Active FBOs")
+                              " Expired"
+                            : "No Active FBOs"
                     }}
                 </span>
             </ng-template>
@@ -109,7 +118,7 @@
         <e-column field="needAttentionCustomers" headerText="Need Attentions">
             <ng-template #template let-data>
                 <span
-                    [ngClass]="{ good: data.needAttentionCustomers == 0}"
+                    [ngClass]="{ good: data.needAttentionCustomers == 0 }"
                     class="status"
                 >
                     {{ data.needAttentionCustomers }} Need Attentions
@@ -122,7 +131,7 @@
             [sortComparer]="dateSortComparer"
         >
             <ng-template #template let-data>
-                {{ data.lastLogin | date: "medium" }}
+                {{ data.lastLogin | date : "medium" }}
             </ng-template>
         </e-column>
         <e-column field="active" headerText="Active"></e-column>
@@ -141,16 +150,18 @@
         ></e-column>
         <e-column field="expiredFboAccountCount" headerText="Active / Inactive">
             <ng-template #template let-data>
-                <span [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
-                      class="status">
+                <span
+                    [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
+                    class="status"
+                >
                     {{
                         data.expiredFboAccountCount == 0 && data.fboCount > 0
                             ? "All Active"
-                            : (data.fboCount > 0)
-                            ? (data.expiredFboAccountCount +
+                            : data.fboCount > 0
+                            ? data.expiredFboAccountCount +
                               " of " +
                               data.fboCount +
-                              " Inactive")
+                              " Inactive"
                             : "No FBOs Found"
                     }}
                 </span>
@@ -177,28 +188,36 @@
                     <mat-icon>settings</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button (click)="editGroup(data)"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="editGroup(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>edit</mat-icon>
                         <span>Edit Group</span>
                     </button>
-                    <button (click)="addNewFbo(data)"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="addNewFbo(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>add</mat-icon>
                         <span>Add FBO</span>
                     </button>
-                    <button (click)="deleteGroup(data)"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="deleteGroup(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>
                     </button>
-                    <button [disabled]="!getGroupFbos(data.oid).length"
-                            [matMenuTriggerFor]="fbosMenu"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        [disabled]="!getGroupFbos(data.oid).length"
+                        [matMenuTriggerFor]="fbosMenu"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <span>Delete FBO</span>
                     </button>
                 </mat-menu>
@@ -248,7 +267,7 @@
 </ng-template>
 
 <ng-template #lastLoginTemplate let-data>
-    {{ data.lastLogin | date: "medium" }}
+    {{ data.lastLogin | date : "medium" }}
 </ng-template>
 
 <ng-template #accountExpiredTemplate let-data>
@@ -259,6 +278,6 @@
 
 <ng-template #accountTypeTemplate let-data>
     <span>
-        {{ data.accountType ? "Freemium" : "Premium"}}
+        {{ data.accountType ? "Freemium" : "Premium" }}
     </span>
 </ng-template>
