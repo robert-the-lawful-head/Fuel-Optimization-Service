@@ -258,6 +258,7 @@
                     <div (click)="$event.stopPropagation()" class="mb-2 mt-2">
                         <app-multiselect-autocomplete 
                         [dataSource]="options"
+                        [fields]="{ text: optionLabel, value: optionValue }"
                         [(ngModel)]="filter.optionsFilter"></app-multiselect-autocomplete>
                     </div>
                 </div>

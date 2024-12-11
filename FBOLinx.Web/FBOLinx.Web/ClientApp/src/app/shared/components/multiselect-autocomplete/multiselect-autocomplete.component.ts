@@ -4,6 +4,7 @@ import {
     ElementRef,
     forwardRef,
     Input,
+    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -14,6 +15,10 @@ import { map, startWith } from 'rxjs/operators';
 export interface MultiSelectElement {
     label: string;
     value: any;
+}
+export interface dataSourceFields {
+    text: string;
+    value: string;
 }
 @Component({
     selector: 'app-multiselect-autocomplete',
@@ -32,8 +37,9 @@ export class MultiselectAutocompleteComponent {
     @Input() selectable: boolean = true;
     @Input() removable: boolean = true;
     @Input() selectedOptions: MultiSelectElement[] = [];
-    @Input() dataSource: MultiSelectElement[] = [];
+    @Input() dataSource: any[] | MultiSelectElement[] = [];
     @Input() enableAddNew: boolean = false;
+    @Input() fields: dataSourceFields = { text: 'label', value: 'value' };
 
     @ViewChild('optionInput') optionInput: ElementRef<HTMLInputElement>;
 
@@ -55,6 +61,11 @@ export class MultiselectAutocompleteComponent {
                 option ? this._filter(option) : this.dataSource.slice()
             )
         );
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.dataSource) {
+            this.dataSource = changes.dataSource.currentValue.map((x) => ({ label: x[this.fields.text], value: x[this.fields.value] }));
+        }
     }
     add(event: MatChipInputEvent): void {
         if (!this.enableAddNew) return;
