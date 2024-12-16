@@ -25,7 +25,10 @@ import {
 import { first, last } from 'lodash';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { accountTypeChangedEvent, fboChangedEvent } from '../../../constants/sharedEvents';
+import {
+    accountTypeChangedEvent,
+    fboChangedEvent,
+} from '../../../constants/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -46,6 +49,12 @@ import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { UserRole } from 'src/app/enums/user-role';
 import { GroupFboViewModel } from 'src/app/models/groups';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { MatSort } from '@angular/material/sort';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatTableDataSource } from '@angular/material/table';
+import { GridBase } from 'src/app/services/tables/GridBase';
+import { MatPaginator } from '@angular/material/paginator';
 
 const initialColumns: ColumnType[] = [
     {
@@ -84,7 +93,7 @@ const initialColumns: ColumnType[] = [
     {
         id: 'expiredFboAccountCount',
         name: 'Accounts Expired',
-    },
+    }
 ];
 
 @Component({
@@ -92,8 +101,18 @@ const initialColumns: ColumnType[] = [
     selector: 'app-groups-grid',
     styleUrls: ['./groups-grid.component.scss'],
     templateUrl: './groups-grid.component.html',
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition(
+                'expanded <=> collapsed',
+                animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+            ),
+        ]),
+    ],
 })
-export class GroupsGridComponent implements OnInit, AfterViewInit {
+export class GroupsGridComponent extends GridBase implements OnInit, AfterViewInit {
     @ViewChild('grid') public grid: GridComponent;
     @ViewChild('fboManageTemplate', { static: true })
     public fboManageTemplate: any;
@@ -108,6 +127,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @ViewChild('accountTypeTemplate', { static: true })
     public accountTypeTemplate: any;
     @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
+    
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+
 
     // Input/Output Bindings
     @Input() groupsFbosData: GroupFboViewModel;
@@ -142,6 +165,19 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     tableLocalStorageFilterKey = 'conductor-group-grid-filter';
     columns: ColumnType[] = [];
 
+    expandedElement: any =  null;
+    columnsToDisplay: string[] = [];
+    dataColumns: string[] = []; 
+
+
+    customColumContent = ['expiredFboPricingCount','needAttentionCustomers','active','lastLogin','users','expiredFboAccountCount'];
+
+    dataSource = new MatTableDataSource<any>();
+    selection = new SelectionModel<any>(true, []);
+
+    isCustomContent(columnId){
+        return this.customColumContent.includes(columnId);
+    }
     constructor(
         private router: Router,
         private viewContainerRef: ViewContainerRef,
@@ -159,7 +195,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private snackBar: MatSnackBar,
         private addAssociationDialog: MatDialog,
         private manageFboGroupsService: ManageFboGroupsService
-    ) {}
+    ) { super(); }
 
     ngOnInit() {
         this.refreshGrid();
@@ -169,7 +205,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.groupDataSource = this.groupsFbosData.groups;
         this.fboDataSource = this.groupsFbosData.fbos;
 
-        
+
         const self = this;
         this.childGrid = {
             columns: [
@@ -240,8 +276,19 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         } else {
             this.applyFilter('');
         }
-    }
+        this.dataColumns = this.columns.map((column) => column.id);
+        this.columnsToDisplay = this.columns.map((column) => column.id);
+        this.columnsToDisplay.push('actions');
+        this.columnsToDisplay.unshift('expandIcon','select');
 
+        this.setVirtualScrollVariables(this.paginator, this.sort, this.groupDataSource);
+    }
+    getColumnDisplayString(columnId){
+        let column  = this.columns.filter(obj => {
+            return obj.id == columnId
+          });
+        return column[0]?.name ?? '';
+    }
     ngAfterViewInit() {
         this.fboManageTemplate.elementRef.nativeElement._viewContainerRef =
             this.viewContainerRef;
@@ -458,7 +505,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,group.oid);
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole, UserRole.GroupAdmin);
-                
+
                 this.sharedService.emitChange(accountTypeChangedEvent);
 
                 this.router.navigate(['/default-layout/fbos/']);
@@ -532,7 +579,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             GroupsMergeDialogComponent,
             {
                 data: {
-                    groups: this.selectedRows,
+                    groups: this.selection.selected,
                 },
                 width: '450px',
             }
@@ -592,9 +639,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 (this.fboActiveAccountType === 'inactive' && fbo.accountExpired))
                 &&
                 (
-                    (this.fboAccountType === 'all' ||
-                        (this.fboAccountType === 'premium' && !fbo.accountType) ||
-                        (this.fboAccountType === 'freemium' && fbo.accountType))
+                (this.fboAccountType === 'all' ||
+                    (this.fboAccountType === 'premium' && !fbo.accountType) ||
+                    (this.fboAccountType === 'freemium' && fbo.accountType))
                 )
         );
         const filteredGroups = this.groupsFbosData.groups.filter(
@@ -603,7 +650,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     (this.fboAccountType == "freemium" && !group.hasPremiumFbos) || (this.fboAccountType == "premium" && group.hasPremiumFbos))
                     && group.fboCount > 0 && (this.fboActiveAccountType == "all" || ((this.fboActiveAccountType == "active" && group.hasActiveFbos) || this.fboActiveAccountType == "inactive" && !group.hasActiveFbos))) :
                 (this.groupAccountType === 'all' ||
-                (this.groupAccountType === 'active' && group.active) ||
+                  (this.groupAccountType === 'active' && group.active) ||
                 (this.groupAccountType == 'inactive' && !group.active))
         );
 
@@ -671,6 +718,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.groupDataSource = secondFilteredGroups;
         this.fboDataSource = secondFilteredFbos;
         this.childGrid.dataSource = this.fboDataSource;
+
+        this.dataSource.data = this.groupDataSource;
     }
 
     editGroup(group: any) {
@@ -747,7 +796,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     getGroupFbos(groupId: number) {
         return this.manageFboGroupsService.getGroupFbos(this.groupsFbosData,groupId);
     }
-    private saveSettings() {
+    //this in on abstract class
+    saveSettings() {
         localStorage.setItem(
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
@@ -795,4 +845,29 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             .toLowerCase()
             .includes((!str2 ? '' : str2).toLowerCase());
     }
+
+    /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    console.log("🚀 ~ GroupsGridComponent ~ checkboxLabel ~ row:", row)
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
 }
