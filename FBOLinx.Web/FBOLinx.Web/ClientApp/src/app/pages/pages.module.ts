@@ -244,6 +244,7 @@ import { DecimalPrecisionPipe } from '../shared/pipes/decimal/decimal-precision.
 import { JetNetInformationComponent } from '../shared/components/jetnet-information/jetnet-information.component';
 import {CustomerActionStatusComponent} from '../shared/components/customer-action-status/customer-action-status.component';
 import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
+import { GroupAnalyticsGenerateDialogGridComponent } from './group-analytics/group-analytics-generate-dialog-grid/group-analytics-generate-dialog-grid.component';
 
 @NgModule({
     declarations: [
@@ -416,7 +417,8 @@ import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion
         JetNetInformationComponent,
         CustomerActionStatusComponent,
         DecimalPrecisionPipe,
-        CurrencyPresicionPipe
+        CurrencyPresicionPipe,
+        GroupAnalyticsGenerateDialogGridComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

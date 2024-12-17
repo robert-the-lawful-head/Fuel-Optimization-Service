@@ -1,0 +1,8 @@
+body {
+}
+::ng-deep .mat-header-row.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1; /* Ensure the header stays on top */
+    background-color: white; /* Prevent header from blending with table rows */
+}

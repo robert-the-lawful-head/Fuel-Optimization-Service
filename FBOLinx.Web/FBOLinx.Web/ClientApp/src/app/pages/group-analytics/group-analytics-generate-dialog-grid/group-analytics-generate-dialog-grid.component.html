@@ -1,0 +1,30 @@
+
+        <mat-table [dataSource]="groupDistributionDataSource">
+            <ng-container matColumnDef="select" sticky>
+                <th *matHeaderCellDef mat-header-cell>
+                    <input (change)="selectAction()"
+                           [(ngModel)]="selectAll"
+                           class="checkboxHeight"
+                           id="selectAllCheckbox"
+                           style="position: absolute; margin-top: 8px"
+                           type="checkbox" />
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    <input type="checkbox" [(ngModel)]="customer.checked" (change)="customerSelected(customer);" />
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="customer" sticky>
+                <th *matHeaderCellDef mat-header-cell>
+                    <input placeholder="Customer Filter"
+                           class="e-input"
+                           id="searchBox" (input)="applyFilter($event.currentTarget.value)" />
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                   {{customer.company}}
+                </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
+        </mat-table>

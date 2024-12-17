@@ -164,13 +164,26 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.focusTextbox();
     }
 
-    rowSelected() {
-        this.selectedCustomers = this.grid.getSelectedRecords();
+    customerSelectedClicked(customer) {
+        let existingCustomer = -1;
+        if (this.selectedCustomers != null && this.selectedCustomers.length > 0)
+            existingCustomer = this.selectedCustomers.findIndex(c => c.company === customer.company);
+        else
+            this.selectedCustomers = [];
+
+        if (existingCustomer > -1)
+            this.selectedCustomers.splice(existingCustomer, 1);
+        else
+            this.selectedCustomers.push(customer);
+
         this.focusTextbox();
     }
 
-    rowDeselected() {
-        this.selectedCustomers = this.grid.getSelectedRecords();
+    selectAllClicked(customers) {
+        if (customers[0].checked)
+            this.selectedCustomers = customers;
+        else
+            this.selectedCustomers = [];
         this.focusTextbox();
     }
 
@@ -244,7 +257,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     focusTextbox() {
         const searchBox = document.getElementById("searchBox") as HTMLInputElement;
 
-        if (searchBox) {
+        if (searchBox && searchBox.value != "") {
             setTimeout(() => {
                 searchBox.focus();
             }, 1);
