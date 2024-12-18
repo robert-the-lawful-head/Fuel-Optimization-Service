@@ -468,7 +468,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
                 });
         }
     }
-
+    getlocalDateTime(date: Date): string{
+        let curentdate = new Date(date+"Z");
+        let localdate = curentdate.toLocaleString();
+        return localdate;
+    }
     private setColumns() {
         this.columns = this.filteredColumns;
     }
