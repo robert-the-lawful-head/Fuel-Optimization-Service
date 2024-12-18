@@ -167,7 +167,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     customerSelectedClicked(customer) {
         let existingCustomer = -1;
         if (this.selectedCustomers != null && this.selectedCustomers.length > 0)
-            existingCustomer = this.selectedCustomers.findIndex(c => c.company === customer.company);
+            existingCustomer = this.selectedCustomers.findIndex(c => c.customerId === customer.customerId);
         else
             this.selectedCustomers = [];
 

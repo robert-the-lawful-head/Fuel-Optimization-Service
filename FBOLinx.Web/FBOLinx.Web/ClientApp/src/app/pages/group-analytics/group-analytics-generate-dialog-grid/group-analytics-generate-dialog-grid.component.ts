@@ -62,14 +62,27 @@ export class GroupAnalyticsGenerateDialogGridComponent implements OnInit {
     }
 
     selectAction() {
-        forEach(this.groupDistributionDataSource.data, (customer) => {
-            customer.checked = this.selectAll;
-        });
+        if (this.groupDistributionDataSource.filter && this.groupDistributionDataSource.filter != "") {
+            forEach(this.groupDistributionDataSource.filteredData, (customer) => {
+                customer.checked = this.selectAll;
+            });
 
-        this.selectAllClicked.emit(this.groupDistributionDataSource.data);
+            this.selectAllClicked.emit(this.groupDistributionDataSource.filteredData);
+        }
+        else {
+            forEach(this.groupDistributionDataSource.data, (customer) => {
+                customer.checked = this.selectAll;
+            });
+
+            this.selectAllClicked.emit(this.groupDistributionDataSource.data);
+        }
     }
 
     public customerSelected(customer) {
+        if (customer.checked == null)
+            customer.checked = true;
+        else
+            customer.checked = !customer.checked;
         this.customerSelectedClicked.emit(customer);
     }
 
