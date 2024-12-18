@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>FBO Group Customer Pricing Report</h1>
-<div style="position: relative; top: 0; width: 100%; z-index: 100; text-align:center;">Select the customer(s) you'd like to generate a price sheet for.</div>
+<div class="subtitle">Select the customer(s) you'd like to generate a price sheet for.</div>
 
-<div mat-dialog-content style="max-height: 500px; width: 100%; height: calc(100vh - 32px); overflow: auto;">
+<div mat-dialog-content class="dialogContent">
         <app-group-analytics-generate-dialog-grid [groupDistributionGridData]="dataSources" (customerSelectedClicked)="customerSelectedClicked($event)" (selectAllClicked)="selectAllClicked($event)"></app-group-analytics-generate-dialog-grid>
 </div>
 <div class="" mat-dialog-actions>
