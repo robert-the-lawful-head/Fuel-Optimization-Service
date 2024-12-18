@@ -6,7 +6,6 @@ export class User {
     password: string;
     firstName: string;
     lastName: string;
-    token?: string;
     role: number;
     fboId: number;
     groupId: number;
@@ -17,6 +16,7 @@ export class User {
     isSingleSourceFbo: boolean;
     isNetworkFbo: boolean;
     accountType?: AccountType;
-    decimalPrecision: number;
     isJetNetIntegrationEnabled?: boolean;
+    decimalPrecision: number;
+    remember: boolean;
 }

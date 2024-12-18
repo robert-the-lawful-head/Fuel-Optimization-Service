@@ -1,20 +1,9 @@
 ﻿using System.Text;
 using FBOLinx.DB.Extensions;
-using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
-using FBOLinx.ServiceLayer.BusinessServices.Customers;
-using FBOLinx.ServiceLayer.BusinessServices.Fbo;
-using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
-using FBOLinx.ServiceLayer.BusinessServices.Mail;
-using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
-using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
-using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
-using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.Extensions;
-using FBOLinx.ServiceLayer.Logging;
-using FBOLinx.ServiceLayer.ScheduledService;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
@@ -29,6 +18,8 @@ using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.TableStorage;
 using FBOLinx.TableStorage.EntityServices;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using System;
 
 namespace FBOLinx.Web
 {
@@ -72,10 +63,26 @@ namespace FBOLinx.Web
                     x.SaveToken = true;
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = false, // change to true when we sepparate 3rd party integration apis
+                        //ValidIssuer = uri
+                        ValidateAudience = false, // evualate implicaitons to 3rd party integrations if set to true.
+                        //ValidAudience = fbolinxapi, 
+                        ValidateIssuerSigningKey = true,                     
                         IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateLifetime = true,                              
+                        ClockSkew = TimeSpan.Zero                           
+                    };
+                    x.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var token = context.HttpContext.Request.Cookies["AuthToken"];
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                context.Token = token;
+                            }
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
@@ -86,12 +93,16 @@ namespace FBOLinx.Web
                 options.AddPolicy("CorsPolicy", builder => builder
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .WithOrigins("https://*.fbolinx.com")
+                    .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
-                options.AddPolicy("LocalHost", builder => builder.WithOrigins("https://localhost:5001").AllowAnyMethod().AllowAnyHeader());
+                options.AddPolicy("LocalHost", builder => builder.WithOrigins("https://localhost:*")
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
             }
             );
-            
+
             // configure DI for application services
 
             services.RegisterConfigurationSections(configuration);

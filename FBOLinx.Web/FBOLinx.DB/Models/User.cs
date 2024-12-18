@@ -43,6 +43,9 @@ namespace FBOLinx.DB.Models
         public Group Group { get; set; }
 
         public ICollection<AccessTokens> AccessTokens { get; set; }
+        
+        public virtual RefreshTokens RefreshToken { get; set; }
+
         public string RoleDescription
         {
             get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(Role); }
