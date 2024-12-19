@@ -62,10 +62,14 @@ export class GroupAnalyticsGenerateDialogGridComponent implements OnInit {
     }
 
     selectAction() {
+        var customers;
+
         if (this.groupDistributionDataSource.filter && this.groupDistributionDataSource.filter != "") {
             forEach(this.groupDistributionDataSource.filteredData, (customer) => {
                 customer.checked = this.selectAll;
             });
+
+            customers = this.groupDistributionDataSource.filteredData;
 
             this.selectAllClicked.emit(this.groupDistributionDataSource.filteredData);
         }
@@ -74,20 +78,67 @@ export class GroupAnalyticsGenerateDialogGridComponent implements OnInit {
                 customer.checked = this.selectAll;
             });
 
+            customers = this.groupDistributionDataSource.data;
+
             this.selectAllClicked.emit(this.groupDistributionDataSource.data);
+        }
+
+        this.updateSelectAll(customers);
+    }
+
+    updateSelectAll(customers) {
+        const selectedCount = customers.filter(c => c.checked == true).length;
+        const totalItems = customers.length;
+
+        if (selectedCount === totalItems) {
+            this.selectAll = true;
+        } else if (selectedCount > 0) {
+            this.selectAll = false;
+        } else {
+            this.selectAll = false;
         }
     }
 
-    public customerSelected(customer) {
+    public customerSelectedRow(customer) {
         if (customer.checked == null)
             customer.checked = true;
         else
             customer.checked = !customer.checked;
-        this.customerSelectedClicked.emit(customer);
+
+        this.customerSelected();
+    }
+
+    public customerSelected() {
+        var customers;
+
+        if (this.groupDistributionDataSource.filter && this.groupDistributionDataSource.filter != "")
+            customers = this.groupDistributionDataSource.filteredData;
+        else
+            customers = this.groupDistributionDataSource.data;
+
+        this.updateSelectAll(customers);
+
+        this.customerSelectedClicked.emit(this.groupDistributionDataSource.data);
+        this.selectAllClicked.emit(customers);
     }
 
     applyFilter(filter: string) {
         this.groupDistributionDataSource.filter = filter.trim().toLowerCase();
+    }
+
+    // Function to determine if "Select All" checkbox should be indeterminate
+    public isIndeterminate(): boolean {
+        var selectedCount;
+        var totalItems;
+        if (this.groupDistributionDataSource.filter && this.groupDistributionDataSource.filter != "") {
+            selectedCount = this.groupDistributionDataSource.filteredData.filter((customer) => customer.checked).length;
+            totalItems = this.groupDistributionDataSource.filteredData.length;
+        }
+        else {
+            selectedCount = this.groupDistributionDataSource.data.filter((customer) => customer.checked).length;
+            totalItems = this.groupDistributionDataSource.data.length;
+        }
+        return selectedCount > 0 && selectedCount < totalItems;
     }
 
     private refreshGroupDistributionDataSource() {

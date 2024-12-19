@@ -4,12 +4,13 @@
                 <th *matHeaderCellDef mat-header-cell>
                     <input (change)="selectAction()"
                            [(ngModel)]="selectAll"
+                           [indeterminate]="isIndeterminate()"
                            class="checkboxHeight"
                            id="selectAllCheckbox"
                            type="checkbox" />
                 </th>
                 <td *matCellDef="let customer" mat-cell>
-                    <input type="checkbox" [(ngModel)]="customer.checked" (change)="customerSelected(customer);" />
+                    <input type="checkbox" [(ngModel)]="customer.checked" (change)="customerSelected();" />
                 </td>
             </ng-container>
 
@@ -19,7 +20,7 @@
                            class="e-input"
                            id="searchBox" (input)="applyFilter($event.currentTarget.value)" />
                 </th>
-                <td *matCellDef="let customer" mat-cell (click)="customerSelected(customer);">
+                <td *matCellDef="let customer" mat-cell (click)="customerSelectedRow(customer);">
                     <div style="width:250px">{{customer.company}}</div>
                 </td>
             </ng-container>

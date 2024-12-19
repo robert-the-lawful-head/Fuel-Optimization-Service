@@ -164,23 +164,13 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.focusTextbox();
     }
 
-    customerSelectedClicked(customer) {
-        let existingCustomer = -1;
-        if (this.selectedCustomers != null && this.selectedCustomers.length > 0)
-            existingCustomer = this.selectedCustomers.findIndex(c => c.customerId === customer.customerId);
-        else
-            this.selectedCustomers = [];
-
-        if (existingCustomer > -1)
-            this.selectedCustomers.splice(existingCustomer, 1);
-        else
-            this.selectedCustomers.push(customer);
-
+    customerSelectedClicked(customers) {
+        this.selectedCustomers = customers.filter(c => c.checked == true);
         this.focusTextbox();
     }
 
     selectAllClicked(customers) {
-        if (customers[0].checked)
+        if (customers.filter(c => c.checked == true).length > 0)
             this.selectedCustomers = customers;
         else
             this.selectedCustomers = [];
