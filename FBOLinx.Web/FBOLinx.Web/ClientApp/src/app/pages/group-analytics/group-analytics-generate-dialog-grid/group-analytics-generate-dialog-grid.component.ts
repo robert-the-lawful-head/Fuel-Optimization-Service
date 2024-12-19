@@ -119,7 +119,6 @@ export class GroupAnalyticsGenerateDialogGridComponent implements OnInit {
         this.updateSelectAll(customers);
 
         this.customerSelectedClicked.emit(this.groupDistributionDataSource.data);
-        this.selectAllClicked.emit(customers);
     }
 
     applyFilter(filter: string) {
