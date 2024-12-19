@@ -245,6 +245,7 @@ import { JetNetInformationComponent } from '../shared/components/jetnet-informat
 import {CustomerActionStatusComponent} from '../shared/components/customer-action-status/customer-action-status.component';
 import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
 import { GroupAnalyticsGenerateDialogGridComponent } from './group-analytics/group-analytics-generate-dialog-grid/group-analytics-generate-dialog-grid.component';
+import { MultiselectAutocompleteComponent } from '../shared/components/multiselect-autocomplete/multiselect-autocomplete.component';
 
 @NgModule({
     declarations: [
@@ -418,7 +419,8 @@ import { GroupAnalyticsGenerateDialogGridComponent } from './group-analytics/gro
         CustomerActionStatusComponent,
         DecimalPrecisionPipe,
         CurrencyPresicionPipe,
-        GroupAnalyticsGenerateDialogGridComponent
+        GroupAnalyticsGenerateDialogGridComponent,
+        MultiselectAutocompleteComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

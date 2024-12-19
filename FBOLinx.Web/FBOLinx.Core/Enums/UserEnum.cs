@@ -17,7 +17,9 @@ namespace FBOLinx.Core.Enums
         [Description("CSR")]
         CSR = 5,
         [Description("Non-Rev")]
-        NonRev = 6
+        NonRev = 6,
+        [Description("X1")]
+        X1 = 7,
     }
 
     public enum Actions : int

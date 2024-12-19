@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 // Services
 import { UserService } from '../../../services/user.service';
+import { SharedService } from '../../../layouts/shared-service';
 
 // Interfaces
 export interface NewUserDialogData {
@@ -30,7 +31,8 @@ export class UsersDialogNewUserComponent {
     constructor(
         public dialogRef: MatDialogRef<UsersDialogNewUserComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewUserDialogData,
-        private userService: UserService
+        private userService: UserService,
+        private sharedService: SharedService
     ) {
         this.loadAvailableRoles();
     }
@@ -65,6 +67,11 @@ export class UsersDialogNewUserComponent {
             } else if (this.data.groupId > 0) {
                 supportedRoleValues = [2];
             }
+
+            if (this.sharedService.currentUser.role === 3) {
+                supportedRoleValues.push(7);
+            }
+
             for (const role of data) {
                 if (supportedRoleValues.indexOf(role.value) > -1) {
                     this.availableroles.push(role);

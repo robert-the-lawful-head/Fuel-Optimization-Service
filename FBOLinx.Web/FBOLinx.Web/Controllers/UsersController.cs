@@ -22,6 +22,9 @@ using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using Mapster;
 using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.DB.Specifications;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -41,7 +44,9 @@ namespace FBOLinx.Web.Controllers
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
         private readonly ServiceLayer.BusinessServices.User.IUserService _userBusinessService;
-        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService,IOAuthService iOAuthService, Services.OAuthService oAuthService, IOptions<SecuritySettings> securitySettings) : base(logger)
+        private readonly IIntegrationStatusService _IntegrationStatusService;
+        private IRepository<IntegrationPartners, FboLinxContext> _IntegrationPartners;
+        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService, IOAuthService iOAuthService, Services.OAuthService oAuthService, IOptions<SecuritySettings> securitySettings, IIntegrationStatusService integrationStatusService, IRepository<IntegrationPartners, FboLinxContext> integrationPartners) : base(logger)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -54,6 +59,8 @@ namespace FBOLinx.Web.Controllers
             _iOAuthService = iOAuthService;
             _oAuthService = oAuthService;
             _securitySettings = securitySettings.Value;
+            _IntegrationStatusService = integrationStatusService;
+            _IntegrationPartners = integrationPartners;
         }
 
         [HttpGet("prepare-token-auth")]
@@ -485,6 +492,15 @@ namespace FBOLinx.Web.Controllers
                 {
                     fbo.LastLogin = DateTime.UtcNow;
                     await _fboService.UpdateModel(fbo);
+
+                    var x1Integration = await _IntegrationPartners.FirstOrDefaultAsync(x => x.PartnerName == "X1");
+
+                    if (x1Integration != null)
+                    {
+                        var result = await _IntegrationStatusService.GetSingleBySpec(new IntegrationStatusSpecification(x1Integration.Oid, fboId));
+                        if (result != null)
+                            fbo.IntegrationStatus = true;
+                    }
                 }
             }
 
