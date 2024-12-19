@@ -6,14 +6,25 @@
     background: main-color(500);
     color: white;
 }
-
+.subtitle {
+    position: relative; 
+    top: 0; 
+    width: 100%; 
+    z-index: 100; 
+    text-align:center;
+    padding: 10px 0;
+}
 .mat-dialog-content {
-    padding: 20px 40px;
+    padding: 0 40px;
     margin: 0;
 
     p {
         margin-bottom: 5px;
     }
+    max-height: 500px; 
+    width: 100%; 
+    height: calc(100vh - 32px); 
+    overflow: auto;
 }
 
 .mat-dialog-actions {
