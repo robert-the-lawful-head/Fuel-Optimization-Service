@@ -164,7 +164,7 @@
                 <td *matCellDef="let info" mat-cell>
                     {{
                         info.flightNumber || !info.percentOfVisits
-                            ? (info.dateTime | date : "MM/dd/YYYY HH:mm")
+                            ? (getlocalDateTime(info.dateTime) | date : "MM/dd/YYYY HH:mm")
                             : ""
                     }}
                 </td>
