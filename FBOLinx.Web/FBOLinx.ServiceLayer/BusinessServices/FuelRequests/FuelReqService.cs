@@ -345,7 +345,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             ActualVolume = 0,
                             Archived = transactionOrderDetails == null ? false : transactionOrderDetails.IsArchived,
                             Cancelled = transactionOrderDetails == null ? false : transactionOrderDetails.IsCancelled,
-                            CustomerId = item.CustomerInfoByGroup?.CustomerId,
+                            CustomerId = customers.Where(c => c.Oid == item.CustomerInfoByGroupId)?.FirstOrDefault().CustomerId,
                             //DateCreated = item.ServiceDateTimeUtc,//check this property
                             DispatchNotes = string.Empty,
                             Eta = item.ArrivalDateTimeLocal,
