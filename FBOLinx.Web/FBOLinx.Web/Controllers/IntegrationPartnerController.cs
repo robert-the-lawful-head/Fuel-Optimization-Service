@@ -147,7 +147,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.IsOkToEmail = request.IsOktoSendEmail.GetValueOrDefault();
 
             var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
-            var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(customer.Oid));
+            var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customer.Oid, fbo.GroupId));
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
             var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber == request.TailNumber).FirstOrDefault();
             var customerInfoByFbo = await _customerInfoByFboEntityService.GetSingleBySpec(new CustomerInfoByFboByCustomerInfoByGroupIdFboIdSpecification(customerInfoByGroup.Oid, fbo.Oid));
@@ -167,7 +167,7 @@ namespace FBOLinx.Web.Controllers
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;
 
             if (request.Services.Count > 0)
-                await _fuelReqService.AddServiceOrder(request, fbo);
+                await _fuelReqService.AddServiceOrder(request, fbo, customerAircraft.Oid, customerInfoByGroup);
 
             // Add order details if it doesn't exist yet
             var existingOrderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(request.SourceId.GetValueOrDefault(), handlerId));
