@@ -13,7 +13,6 @@
       [editSettings]="editSettings"
       allowFiltering="true"
       [filterSettings]="filterOptions"
-      [sortSettings]="sortSettings"
       [allowSorting]="true"
       height="350"
     >
@@ -25,7 +24,7 @@
           isPrimaryKey="true"
           [visible]="false"
         ></e-column>
-        <e-column field="company" headerText="Customer">
+        <e-column field="company" headerText="Customer" [allowSorting]="true">
           <ng-template #filterTemplate let-data>
             <input
                 (input)="onFilterInput($event, 'company', 'contains')"

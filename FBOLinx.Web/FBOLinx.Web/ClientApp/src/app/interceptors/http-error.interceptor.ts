@@ -35,11 +35,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           return throwError(error);
         }
 
-        let displayError = error.error?.message ?? 'An unexpected error occurred, try reloading the page. If the problem persists, please contact support.';
-
-        if(error.error.message != "Username or password is incorrect"){
-          displayError = error.error.message;
-        }
+        let displayError = error.error?.message ??'An unexpected error occurred, try reloading the page. If the problem persists, please contact support.';
 
         if (error.status === 403) {
           displayError = 'You are not authorized to access this resource';
@@ -47,9 +43,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           displayError = 'The resource you are looking for is not found';
         }
 
-        console.error(error);
+        console.log(error);
         this.snackbarService.showErrorSnackBar(displayError,this.errorSnackBarDuration);
-        return throwError(displayError);
+        return throwError(error);
       })
     );
   }

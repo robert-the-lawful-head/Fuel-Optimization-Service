@@ -13,7 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject, Subscription, interval } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
+import { debounceTime, takeWhile } from 'rxjs/operators';
 import {
     CsvExportModalComponent,
     ICsvExportModalData,
@@ -76,7 +76,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
 
 
         this.filterChangeSubscription = this.filtersChanged
-            .debounceTime(2000)
+            .pipe(debounceTime(2000))
             .subscribe(() => this.refreshData());
 
         this.initColumns();
@@ -256,7 +256,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
     }
 
     filterChanged() {
-        this.filtersChanged.next();
+        this.filtersChanged.next({});
     }
 
     onExport() {

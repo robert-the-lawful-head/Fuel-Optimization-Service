@@ -96,6 +96,8 @@ namespace FBOLinx.DB.Models
         public AccountTypes AccountType { get; set; }
         public string AntennaName { get; set; }
         public bool? IsJetNetIntegrationEnabled { get; set; } = false;
+        [NotMapped]
+        public bool IntegrationStatus { get; set; } = false;
 
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]

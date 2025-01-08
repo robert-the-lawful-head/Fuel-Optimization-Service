@@ -28,6 +28,9 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.DB.Specifications;
+using System.Security.Cryptography;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -52,6 +55,8 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboCompaniesFavoritesService _fboCompaniesFavoritesService;
         private readonly IAirportService _airportService;
+        private readonly IIntegrationStatusService _IntegrationStatusService;
+        private IRepository<IntegrationPartners, FboLinxContext> _IntegrationPartners;
 
         public FbosController(
             FboLinxContext context,
@@ -64,7 +69,7 @@ namespace FBOLinx.Web.Controllers
             IFboPricesService fbopricesService,
             IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             IUserService userService,
-            IHttpContextAccessor httpContextAccessor, IFboCompaniesFavoritesService fboCompaniesFavoritesService, IAirportService airportService) : base(logger)
+            IHttpContextAccessor httpContextAccessor, IFboCompaniesFavoritesService fboCompaniesFavoritesService, IAirportService airportService, IIntegrationStatusService integrationStatusService, IRepository<IntegrationPartners, FboLinxContext> integrationPartners) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -82,6 +87,8 @@ namespace FBOLinx.Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
             _airportService = airportService;
+            _IntegrationStatusService = integrationStatusService;
+            _IntegrationPartners = integrationPartners;
         }
 
         // GET: api/Fbos/group/5
@@ -187,6 +194,15 @@ namespace FBOLinx.Web.Controllers
             if (fbos == null)
             {
                 return NotFound();
+            }
+
+            var x1Integration = await _IntegrationPartners.FirstOrDefaultAsync(x => x.PartnerName == "X1");
+
+            if (x1Integration != null)
+            {
+                var result = await _IntegrationStatusService.GetSingleBySpec(new IntegrationStatusSpecification(x1Integration.Oid, fbos.Oid));
+                if (result != null)
+                    fbos.IntegrationStatus = true;
             }
 
             return Ok(fbos);

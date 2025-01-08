@@ -35,6 +35,7 @@ import { csvFileOptions, GridBase } from '../../../services/tables/GridBase';
 import { localStorageAccessConstant } from '../../../constants/LocalStorageAccessConstant';
 import { SelectedDateFilter } from '../../../shared/components/preset-date-filter/preset-date-filter.component';
 import { FbosGridViewModel } from '../../../models/FbosGridViewModel';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -158,7 +159,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             localStorageAccessConstant.icao
         );
         this.filtersChangeSubscription = this.filtersChanged
-            .debounceTime(500)
+            .pipe(debounceTime(500))
             .subscribe(() => this.refreshDataSource());
         this.initColumns();
     }
@@ -320,7 +321,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         if(typeof value == "boolean")
             this.hideCommercialAicrafts = value;
 
-        this.filtersChanged.next();
+        this.filtersChanged.next({});
     }
 
     onClickAircraft(row: FlightWatchHistorical) {
@@ -467,7 +468,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
                 });
         }
     }
-
+    getlocalDateTime(date: Date): string{
+        let curentdate = new Date(date+"Z");
+        let localdate = curentdate.toLocaleString();
+        return localdate;
+    }
     private setColumns() {
         this.columns = this.filteredColumns;
     }

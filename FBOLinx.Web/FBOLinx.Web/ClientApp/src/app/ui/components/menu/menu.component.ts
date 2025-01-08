@@ -34,16 +34,18 @@ export class MenuComponent implements OnInit, AfterViewInit {
     hasShownTutorial = false;
 
     changeEmittedSubscription: Subscription;
+    integrationStatus: boolean = false;
 
     constructor(
         private menuService: MenuService,
         private sharedService: SharedService,
         private userService: UserService,
-        private serviceOrderService: ServiceOrderService
+        private serviceOrderService: ServiceOrderService,
     ) {}
 
     ngOnInit(): void {
         this.getMenuItems();
+
     }
     ngOnDestroy() {
         this.changeEmittedSubscription?.unsubscribe();
@@ -86,7 +88,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         if (this.sharedService.currentUser.impersonatedRole) {
             role = this.sharedService.currentUser.impersonatedRole;
         }
-        return item.roles && item.roles.indexOf(role) === -1;
+        return (item.title != 'Dashboard' && this.sharedService.currentUser.integrationStatus) || (item.roles && item.roles.indexOf(role) === -1);
     }
 
     getStyles(item: any) {

@@ -8,7 +8,7 @@
             <app-fbo-prices-update-generator [isCsr]="isCsr"
                                              [isMember]="isMember"></app-fbo-prices-update-generator>
 
-        <div class="row">
+        <div class="row" *ngIf="!integrationStatus">
             <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                 <ni-card [collapsible]="false"
                          [opened]="true"
