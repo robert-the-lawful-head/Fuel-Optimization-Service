@@ -68,7 +68,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         {
             List<CustomerInfoByGroupDto> result = new List<CustomerInfoByGroupDto>();
             if (tailNumbers?.Count == 0 || tailNumbers == null)
-            result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+                result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
 
 
             if (tailNumbers != null && tailNumbers.Count > 0)

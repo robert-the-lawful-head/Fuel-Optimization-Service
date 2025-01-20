@@ -1,5 +1,4 @@
-import { ThrowStmt } from '@angular/compiler';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CustomersListType } from 'src/app/models';
@@ -66,12 +65,10 @@ export class AircraftPopupContainerComponent {
 
                 if (changes.flightData?.currentValue?.flightDepartment) {
                     this.hasAircraft = true;
-                    //if (changes.isLoading?.currentValue)
-                    //    this.isLoading = changes.isLoading.currentValue;
                     this.isLoading = false;
                 }
                 else
-                    this.getJetNetCustomerName(changes);
+                    this.getJetNetCustomerName();
             }
         }
   }
@@ -122,25 +119,30 @@ export class AircraftPopupContainerComponent {
               this.customers = customers;
           });
   }
-  goToCustomerManager(customerInfoByGroupId: number):void{
-    this.router.navigate(['./default-layout','customers',customerInfoByGroupId]);
+    goToCustomerManager(customerInfoByGroupId: number): void {
+        this.router.navigate([
+            './default-layout',
+            'customers',
+            customerInfoByGroupId,
+        ]);
     }
 
     openJetNetInformation() {
         this.isJetNetOpened = true;
-        const dialogRef = this.jetNetInformationDialog.open(JetNetInformationComponent, {
+        const dialogRef = this.jetNetInformationDialog.open(
+            JetNetInformationComponent,
+            {
             width: '1100px',
-            data: this.aircraftWatch.tailNumber
-        });
-        dialogRef
-            .afterClosed()
-            .subscribe((result: any) => {
+                data: this.aircraftWatch.tailNumber,
+            }
+        );
+        dialogRef.afterClosed().subscribe((result: any) => {
                 this.aircraftWatch.customerInfoByGroupId = result;
                 this.isJetNetOpened = false;
             });
     }
 
-    getJetNetCustomerName(changes: any) {
+    getJetNetCustomerName() {
         if ((this.aircraftWatch?.customerInfoByGroupId == null || this.aircraftWatch?.customerInfoByGroupId == 0) && this.isJetNetIntegrationEnabled && this.aircraftWatch?.tailNumber?.startsWith("N")) {
             try {
                 this.jetNetService.getJetNetInformationByTailNumber(this.aircraftWatch?.tailNumber).subscribe((response: JetNet) => {
@@ -148,8 +150,6 @@ export class AircraftPopupContainerComponent {
                         this.hasJetNetInformation = true;
                         this.aircraftWatch.flightDepartment = response.aircraftresult.companyrelationships[0].companyname.toUpperCase();
                         this.hasAircraft = true;
-                        //if (changes.isLoading?.currentValue)
-                        //    this.isLoading = changes.isLoading.currentValue;
                     }
                     else
                         this.hasJetNetInformation = false;
@@ -159,15 +159,11 @@ export class AircraftPopupContainerComponent {
             catch (e) {
                 this.hasAircraft = false;
                 this.hasJetNetInformation = false;
-                //if (changes.isLoading?.currentValue)
-                //    this.isLoading = changes.isLoading.currentValue;
                 this.isLoading = false;
             }
         }
         else {
             this.hasAircraft = false;
-            //if (changes.isLoading?.currentValue)
-            //    this.isLoading = changes.isLoading.currentValue;
             this.isLoading = false;
             this.hasJetNetInformation = false;
         }

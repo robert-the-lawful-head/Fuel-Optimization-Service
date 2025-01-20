@@ -256,13 +256,10 @@
                         </mat-form-field>
                     </div>
                     <div (click)="$event.stopPropagation()" class="mb-2 mt-2">
-                        <ejs-multiselect
-                            [dataSource]="options"
-                            [fields]="{ text: optionLabel, value: optionValue }"
-                            placeholder="Select filters"
-                            [showSelectAll]="true"
-                            [(ngModel)]="filter.optionsFilter"
-                        ></ejs-multiselect>
+                        <app-multiselect-autocomplete 
+                        [dataSource]="options"
+                        [fields]="{ text: optionLabel, value: optionValue }"
+                        [(ngModel)]="filter.optionsFilter"></app-multiselect-autocomplete>
                     </div>
                 </div>
                 <div *ngIf="isFilterOpen" class="col-12">
