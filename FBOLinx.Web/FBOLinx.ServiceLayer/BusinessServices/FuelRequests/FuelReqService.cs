@@ -73,7 +73,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
         Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId, int fuelerlinxCompanyId, SendOrderNotificationRequest request, bool isCancelled = false, FuelReqDto fuelReq = null);
-        Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
+        Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo, int customerAircraftId, CustomerInfoByGroupDto customer);
         Task CheckAndSendFuelOrderUpdateEmail(FuelReqRequest fuelerlinxTransaction);
         Task<FuelReqDto> CreateFuelOrder(FuelReqDto request);
         Task<FuelReqDto> GetContractOrder(int fboId, int fuelerLinxTransactionId);
@@ -345,7 +345,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             ActualVolume = 0,
                             Archived = transactionOrderDetails == null ? false : transactionOrderDetails.IsArchived,
                             Cancelled = transactionOrderDetails == null ? false : transactionOrderDetails.IsCancelled,
-                            CustomerId = item.CustomerInfoByGroup?.CustomerId,
+                            CustomerId = customers.Where(c => c.Oid == item.CustomerInfoByGroupId)?.FirstOrDefault().CustomerId,
                             //DateCreated = item.ServiceDateTimeUtc,//check this property
                             DispatchNotes = string.Empty,
                             Eta = item.ArrivalDateTimeLocal,
@@ -769,12 +769,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return false;
         }
 
-        public async Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo)
+        public async Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo, int customerAircraftId, CustomerInfoByGroupDto customer)
         {
-            var customersWithTail = await _customerInfoByGroupService.GetCustomers(fbo.GroupId, new List<string>() { request.TailNumber });
-            var customer = customersWithTail.Where(c => c.Customer.FuelerlinxId == request.CompanyId).FirstOrDefault();
-            var customerAircraft = customer.Customer.CustomerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
-
             var serviceReq = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(request.SourceId.GetValueOrDefault(), fbo.Oid));
 
             if (serviceReq == null || serviceReq.Oid == 0)
@@ -782,7 +778,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceReq = new ServiceOrderDto()
                 {
                     Fboid = fbo.Oid,
-                    CustomerAircraftId = customerAircraft.Oid,
+                    CustomerAircraftId = customerAircraftId,
                     AssociatedFuelOrderId = request.FboLinxFuelOrderId,
                     FuelerLinxTransactionId = request.SourceId,
                     ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,

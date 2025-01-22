@@ -174,7 +174,7 @@ namespace FBOLinx.Web.Controllers
                               CustomerId = groupedResult.Key.CustomerId,
                               Company = groupedResult.Key.Company,
                           })
-                            .Distinct().ToList();
+                            .Distinct().OrderBy(c => c.Company).ToList();
            
             result.ForEach(row =>
             {
