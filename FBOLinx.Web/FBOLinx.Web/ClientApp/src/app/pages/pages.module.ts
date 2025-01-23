@@ -246,6 +246,7 @@ import {CustomerActionStatusComponent} from '../shared/components/customer-actio
 import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
 import { GroupAnalyticsGenerateDialogGridComponent } from './group-analytics/group-analytics-generate-dialog-grid/group-analytics-generate-dialog-grid.component';
 import { MultiselectAutocompleteComponent } from '../shared/components/multiselect-autocomplete/multiselect-autocomplete.component';
+import { GroupFbosGridComponent } from './groups/group-fbos-grid/group-fbos-grid.component';
 
 @NgModule({
     declarations: [
@@ -292,6 +293,7 @@ import { MultiselectAutocompleteComponent } from '../shared/components/multisele
         GroupsMergeDialogComponent,
         GroupsEditComponent,
         GroupsGridComponent,
+        GroupFbosGridComponent,
         GroupsHomeComponent,
         PricingTemplatesDialogNewTemplateComponent,
         PricingTemplatesDialogCopyTemplateComponent,
