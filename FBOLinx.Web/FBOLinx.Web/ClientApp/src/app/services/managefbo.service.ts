@@ -14,6 +14,6 @@ export class ManageFboGroupsService {
     }
     public isNetworkFbo(groupsFbosData: GroupFboViewModel,groupId: number): boolean{
         var groupFbos =  groupsFbosData.groups.find(g => g.oid == groupId);
-        return groupFbos.fboCount > 1;
+        return groupFbos?.fboCount > 1;
     }
 }
