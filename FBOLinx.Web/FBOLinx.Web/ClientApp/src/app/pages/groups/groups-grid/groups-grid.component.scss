@@ -1,29 +1,5 @@
 ﻿::ng-deep {
-    .e-grid {
-        .e-headercell,
-        .e-detailheadercell {
-            height: 60px;
-        }
-
-        .e-detailcell {
-            .e-headercell {
-                height: 40px;
-            }
-        }
-
-        .e-headercelldiv {
-            height: auto;
-        }
-
-        .e-rowcell {
-            padding: 12px 21px;
-        }
-
-        .e-toolbar-right {
-            left: 0;
-        }
-    }
-
+    //checkk of can be removed
     .status {
         color: red;
         font-weight: bold;
@@ -31,6 +7,9 @@
         &.good {
             color: #81c784;
         }
+    }
+    .mat-row:hover {
+        background-color: transparent;
     }
 }
 
@@ -52,7 +31,7 @@
 }
 
 .table-container {
-  height: calc(100vh - 265px);
+  height: calc(100vh - 215px);
   overflow: auto;
 }
 
@@ -60,9 +39,16 @@
 table {
     width: 100%;
   }
+
+  .expanded-detail {
+    padding: 20px;
+  }
   
   tr.example-detail-row {
     height: 0;
+  }
+  tr.example-detail-row :hover {
+    background-color: whitesmoke;
   }
   
   tr.example-element-row:not(.example-expanded-row):hover {
@@ -80,27 +66,4 @@ table {
   .example-element-detail {
     overflow: hidden;
     display: flex;
-  }
-  
-  .example-element-diagram {
-    min-width: 80px;
-    border: 2px solid black;
-    padding: 8px;
-    font-weight: lighter;
-    margin: 8px 0;
-    height: 104px;
-  }
-  
-  .example-element-symbol {
-    font-weight: bold;
-    font-size: 40px;
-    line-height: normal;
-  }
-  
-  .example-element-description {
-    padding: 16px;
-  }
-  
-  .example-element-description-attribution {
-    opacity: 0.5;
   }
