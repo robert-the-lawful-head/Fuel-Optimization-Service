@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
@@ -19,10 +19,7 @@ import { NotificationComponent } from 'src/app/shared/components/notification/no
 })
 export class GroupFbosGridComponent implements OnInit {
     @Input() dataSource: any;
-    @Input() isNetworkFbo: boolean;
-
-    //this emitter seems useless need to evaluate if it can be removed it use redux to set grid state
-    @Output() editFboClicked = new EventEmitter<any>();
+    @Input() isNetworkFbo: boolean;    
 
     displayedColumns = [
         'icao',
@@ -46,16 +43,12 @@ export class GroupFbosGridComponent implements OnInit {
         private notification: MatDialog,
         private manageDialog: MatDialog,
         private groupsService: GroupsService,
-        private router: Router
+        private router: Router,
     ) {}
 
     ngOnInit() {}
-
     editFBO(fbo: any) {
-        this.editFboClicked.emit({
-            fbo,
-            searchValue: this.searchValue,
-        });
+        this.router.navigate(['/default-layout/fbos/' + fbo.oid]);
     }
     manageFBO(fbo: any) {
         if (!fbo.active) {
