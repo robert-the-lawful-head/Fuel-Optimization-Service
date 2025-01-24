@@ -382,7 +382,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             .filter((column) => !column.hidden)
             .map((column) => column.id);
     }
-
+    // this might be repeeated on all grids
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(
             TableSettingsComponent,
@@ -394,16 +394,9 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             if (result) {
                 this.columns = [...result];
                 this.refreshSort(this.sort, this.columns);
-                this.saveSettings();
+                this.saveSettings(this.tableLocalStorageKey,this.columns);
             }
         });
-    }
-
-    saveSettings() {
-        localStorage.setItem(
-            this.tableLocalStorageKey,
-            JSON.stringify(this.columns)
-        );
     }
 
     onFuelVendorUpdate(event: any, customer: any) {
@@ -534,7 +527,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                         name: column.name,
                     }
             );
-            this.saveSettings();
+            this.saveSettings(this.tableLocalStorageKey,this.columns);
         });
         this.dataSource.data = this.customersData.filter(
             (element: any) => {
