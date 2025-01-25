@@ -55,11 +55,6 @@
             <mat-icon>merge_type</mat-icon>
             Merge Groups
         </button>
-
-        <!--<button (click)="addAssociation()"
-           mat-flat-button>
-        Add Association
-    </button>-->
     </div>
 
     <div class="actions col-6 col-md-2">
@@ -87,6 +82,7 @@
 >
     <table
         mat-table
+        matSort
         [dataSource]="dataSource"
         multiTemplateDataRows
         class="mat-elevation-z8"
@@ -304,11 +300,15 @@
             >
                 <div
                     class="example-element-detail"
+                    [class.expanded-detail]="element === expandedElement"
                     [@detailExpand]="
                         element == expandedElement ? 'expanded' : 'collapsed'
                     "
                 >
-                    <p>here goes the expandable content component to display</p>
+                    <app-group-fbos-grid
+                    [dataSource]="fboDataSourceDictionary[element.oid]"
+                    [isNetworkFbo]="isNetworkFbo(element.oid)"
+                    ></app-group-fbos-grid>
                 </div>
             </td>
         </ng-container>
@@ -327,7 +327,7 @@
             class="example-detail-row"
         ></tr>
     </table>
-    <div class="">
+    <div class="invisible">
         <mat-paginator
             (page)="(0); onPageChanged($event)"
             [length]="groupDataSource.length"
