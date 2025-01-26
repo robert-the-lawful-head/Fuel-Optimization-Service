@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.Core.BaseModels.Queries;
 using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO.SWIM;
@@ -29,13 +27,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
         Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdated);
     }
 
-    public class SWIMFlightLegService : BaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg, DegaContext>, ISWIMFlightLegService
+    public class SWIMFlightLegService : BaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg, FlightDataContext>, ISWIMFlightLegService
     {
         private SWIMFlightLegEntityService _SwimFlightLegEntityService;
-        private IRepository<DB.Models.SWIMFlightLeg, DegaContext> _repository;
+        private IRepository<DB.Models.SWIMFlightLeg, FlightDataContext> _repository;
         private int flightWatchMaxRecords = 30000;
 
-        public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IRepository<DB.Models.SWIMFlightLeg, DegaContext> repository) : base(swimFlightLegEntityService)
+        public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IRepository<DB.Models.SWIMFlightLeg, FlightDataContext> repository) : base(swimFlightLegEntityService)
         {
             _SwimFlightLegEntityService = swimFlightLegEntityService;
             _repository = repository;

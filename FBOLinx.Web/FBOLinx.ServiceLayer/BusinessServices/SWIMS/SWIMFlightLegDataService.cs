@@ -3,12 +3,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.BusinessServices.User;
-using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using Mapster;
 
@@ -20,7 +15,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             List<long> swimFlightLegIds, DateTime? minMessageDateTimeUtc = null);
     }
 
-    public class SWIMFlightLegDataService : BaseDTOService<SWIMFlightLegDataDTO, DB.Models.SWIMFlightLegData, DegaContext>, ISWIMFlightLegDataService
+    public class SWIMFlightLegDataService : BaseDTOService<SWIMFlightLegDataDTO, DB.Models.SWIMFlightLegData, FlightDataContext>, ISWIMFlightLegDataService
     {
         SWIMFlightLegDataEntityService _SwimFlightLegEntityService;
         public SWIMFlightLegDataService(SWIMFlightLegDataEntityService entityService) : base(entityService)
