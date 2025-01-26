@@ -247,6 +247,7 @@ import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion
 import { GroupAnalyticsGenerateDialogGridComponent } from './group-analytics/group-analytics-generate-dialog-grid/group-analytics-generate-dialog-grid.component';
 import { MultiselectAutocompleteComponent } from '../shared/components/multiselect-autocomplete/multiselect-autocomplete.component';
 import { GroupFbosGridComponent } from './groups/group-fbos-grid/group-fbos-grid.component';
+import { CustomerEmailGridComponent } from './group-analytics/group-analytics-email-pricing-dialog/customer-email-grid/customer-email-grid.component';
 
 @NgModule({
     declarations: [
@@ -422,7 +423,8 @@ import { GroupFbosGridComponent } from './groups/group-fbos-grid/group-fbos-grid
         DecimalPrecisionPipe,
         CurrencyPresicionPipe,
         GroupAnalyticsGenerateDialogGridComponent,
-        MultiselectAutocompleteComponent
+        MultiselectAutocompleteComponent,
+        CustomerEmailGridComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
