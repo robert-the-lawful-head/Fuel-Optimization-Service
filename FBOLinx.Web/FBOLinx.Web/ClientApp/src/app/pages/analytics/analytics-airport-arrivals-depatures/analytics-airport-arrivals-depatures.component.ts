@@ -84,10 +84,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             id: 'company',
             name: 'Company',
         },
-        //{
-        //    id: 'customerActionStatus',
-        //    name: 'Customer Action Status',
-        //},
         {
             id: 'tailNumber',
             name: 'Tail #',
@@ -351,6 +347,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     exportCsv() {
         let computePropertyFnc = (item: any[], id: string): any => {
+            if('isConfirmedVisit' == id)
+                item[id] = item[id] ? 'Yes' : 'No';
+            if(id == 'dateTime')
+                item[id] = this.getlocalDateTime(item[id]);
+            else
             if (id == 'aircraftTypeCode')
                 item[id] = this.getAircraftLabel(item[id]);
             else return null;
