@@ -14,6 +14,7 @@ import { NullOrEmptyToDefault } from 'src/app/shared/pipes/null/NullOrEmptyToDef
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
+  providers: [NullOrEmptyToDefault],
   selector: 'app-aircraft-popup-container',
   templateUrl: './aircraft-popup-container.component.html',
   styleUrls: ['./aircraft-popup-container.component.scss'],
