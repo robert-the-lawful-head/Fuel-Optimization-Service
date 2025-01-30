@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { DefaultUrlSerializer, Router } from '@angular/router';
 import { CustomersListType } from 'src/app/models';
 import { Aircraftwatch } from 'src/app/models/flight-watch';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
@@ -10,6 +10,8 @@ import { SharedService } from 'src/app/layouts/shared-service';
 import { JetNetInformationComponent } from '../../../shared/components/jetnet-information/jetnet-information.component';
 import { JetNetService } from '../../../services/jetnet.service';
 import { JetNet } from '../../../models/jetnet-information';
+import { NullOrEmptyToDefault } from 'src/app/shared/pipes/null/NullOrEmptyToDefault.pipe';
+import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
   selector: 'app-aircraft-popup-container',
@@ -53,7 +55,8 @@ export class AircraftPopupContainerComponent {
         private flightWatchMapSharedService: FlightWatchMapSharedService,
         private sharedService: SharedService,
         private jetNetInformationDialog: MatDialog,
-        private jetNetService: JetNetService
+        private jetNetService: JetNetService,
+        private nullOrEmptyToDefault: NullOrEmptyToDefault
     ) { }
     ngOnChanges(changes) {
         if (changes.flightData?.currentValue != undefined && changes.flightData?.currentValue.atcFlightNumber != this.newChanges) {
@@ -109,6 +112,16 @@ export class AircraftPopupContainerComponent {
         }
     });
   }
+
+    get companyDisplayText() {
+        const defaultstring = this.nullOrEmptyToDefault.transform(this.aircraftWatch?.flightDepartment,defaultStringsEnum.unknown);
+        return !this.isJetNetIntegrationEnabled
+            ? defaultstring
+            : (!this.hasJetNetInformation)
+                ? this.aircraftWatch?.flightDepartment ?? 'Info N/A on JETNET' 
+                : defaultstring
+    }
+
   getCustomersList(groupId,fboId) {
       this.customerInfoByGroupService
           .getCustomersListByGroupAndFbo(
