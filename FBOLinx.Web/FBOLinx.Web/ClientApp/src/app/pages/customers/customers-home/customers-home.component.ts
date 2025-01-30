@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TagsService } from 'src/app/services/tags.service';
@@ -59,7 +59,8 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         private customerAircraftService: CustomeraircraftsService,
         private tagService: TagsService,
         private route: ActivatedRoute,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        private cdr: ChangeDetectorRef
     ) {
         
         this.loadCustomers();
@@ -169,6 +170,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                         value: fv,
                     })),
                 }));
+                this.cdr.detectChanges();
                 this.customersCount = this.customersData.length;
                 this.ngxLoader.stopLoader(this.charNameCustomer);
             });
