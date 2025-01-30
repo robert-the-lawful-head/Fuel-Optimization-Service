@@ -330,3 +330,6 @@ ASALocalRun/
 .mfractor/
 
 FBOLinx.Web/FBOLinx.Job/Data/
+
+# Files included on the build on upgrade to angular 13
+FBOLinx.Web/FBOLinx.Web/ClientApp/.angular/*
