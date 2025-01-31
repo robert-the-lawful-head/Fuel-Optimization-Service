@@ -381,6 +381,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     private updateMargins(oldMargins, marginType , discountType) {
         const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
+            margins[i].max = Number(margins[i].max)
             if (marginType == 0) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
                        if(discountType == 0)
