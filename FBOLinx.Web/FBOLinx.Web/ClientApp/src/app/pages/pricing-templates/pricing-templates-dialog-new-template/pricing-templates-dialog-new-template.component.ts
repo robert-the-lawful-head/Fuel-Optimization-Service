@@ -171,7 +171,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         const secondStep = this.form.controls.secondStep as FormGroup;
         this.valueChangeSubscription = secondStep.valueChanges.subscribe(() => {
             const updatedMargins = this.updateMargins(
-                this.customerMarginsFormArray.value,
+                this.customerMarginsFormArray.getRawValue(),
                 this.marginType ,
                 this.discountType
             );
@@ -381,7 +381,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     private updateMargins(oldMargins, marginType , discountType) {
         const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
-            margins[i].max = Number(margins[i].max)
             if (marginType == 0) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
                        if(discountType == 0)
