@@ -1234,10 +1234,10 @@ namespace FBOLinx.Web.Controllers
                             //                         : string.Format(decimalStringFormat, (cm == null ? 0 : cm.Amount.GetValueOrDefault())))),
                             FavoriteCompany = cg.FavoriteCompany,
                             CustomerActionStatusEmailRequired = nfc != null ? true : false,
-                            CustomerActionStatusSetupRequired = (ct == null || nfc != null ? true : false),
+                            CustomerActionStatusSetupRequired = (ct == null ? true : false),// || nfc != null
                             CustomerActionStatusTopCustomer = tc != null ? true : false,
                             ToolTipEmailRequired = (nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
-                            ToolTipSetupRequired = (ct == null || nfc != null) ? "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address." : "",
+                            ToolTipSetupRequired = (ct == null) ? "This customer was added and needs to be setup with an appropriate ITP template." : "",// || nfc != null
                             ToolTipTopCustomer = (tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : ""
                         }
                         into resultsGroup
