@@ -1,15 +1,24 @@
-<ni-badge *ngIf="customerActionStatusEmailRequired == 'true'" [borderRadius]="false"
-          [color]="'active'" >
-    <img src="../../../../assets/img/envelope-regular16.png" style="padding-right:5px; padding-bottom: 3px;"> Email Required
-</ni-badge>
+<div class="pb-1 pt-1">
+    <ni-badge *ngIf="customerActionStatusEmailRequired == 'true'" [borderRadius]="false"
+              [color]="'active'" matTooltip="{{ toolTipEmailRequired }}">
+        <img src="../../../../assets/img/envelope-regular16.png" style="padding-right:5px; padding-bottom: 3px;"> Email Required
+    </ni-badge>
+</div>
 
-<ni-badge *ngIf="customerActionStatusSetupRequired == 'true'" [borderRadius]="false"
-          [color]="'danger'">
-    <img src="../../../../assets/img/wrench-regular16.png" style="padding-right:5px; padding-bottom: 3px;">  Setup Required
-</ni-badge>
+<div  class="pb-1 float-left">
+    <ni-badge *ngIf="customerActionStatusSetupRequired == 'true'" [borderRadius]="false"
+              [color]="'danger'" matTooltip="{{ toolTipSetupRequired }}">
+        <img src="../../../../assets/img/wrench-regular16.png" style="padding-right:5px; padding-bottom: 3px;">  Setup Required
+    </ni-badge>
+</div>
 
-<ni-badge *ngIf="customerActionStatusTopCustomer == 'true'" [borderRadius]="false"
-          [color]="'success'">
-    <img src="../../../../assets/img/award-regular_16.png" style="padding-right:5px; padding-bottom: 2px;"> Top Customer
-</ni-badge>
+<div *ngIf="moreThan2Badges == 'true'" class="pb-1 pl-1 float-left">
+    <img src="../../../../assets/img/circle-1-sharp-duotone-solid-v3.png"><!-- style="padding-right:5px; padding-bottom: 2px;"-->
+</div>
 
+<div class="pb-1">
+    <ni-badge *ngIf="customerActionStatusTopCustomer == 'true' && moreThan2Badges == 'false'" [borderRadius]="false"
+              [color]="'success'" matTooltip="{{ toolTipTopCustomer }}">
+        <img src="../../../../assets/img/award-regular_16.png" style="padding-right:5px; padding-bottom: 2px;"> Top Customer
+    </ni-badge>
+</div>

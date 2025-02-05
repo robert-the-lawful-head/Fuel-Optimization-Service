@@ -13,6 +13,7 @@ using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -59,20 +60,23 @@ namespace FBOLinx.Web.Controllers
             if (customCustomerTypes != null)
                 return Ok(customCustomerTypes);
 
-            //If no previous pricing template was attached, grab the default
-            var defaultPricingTemplate = await _context.PricingTemplate
-                .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
-            
-            if (defaultPricingTemplate == null)
-                return null;
-            
-            var defaultCustomerType = new CustomCustomerTypes()
-            {
-                CustomerId = customerId,
-                CustomerType = defaultPricingTemplate.Oid,
-                Fboid = fboId
-            };
-            return Ok(defaultCustomerType);
+            return Ok(new CustomCustomerTypesDto());
+
+
+            ////If no previous pricing template was attached, grab the default
+            //var defaultPricingTemplate = await _context.PricingTemplate
+            //    .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
+
+            //if (defaultPricingTemplate == null)
+            //    return null;
+
+            //var defaultCustomerType = new CustomCustomerTypes()
+            //{
+            //    CustomerId = customerId,
+            //    CustomerType = defaultPricingTemplate.Oid,
+            //    Fboid = fboId
+            //};
+            //return Ok(defaultCustomerType);
         }
 
         [HttpPut("update")]
@@ -141,7 +145,7 @@ namespace FBOLinx.Web.Controllers
             _context.CustomCustomerTypes.Add(customCustomerTypes);
             await _context.SaveChangesAsync();
 
-            await _customCustomerTypeService.SaveCustomerTypeForNewCustomer(customCustomerTypes.CustomerId);
+            //await _customCustomerTypeService.SaveCustomerTypeForNewCustomer(customCustomerTypes.CustomerId);
 
             return CreatedAtAction("GetCustomCustomerTypes", new { id = customCustomerTypes.Oid }, customCustomerTypes);
         }
@@ -228,7 +232,7 @@ namespace FBOLinx.Web.Controllers
                                 .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))
                                 .ToListAsync();
 
-                            customCustomerTypes.ForEach(c => c.CustomerType = newDefault.Oid);
+                            customCustomerTypes.ForEach(c => c.CustomerType = 0);
                         }
                     }
                 }
