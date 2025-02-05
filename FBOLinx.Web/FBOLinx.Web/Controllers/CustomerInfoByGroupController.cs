@@ -1274,7 +1274,16 @@ namespace FBOLinx.Web.Controllers
                             ToolTipEmailRequired = resultsGroup.Key.ToolTipEmailRequired,
                             ToolTipSetupRequired = resultsGroup.Key.ToolTipSetupRequired,
                             ToolTipTopCustomer = resultsGroup.Key.ToolTipTopCustomer,
-                            MoreThan2Badges = resultsGroup.Key.CustomerActionStatusEmailRequired && resultsGroup.Key.CustomerActionStatusSetupRequired && resultsGroup.Key.CustomerActionStatusTopCustomer ? true : false
+                            MoreThan2Badges = resultsGroup.Key.CustomerActionStatusEmailRequired && resultsGroup.Key.CustomerActionStatusSetupRequired && resultsGroup.Key.CustomerActionStatusTopCustomer ? true : false,
+                            CustomerNeedsAttention =
+                            resultsGroup.Key.CustomerActionStatusEmailRequired && resultsGroup.Key.CustomerActionStatusSetupRequired && resultsGroup.Key.CustomerActionStatusTopCustomer ? "Email Required;Setup Required;Top Customer" :
+                            resultsGroup.Key.CustomerActionStatusEmailRequired && resultsGroup.Key.CustomerActionStatusSetupRequired ? "Email Required;Setup Required" :
+                            resultsGroup.Key.CustomerActionStatusSetupRequired && resultsGroup.Key.CustomerActionStatusTopCustomer ? "Setup Required;Top Customer" :
+                            resultsGroup.Key.CustomerActionStatusEmailRequired && resultsGroup.Key.CustomerActionStatusTopCustomer ? "Email Required;Top Customer" :
+                            resultsGroup.Key.CustomerActionStatusEmailRequired ? "Email Required" :
+                            resultsGroup.Key.CustomerActionStatusSetupRequired ? "Setup Required" :
+                            resultsGroup.Key.CustomerActionStatusTopCustomer ? "Top Customer" :
+                            ""
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())

@@ -131,6 +131,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     selectedRows: number;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
+    needsAttentionOptions: any[];
 
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
     dialogOpen : boolean = false;
@@ -193,6 +194,12 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         //        .orderBy as SortDirection;
         //}
         this.airportWatchStartDate = new Date("10/6/2022");
+
+        var needsAttentionOptionsList = ['Email Required', 'Setup Required', 'Top Customer']
+        this.needsAttentionOptions = needsAttentionOptionsList.map((nl) => ({
+            label: nl,
+            value: nl,
+        }));
     }
     ngOnDestroy() {
         this.sortChangeSubscription?.unsubscribe();

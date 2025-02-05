@@ -63,6 +63,7 @@ namespace FBOLinx.Web.ViewModels
         public string ToolTipSetupRequired { get; set; }
         public string ToolTipTopCustomer { get; set; }
         public bool MoreThan2Badges { get; set; }
+        public string CustomerNeedsAttention { get; set; }
     }
     public class CustomerGridContactsViewModel
     {

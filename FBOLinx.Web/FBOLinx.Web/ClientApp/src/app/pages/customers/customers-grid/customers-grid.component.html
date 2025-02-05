@@ -173,9 +173,14 @@
                     <span *ngIf="dataSource">
                         <app-table-column-filter [matDataSource]="dataSource"
                                                  [matSort]="sort"
-                                                 columnId="needsAttention"
+                                                 columnId="customerNeedsAttention"
                                                  (filteredDataSource)="onFilterApplied($event)"
-                                                 propertyName="needsAttention">
+                                                 propertyName="customerNeedsAttention"
+                                                 [columnFormat]="10"
+                                                 optionLabel="label"
+                                                 optionValue="value"
+                                                 [options]="needsAttentionOptions"
+                                                 >
                             <span>Action Status</span>
                         </app-table-column-filter>
                     </span>
