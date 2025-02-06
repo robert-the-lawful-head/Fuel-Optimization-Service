@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -59,7 +59,7 @@ export class CustomersEditComponent implements OnInit {
     certificateTypes: any[];
     selectedIndex: any  = 0;
     customerCompanyTypes: any[];
-    customerForm: FormGroup;
+    customerForm: UntypedFormGroup;
     public customerHistory: any;
     feesAndTaxes: Array<any>;
     isEditing: boolean = false;
@@ -75,7 +75,7 @@ export class CustomersEditComponent implements OnInit {
     routeSubscription: Subscription;
     formValueChangesSubscription: Subscription[] = [];
     constructor(
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private customCustomerTypesService: CustomcustomertypesService,

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
     MAT_DIALOG_DATA,
     MatDialog,
@@ -22,7 +22,7 @@ export interface NewContactDialogData {
     templateUrl: './systemcontacts-new-contact-modal.component.html',
 })
 export class SystemcontactsNewContactModalComponent implements OnInit {
-    contactForm: FormGroup;
+    contactForm: UntypedFormGroup;
 
     constructor(
         public dialogRef: MatDialogRef<SystemcontactsNewContactModalComponent>,
@@ -36,15 +36,15 @@ export class SystemcontactsNewContactModalComponent implements OnInit {
             this.data.copyOrders = true;
         }
 
-        this.contactForm = new FormGroup({
-            copyAlerts: new FormControl(this.data.copyAlerts),
-            copyOrders: new FormControl(this.data.copyOrders),
-            email: new FormControl(this.data.email, [
+        this.contactForm = new UntypedFormGroup({
+            copyAlerts: new UntypedFormControl(this.data.copyAlerts),
+            copyOrders: new UntypedFormControl(this.data.copyOrders),
+            email: new UntypedFormControl(this.data.email, [
                 Validators.required,
                 Validators.email,
             ]),
-            firstName: new FormControl(this.data.firstName),
-            lastName: new FormControl(this.data.lastName),
+            firstName: new UntypedFormControl(this.data.firstName),
+            lastName: new UntypedFormControl(this.data.lastName),
         });
     }
 

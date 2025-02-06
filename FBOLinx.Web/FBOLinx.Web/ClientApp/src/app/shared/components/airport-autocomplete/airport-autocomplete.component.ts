@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable, of } from 'rxjs';
 import {
@@ -30,7 +30,7 @@ export class AirportAutocompleteComponent implements OnInit {
     @Input() airportContainerModel: any;
     @Output() valueChange = new EventEmitter();
 
-    searchControl: FormControl = new FormControl();
+    searchControl: UntypedFormControl = new UntypedFormControl();
     filteredAirports: Observable<AirportAutoCompleteDataSource>;
     airports: AirportAutoCompleteData[] = null;
     isLoading = false;

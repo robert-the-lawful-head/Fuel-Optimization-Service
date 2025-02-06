@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { UntypedFormArray } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +7,7 @@ import { FormArray } from '@angular/forms';
 export class PricingTemplateCalcService {
 
     constructor() { }
-    public adjustCustomerMarginNextValues(index: number, customerMarginsFormArray: FormArray): void {
+    public adjustCustomerMarginNextValues(index: number, customerMarginsFormArray: UntypedFormArray): void {
         for(let i: number = index; i < customerMarginsFormArray.length ; i++){
             let currentMinValue: number = parseFloat(customerMarginsFormArray.at(i).get('min').value);
             let currentMaxValue: number = parseFloat(customerMarginsFormArray.at(i).get('max').value);
@@ -40,7 +40,7 @@ export class PricingTemplateCalcService {
             });
         }
     }
-    public adjustCustomerMarginPreviousValues(index: number, customerMarginsFormArray: FormArray): void {
+    public adjustCustomerMarginPreviousValues(index: number, customerMarginsFormArray: UntypedFormArray): void {
         for(let i: number = index; i > 0 ; i--){
             let previousIndex: number = i - 1;
             let modifedMinValue: number = customerMarginsFormArray.at(i).get('min').value;
@@ -66,7 +66,7 @@ export class PricingTemplateCalcService {
             }
         }
     }
-    public adjustCustomerMarginValuesOnDelete(deletedIndex: number, customerMarginsFormArray: FormArray): void {
+    public adjustCustomerMarginValuesOnDelete(deletedIndex: number, customerMarginsFormArray: UntypedFormArray): void {
         customerMarginsFormArray.removeAt(deletedIndex);
 
         if(deletedIndex == 0) {

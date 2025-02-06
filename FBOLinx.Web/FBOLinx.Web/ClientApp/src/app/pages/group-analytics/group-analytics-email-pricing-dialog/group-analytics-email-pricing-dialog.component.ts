@@ -2,8 +2,8 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
     AbstractControl,
-    FormControl,
-    FormGroup,
+    UntypedFormControl,
+    UntypedFormGroup,
     ValidationErrors,
     Validators,
 } from '@angular/forms';
@@ -43,26 +43,26 @@ export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
 
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsEmailPricingDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: GroupAnalyticsGenerateDialogData
     ) {
-        this.form = new FormGroup({
-            emailContentHtml: new FormControl(
+        this.form = new UntypedFormGroup({
+            emailContentHtml: new UntypedFormControl(
                 this.data.emailTemplate.emailContentHtml
             ),
-            fromAddress: new FormControl(this.data.emailTemplate.fromAddress, [
+            fromAddress: new UntypedFormControl(this.data.emailTemplate.fromAddress, [
                 this.fromAddressValidator,
             ]),
-            replyTo: new FormControl(
+            replyTo: new UntypedFormControl(
                 this.data.emailTemplate.replyTo,
                 Validators.pattern(
                     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 )
             ),
-            subject: new FormControl(this.data.emailTemplate.subject, Validators.required),
+            subject: new UntypedFormControl(this.data.emailTemplate.subject, Validators.required),
         });
     }
 
