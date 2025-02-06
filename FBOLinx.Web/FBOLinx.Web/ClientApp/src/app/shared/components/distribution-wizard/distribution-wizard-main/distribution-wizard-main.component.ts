@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
@@ -32,11 +32,11 @@ export class DistributionWizardMainComponent implements OnInit {
     public emailContentBodies: any[] = [];
     public emailContentSignatures: any[] = [];
     public isDistributionComplete = false;
-    public firstFormGroup: FormGroup;
-    public secondFormGroup: FormGroup;
-    public thirdFormGroup: FormGroup;
-    public fourthFormGroup: FormGroup;
-    public fifthFormGroup: FormGroup;
+    public firstFormGroup: UntypedFormGroup;
+    public secondFormGroup: UntypedFormGroup;
+    public thirdFormGroup: UntypedFormGroup;
+    public fourthFormGroup: UntypedFormGroup;
+    public fifthFormGroup: UntypedFormGroup;
     public isLoadingCustomers = true;
     public isLoadingPricingTemplates = true;
     public isLoadingEmailContent = true;
@@ -62,7 +62,7 @@ export class DistributionWizardMainComponent implements OnInit {
         private distributionService: DistributionService,
         private emailContentService: EmailcontentService,
         private pricingtemplatesService: PricingtemplatesService,
-        private formBuilder: FormBuilder
+        private formBuilder: UntypedFormBuilder
     ) {
         if (this.data.customer !== null) {
             this.isForSingleCustomer = true;

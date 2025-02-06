@@ -6,9 +6,9 @@ import {
     ViewChild,
 } from '@angular/core';
 import {
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
     Validators,
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -63,10 +63,10 @@ export class AccountProfileComponent {
     contactsData: any[];
     currentContact: any;
     availableroles: any[];
-    systemContactsForm: FormGroup;
-    emailDistributionForm: FormGroup;
-    productsForm: FormGroup;
-    companyForm: FormGroup;
+    systemContactsForm: UntypedFormGroup;
+    emailDistributionForm: UntypedFormGroup;
+    productsForm: UntypedFormGroup;
+    companyForm: UntypedFormGroup;
     theFile: any = null;
     logoUrl: string;
     isUploadingLogo: boolean;
@@ -85,34 +85,34 @@ export class AccountProfileComponent {
         private fboPreferencesService: FbopreferencesService,
         private fboPricesService: FbopricesService,
         private usersService: UserService,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         public newContactDialog: MatDialog,
         private snackBarService: SnackBarService
     ) {
         this.systemContactsForm = this.formBuilder.group({
-            fuelDeskEmail: new FormControl('', [
+            fuelDeskEmail: new UntypedFormControl('', [
                 Validators.required,
                 Validators.email,
             ]),
         });
         this.emailDistributionForm = this.formBuilder.group({
-            replyTo: new FormControl('', [
+            replyTo: new UntypedFormControl('', [
                 Validators.required,
                 Validators.email,
             ]),
-            senderAddress: new FormControl('', [
+            senderAddress: new UntypedFormControl('', [
                 Validators.required,
                 Validators.pattern('[a-zA-Z0-9-]*'),
             ]),
         });
-        this.productsForm = new FormGroup({
-            enableJetA: new FormControl(),
-            enableSaf: new FormControl()
+        this.productsForm = new UntypedFormGroup({
+            enableJetA: new UntypedFormControl(),
+            enableSaf: new UntypedFormControl()
         });
 
-        this.companyForm = new FormGroup({
-            orderNotifications: new FormControl(),
-            directOrderNotifications: new FormControl(),
+        this.companyForm = new UntypedFormGroup({
+            orderNotifications: new UntypedFormControl(),
+            directOrderNotifications: new UntypedFormControl(),
         });
 
 
