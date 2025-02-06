@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
@@ -20,7 +20,7 @@ export class FlightWatchFiltersComponent implements OnInit {
 
     @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
-    myControl = new FormControl({value: '', disabled: true});
+    myControl = new UntypedFormControl({value: '', disabled: true});
     filteredOptions: string[];
 
     constructor() {
