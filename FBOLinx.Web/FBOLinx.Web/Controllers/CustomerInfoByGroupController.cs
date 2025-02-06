@@ -935,7 +935,7 @@ namespace FBOLinx.Web.Controllers
                                 join cc in _context.CustomerContacts on c.Oid equals cc.CustomerId
                                 join t in _context.Contacts on cc.ContactId equals t.Oid
                                 join cibg in _context.ContactInfoByGroup on t.Oid equals cibg.ContactId
-                                where cibg.GroupId == groupId && c.Oid == customerId
+                                where cibg.GroupId == groupId && c.Oid == customerId && cibg.Email != null && cibg.Email != ""
                                 select cibg.Email)
                                 .Where(s => !string.IsNullOrWhiteSpace(s))
                                 .Distinct()
