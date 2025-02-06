@@ -37,6 +37,8 @@ import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 import { CurrencyPresicionPipe } from 'src/app/shared/pipes/decimal/currencyPresicion.pipe';
+import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
+import { ContactinfobyfboService } from '../../../services/contactinfobyfbo.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -129,6 +131,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     selectedRows: number;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
+    needsAttentionOptions: any[];
 
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
     dialogOpen : boolean = false;
@@ -159,11 +162,13 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         private tagsService: TagsService,
         private dialog: MatDialog ,
         private route : ActivatedRoute,
-        private currencyPresicion: CurrencyPresicionPipe
+        private currencyPresicion: CurrencyPresicionPipe,
+        public closeConfirmationDialog: MatDialog,
+        public contactInfoByFboService: ContactinfobyfboService
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
-            this.addContactToCustomerDataList();
+            //this.addContactToCustomerDataList();
             this.setVirtualScrollVariables(this.paginator, this.sort, this.customersData);
             this.refreshCustomerDataSource();
         }
@@ -181,14 +186,20 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                 this.customerGridState.filter
             );
         }
-        if (this.customerGridState.order) {
-            this.sort.active = this.customerGridState.order;
-        }
-        if (this.customerGridState.orderBy) {
-            this.sort.direction = this.customerGridState
-                .orderBy as SortDirection;
-        }
+        //if (this.customerGridState.order) {
+        //    this.sort.active = this.customerGridState.order;
+        //}
+        //if (this.customerGridState.orderBy) {
+        //    this.sort.direction = this.customerGridState
+        //        .orderBy as SortDirection;
+        //}
         this.airportWatchStartDate = new Date("10/6/2022");
+
+        var needsAttentionOptionsList = ['Email Required', 'Setup Required', 'Top Customer']
+        this.needsAttentionOptions = needsAttentionOptionsList.map((nl) => ({
+            label: nl,
+            value: nl,
+        }));
     }
     ngOnDestroy() {
         this.sortChangeSubscription?.unsubscribe();
@@ -296,7 +307,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         return message;
     }
     getAllIPriceDisplayString(customer: any): any{
-        return customer.allInPrice > 0 ? this.currencyPresicion.transform(customer.allInPrice) : "Expired";
+        return customer.allInPrice > 0 ? this.currencyPresicion.transform(customer.allInPrice) : customer.isPricingExpired == true ? "Expired" : "N/A";
     }
     getIsInNetworkDisplayString(customer: any): any{
         return customer.isFuelerLinxCustomer ? "YES" : "NO"
@@ -310,30 +321,74 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     }
 
     onMarginChange(changedPricingTemplateId: any, customer: any) {
-        const changedPricingTemplate = find(
-            this.pricingTemplatesData,
-            (p) => p.oid === parseInt(changedPricingTemplateId, 10)
-        );
-
-        customer.needsAttention = changedPricingTemplate.default;
-
-        if (customer.needsAttention) {
-            customer.needsAttentionReason =
-                'Customer was assigned to the default template and has not been changed yet.';
-        }
-
-        customer.pricingFormula = changedPricingTemplate.pricingFormula;
-        customer.allInPrice = changedPricingTemplate.allInPrice;
-
-        const vm = {
+        let vm = {
             fboid: this.sharedService.currentUser.fboId,
             id: customer.customerId,
-            pricingTemplateId: changedPricingTemplate.oid,
+            pricingTemplateId: 0,
             userId: this.sharedService.currentUser.oid
         };
-        const id = this.route.snapshot.paramMap.get('id');
-        this.customerMarginsService.updatecustomermargin(vm).subscribe(() => {
+
+        if (changedPricingTemplateId > 0) {
+            const changedPricingTemplate = find(
+                this.pricingTemplatesData,
+                (p) => p.oid === parseInt(changedPricingTemplateId, 10)
+            );
+
+            //customer.needsAttention = changedPricingTemplate.default;
+
+            //if (customer.needsAttention) {
+            //    customer.needsAttentionReason =
+            //        'Customer was assigned to the default template and has not been changed yet.';
+            //}
+
+            customer.pricingFormula = changedPricingTemplate.pricingFormula;
+            customer.allInPrice = changedPricingTemplate.allInPrice;
+            customer.isPricingExpired = true;
+            customer.customerActionStatusSetupRequired = false;
+            customer.ToolTipSetupRequired = "";
+            
+            const id = this.route.snapshot.paramMap.get('id');
+
+            vm.pricingTemplateId = changedPricingTemplate.oid;
+        }
+        else {
+            customer.pricingFormula = "NULL";
+            customer.allInPrice = 0;
+            customer.isPricingExpired = false;
+            customer.customerActionStatusSetupRequired = true;
+            customer.ToolTipSetupRequired = "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address.";
+        }
+
+        this.customerMarginsService.updatecustomermargin(vm).subscribe((data: number) => {
             this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+
+            if (data > 0 && !customer.isFuelerLinxCustomer) {
+                const closeDialogRef = this.closeConfirmationDialog.open(
+                    CloseConfirmationComponent,
+                    {
+                        autoFocus: false,
+                        data: {
+                            cancel: 'No',
+                            customText: 'Would you like to enable email distribution for all contacts within this flight dept?',
+                            customTitle: 'Enable Email Distribution?',
+                            ok: 'Yes',
+                        },
+                    }
+                );
+                closeDialogRef.afterClosed().subscribe((result) => {
+                    if (result === true) {
+                        this.contactInfoByFboService.updateDistributionForAllCustomerContacts(customer.customerId, this.sharedService.currentUser.fboId, true).subscribe(() => {
+
+                        });
+                    }
+                    else {
+                        this.contactInfoByFboService.updateDistributionForAllCustomerContacts(customer.customerId, this.sharedService.currentUser.fboId, false).subscribe(() => {
+
+                        });
+                    }
+                });
+            }
+
         });
     }
 
@@ -541,12 +596,10 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                if (this.customerFilterType != 1) {
                    return true;
                 }
-                return element.needsAttention;
+                //return element.needsAttention;
 
             }
         );
-
-        this.sort.active = 'allInPrice';
     }
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {

@@ -29,5 +29,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels
         public string CopyAlertsContact { get; set; }
         public int? GroupId { get; set; }
         public int? CustomerId { get; set; }
+        public bool? IsFuelerLinxCustomer { get; set; }
+        public int? ContactInfoByFboId { get; set; }
     }
 }

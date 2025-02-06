@@ -55,6 +55,15 @@ namespace FBOLinx.Web.ViewModels
         public List<CustomerGridContactsViewModel> Contacts { get; set; }
         public FboFavoriteCompany FavoriteCompany { get; set; }
         public string InvoiceUniqueEmail { get; set; }
+
+        public bool CustomerActionStatusEmailRequired { get; set; }
+        public bool CustomerActionStatusSetupRequired { get; set; }
+        public bool CustomerActionStatusTopCustomer { get; set; }
+        public string ToolTipEmailRequired { get; set; }
+        public string ToolTipSetupRequired { get; set; }
+        public string ToolTipTopCustomer { get; set; }
+        public bool MoreThan2Badges { get; set; }
+        public string CustomerNeedsAttention { get; set; }
     }
     public class CustomerGridContactsViewModel
     {
