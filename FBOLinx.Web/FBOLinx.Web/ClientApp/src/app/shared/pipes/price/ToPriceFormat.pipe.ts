@@ -7,7 +7,7 @@ export class ToPriceFormatPipe implements PipeTransform {
 
   transform(value: any): any {
       var price = +value;
-      if(price == NaN) return "N/A";
+      if(Number.isNaN(price)) return "N/A";
       return "$"+price.toString();
   }
 

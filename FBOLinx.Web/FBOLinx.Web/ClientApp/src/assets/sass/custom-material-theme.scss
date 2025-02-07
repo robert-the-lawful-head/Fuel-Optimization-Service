@@ -1,5 +1,5 @@
 @import "variable";
-@import "~@angular/material/theming";
+@import "@angular/material/theming";
 // Plus imports for other components in your app.
 
 // Include the base styles for Angular Material core. We include this here so that you only
@@ -7,7 +7,10 @@
 $custom-typography: mat-typography-config(
     $font-family: "Lato, sans-serif",
 );
-@include mat-core($custom-typography);
+// Include Material core styles (without arguments)
+@include mat-core();
+// Apply typography configuration
+@include angular-material-typography($custom-typography);
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
