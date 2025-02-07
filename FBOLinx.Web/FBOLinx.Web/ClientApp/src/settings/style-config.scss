@@ -1,3 +1,4 @@
+@use 'sass:math';
 // Material palettes:
 // $mat-red, $mat-pink, $mat-purple, $mat-deep-purple, $mat-indigo, $mat-blue, $mat-light-blue, $mat-cyan, $mat-teal,
 // $mat-green, $mat-light-green, $mat-lime, $mat-yellow, $mat-amber, $mat-orange, $mat-deep-orange, $mat-brown,
@@ -103,8 +104,8 @@ $main-fs: 16px;
 $main-ff: "Lato", sans-serif;
 $main-fw: 400;
 $module: 11px;
-$main-lh: ($module * 2 / $main-fs);
-$module-rem: ($module / $main-fs) * 1rem;
+$main-lh: math.div($module * 2, $main-fs);
+$module-rem: math.div($module , $main-fs) * 1rem;
 $shape: 3px;
 
 //Second
