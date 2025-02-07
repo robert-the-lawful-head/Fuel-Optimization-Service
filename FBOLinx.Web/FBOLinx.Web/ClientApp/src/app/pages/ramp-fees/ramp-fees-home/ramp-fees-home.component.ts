@@ -127,13 +127,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public rampFeeFieldChanged() {
-        this.requiresUpdate = false;
-        this.rampFees.forEach((fee) => {
-            if (fee.requiresUpdate) {
-                this.requiresUpdate = true;
-                return;
-            }
-        });
+        this.requiresUpdate = !(this.rampFees.filter(x => x.requiresUpdate === false).length > 0);
     }
 
     public rampFeeDeleted() {

@@ -26,6 +26,7 @@
                 class="switch-nested-menu-left-arrows"
                 xPosition="before"
             >
+                <button (click)="exportCsv()" mat-menu-item>Export</button>
                 <button (click)="openSettings()" mat-menu-item>Settings</button>
             </mat-menu>
         </div>
@@ -145,10 +146,10 @@
         </div>
     </div>
     <ngx-ui-loader
-    [loaderId]="chartName"
-    bgsColor="rgb(100, 181, 246)"
-    bgsPosition="center-center"
-    bgsType="ball-spin"
-    overlayColor="rgba(0, 0, 0, 0.1)"
-></ngx-ui-loader>
+        [loaderId]="chartName"
+        bgsColor="rgb(100, 181, 246)"
+        bgsPosition="center-center"
+        bgsType="ball-spin"
+        overlayColor="rgba(0, 0, 0, 0.1)"
+    ></ngx-ui-loader>
 </div>

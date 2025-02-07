@@ -14,7 +14,7 @@
               <p>Company</p>
           </div>
           <div class="col-6 pl-4 info-values">
-              <p matTooltip="No Information is available for this item on JETNET. You can manually add the information by accessing our customer manager section." matTooltipPosition="below" [matTooltipDisabled]="hasJetNetInformation">{{ hasJetNetInformation ? aircraftWatch?.flightDepartment : "Info N/A on JETNET"}}&nbsp;</p>
+              <p matTooltip="No Information is available for this item on JETNET. You can manually add the information by accessing our customer manager section." matTooltipPosition="below" [matTooltipDisabled]="hasJetNetInformation">{{  companyDisplayText }}&nbsp;</p>
           </div>
       </div>
       <div class="row pb-2">

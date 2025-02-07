@@ -558,7 +558,10 @@ namespace FBOLinx.Web.Controllers
                         customerInfoByFbo.CustomerInfoByGroupId = customerInfoByGroup.Oid;
                         customerInfoByFbo.FboId = fbo.Oid;
                         customerInfoByFbo.CustomFboEmail = request.FboEmail;
-                        await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
+                        if (customerInfoByFbo.Oid == 0)
+                            await _customerInfoByFboService.AddAsync(customerInfoByFbo);
+                        else
+                            await _customerInfoByFboService.UpdateAsync(customerInfoByFbo);
                     }
 
                     return Ok(new List<FuelReqDto>() { fuelReq });
