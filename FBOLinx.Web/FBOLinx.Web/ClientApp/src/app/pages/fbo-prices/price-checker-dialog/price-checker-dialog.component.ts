@@ -1,5 +1,5 @@
 import { Component, ViewChild, HostListener } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 

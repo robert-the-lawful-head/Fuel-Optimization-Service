@@ -23,7 +23,7 @@ import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { OrderNote } from '../../../models/order-note';
 import * as moment from 'moment';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 
 @Component({

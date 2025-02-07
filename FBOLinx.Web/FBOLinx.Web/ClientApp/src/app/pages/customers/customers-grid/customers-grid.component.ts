@@ -8,9 +8,9 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSelectChange } from '@angular/material/select';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { ActivatedRoute } from '@angular/router';
 import { find, forEach, sortBy } from 'lodash';

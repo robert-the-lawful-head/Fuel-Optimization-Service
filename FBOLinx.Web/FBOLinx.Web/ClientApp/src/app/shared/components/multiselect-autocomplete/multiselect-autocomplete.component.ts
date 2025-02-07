@@ -8,7 +8,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { UntypedFormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 

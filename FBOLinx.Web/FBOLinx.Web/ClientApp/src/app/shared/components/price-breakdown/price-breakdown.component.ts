@@ -20,7 +20,7 @@ import {
     FeeAndTaxBreakdownComponent,
     FeeAndTaxBreakdownDisplayModes,
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { FeeAndTaxBreakDown, FeeAndTaxBreakdownDialogWrapperComponent } from './fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 
 export enum PriceBreakdownDisplayTypes {

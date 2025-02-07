@@ -11,8 +11,8 @@ import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor'
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest, Subscription } from 'rxjs';
 import {
-    MatDialog,
-} from '@angular/material/dialog';
+    MatLegacyDialog as MatDialog,
+} from '@angular/material/legacy-dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services

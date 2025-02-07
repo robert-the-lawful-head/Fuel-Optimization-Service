@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
@@ -14,7 +14,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import * as moment from 'moment';
 import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
 import { AccountType } from 'src/app/enums/user-role';
-import { MatSelectionList } from '@angular/material/list';
+import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
 
 @Component({
     selector: 'app-service-orders-list',
