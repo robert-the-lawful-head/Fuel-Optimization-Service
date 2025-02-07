@@ -8,7 +8,7 @@
         width: calc(100vw - 270px);
         width: -moz-available;          /* WebKit-based browsers will ignore this. */
         width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
-        width: fill-available;
+        width: stretch;
 
         .popup-content {
             display: flex;

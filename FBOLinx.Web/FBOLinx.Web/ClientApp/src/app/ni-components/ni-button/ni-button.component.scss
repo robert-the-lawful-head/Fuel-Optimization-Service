@@ -6,14 +6,14 @@ $btn-fs: 1rem;
 $btn-ff: $main-ff;
 $btn-lh: $main-lh;
 $btn-tt: none;
-$btn-paddings: ($module-rem / 2) ($module-rem * 2);
+$btn-paddings: (math.div($module-rem, 2)) ($module-rem * 2);
 $btn-shape: $shape;
 $btn-transition: $animation;
 
 $btn-large-paddings: ($module-rem) ($module-rem * 3);
 $btn-large-fs: ($btn-fs * 1.2);
 
-$btn-small-paddings: ($module-rem / 4) ($module-rem);
+$btn-small-paddings: (math.div($module-rem, 4)) ($module-rem);
 $btn-small-fs: ($btn-fs * 0.8);
 
 //btn colors
