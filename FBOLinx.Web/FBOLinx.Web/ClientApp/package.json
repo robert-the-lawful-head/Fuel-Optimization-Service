@@ -33,7 +33,7 @@
     "@syncfusion/ej2-angular-inputs": "^19.2.55",
     "@syncfusion/ej2-angular-richtexteditor": "^19.1.54",
     "@syncfusion/ej2-material-theme": "~19.1.54",
-    "@turf/turf": "^6.5.0",
+    "@turf/turf": "^7.2.0",
     "@types/lodash": "^@types/lodash",
     "angular-resizable-element": "^3.3.5",
     "angular2-text-mask": "^9.0.0",
