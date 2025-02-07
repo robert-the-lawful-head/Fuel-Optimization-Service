@@ -93,7 +93,7 @@ $types: (
     -webkit-appearance: none;
 
     .btn-text {
-        margin: 0 ($module-rem / 2);
+        margin: 0  math.div($module-rem, 2);
         min-height: #{$btn-fs * $btn-lh};
 
         &:empty {
@@ -125,7 +125,7 @@ $types: (
     }
 
     .btn-icon {
-        margin: 0 ($module-rem / 2);
+        margin: 0  math.div($module-rem, 2);
     }
 
     &.customButton {

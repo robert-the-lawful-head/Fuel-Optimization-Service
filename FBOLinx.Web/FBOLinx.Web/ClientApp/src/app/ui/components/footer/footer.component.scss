@@ -14,7 +14,7 @@
     width: calc(100vw - 270px);
     width: -moz-available;          /* WebKit-based browsers will ignore this. */
     width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
-    width: fill-available;
+    width: stretch;
 
     @media only screen and (max-width: 543px) {
         font-size: 0.7rem;
