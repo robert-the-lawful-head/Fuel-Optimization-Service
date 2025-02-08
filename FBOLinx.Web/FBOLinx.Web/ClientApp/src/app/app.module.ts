@@ -118,7 +118,6 @@ import { StringHelperService } from './helpers/strings/stringHelper.service';
 import {JetNetService} from './services/jetnet.service';
 import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { AuthenticationService } from './services/security/authentication.service';
-import { NgxMaskModule } from 'ngx-mask';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -166,10 +165,6 @@ import { NgxMaskModule } from 'ngx-mask';
         NgxMatDatetimePickerModule,
         NgxMatTimepickerModule,
         NgxMatNativeDateModule,
-        NgxMaskModule.forRoot({
-            validation: true,
-            dropSpecialCharacters: false
-          }),
         EffectsModule.forRoot([]),
         StoreModule.forRoot(reducers, {
             metaReducers,
