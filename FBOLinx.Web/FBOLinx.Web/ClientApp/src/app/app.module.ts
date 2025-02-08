@@ -33,7 +33,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { TextMaskModule } from 'angular2-text-mask';
 import { PopoverModule } from 'ngx-smart-popover';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
 import {
@@ -119,6 +118,7 @@ import { StringHelperService } from './helpers/strings/stringHelper.service';
 import {JetNetService} from './services/jetnet.service';
 import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { AuthenticationService } from './services/security/authentication.service';
+import { NgxMaskModule } from 'ngx-mask';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -166,7 +166,10 @@ import { AuthenticationService } from './services/security/authentication.servic
         NgxMatDatetimePickerModule,
         NgxMatTimepickerModule,
         NgxMatNativeDateModule,
-        TextMaskModule,
+        NgxMaskModule.forRoot({
+            validation: true,
+            dropSpecialCharacters: false
+          }),
         EffectsModule.forRoot([]),
         StoreModule.forRoot(reducers, {
             metaReducers,

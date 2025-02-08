@@ -58,7 +58,6 @@ import {
 } from '@syncfusion/ej2-angular-grids';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { ResizableModule } from 'angular-resizable-element';
-import { TextMaskModule } from 'angular2-text-mask';
 import {
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
@@ -246,6 +245,7 @@ import {CustomerActionStatusComponent} from '../shared/components/customer-actio
 import { CurrencyPresicionPipe } from '../shared/pipes/decimal/currencyPresicion.pipe';
 import { GroupAnalyticsGenerateDialogGridComponent } from './group-analytics/group-analytics-generate-dialog-grid/group-analytics-generate-dialog-grid.component';
 import { MultiselectAutocompleteComponent } from '../shared/components/multiselect-autocomplete/multiselect-autocomplete.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
     declarations: [
@@ -470,7 +470,10 @@ import { MultiselectAutocompleteComponent } from '../shared/components/multisele
         MatToolbarModule,
         MatTooltipModule,
         NgxChartsModule,
-        TextMaskModule,
+        NgxMaskModule.forRoot({
+            validation: true,
+            dropSpecialCharacters: false
+            }),
         RichTextEditorAllModule,
         AppPipesModule,
         NgbPopoverModule,

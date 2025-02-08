@@ -33,25 +33,8 @@ export interface NewContactDialogData {
 })
 export class ContactsDialogNewContactComponent {
     // Masks
-    phoneMask: any[] = [
-        '+',
-        '1',
-        ' ',
-        '(',
-        /[1-9]/,
-        /\d/,
-        /\d/,
-        ')',
-        ' ',
-        /\d/,
-        /\d/,
-        /\d/,
-        '-',
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-    ];
+    phoneMask = '(000) 000-0000';
+    prefix = '+1 ';
 
     constructor(
         public dialogRef: MatDialogRef<ContactsDialogNewContactComponent>,
@@ -81,3 +64,7 @@ export class ContactsDialogNewContactComponent {
         });
     }
 }
+function provideNgxMask(): import("@angular/core").Provider {
+    throw new Error('Function not implemented.');
+}
+
