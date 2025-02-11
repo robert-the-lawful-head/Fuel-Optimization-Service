@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web;
-using FBOLinx.Web.Data;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.Logging;
 
@@ -66,7 +61,7 @@ namespace FBOLinx.Web.Controllers
             result.ForEach(x =>
             {
                 x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerId));
-                if (x.IsOmitted)
+                if (x.IsOmittedSafe())
                     x.OmittedFor = "C";
             });
             return Ok(result);
@@ -82,8 +77,8 @@ namespace FBOLinx.Web.Controllers
             fboFeesAndTaxes.ForEach(x =>
             {
                 x.OmitsByPricingTemplate = fboFeeAndTaxOmitsByPricingTemplate;
-                x.IsOmitted = fboFeeAndTaxOmitsByPricingTemplate.Any(o => o.FboFeeAndTaxId == x.Oid);
-                if (x.IsOmitted)
+                x.IsOmitted = x.IsOmittedSafe();
+                if (x.IsOmittedSafe())
                     x.OmittedFor = "P";
             });
             return Ok(fboFeesAndTaxes); 
