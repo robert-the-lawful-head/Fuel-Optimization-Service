@@ -129,6 +129,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         {
             id: 'originated',
             name: 'Origin ICAO',
+        },
+        {
+            id: 'customerActionStatus',
+            name:'Customer Action Status'
         }
     ];
 
@@ -139,6 +143,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     filtersChangeSubscription: Subscription;
     sortChangeSubscription: Subscription;
+    needsAttentionOptions: any[];
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -201,6 +206,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
             this.saveSettings();
         });
+
+        var needsAttentionOptionsList = ['Email Required', 'Setup Required', 'Top Customer']
+        this.needsAttentionOptions = needsAttentionOptionsList.map((nl) => ({
+            label: nl,
+            value: nl,
+        }));
 
         this.refreshData();
     }
