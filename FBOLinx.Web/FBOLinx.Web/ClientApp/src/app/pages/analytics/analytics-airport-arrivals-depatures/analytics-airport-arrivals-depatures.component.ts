@@ -365,6 +365,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             else
             if (id == 'aircraftTypeCode')
                 item[id] = this.getAircraftLabel(item[id]);
+            else if (id == "customerActionStatus") {
+                return this.getNeedsAttentionDisplayString(item);
+            }
             else return null;
         };
         this.exportCsvFile(
@@ -406,6 +409,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         } else {
             return 'Other';
         }
+    }
+
+    getNeedsAttentionDisplayString(customer: any): any {
+        let message = customer.customerNeedsAttention;
+        return message;
     }
 
     openSettings() {
