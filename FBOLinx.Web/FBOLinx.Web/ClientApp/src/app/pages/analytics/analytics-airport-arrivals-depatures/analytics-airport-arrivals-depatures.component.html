@@ -75,13 +75,21 @@
                     <span *ngIf="dataSource">
                         <app-table-column-filter [matDataSource]="dataSource"
                                                  [matSort]="sort"
-                                                 columnId="customerActionStatus">
+                                                 columnId="customerNeedsAttention"
+                                                 propertyName="customerNeedsAttention"
+                                                 [columnFormat]="10"
+                                                 optionLabel="label"
+                                                 optionValue="value"
+                                                 [options]="needsAttentionOptions"
+                                                 >
                             <span>Customer Action Status</span>
                         </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
-                    <app-customer-action-status  matTooltip="{{ info.toolTipText }}" matTooltipPosition="after" customerActionStatusEmailRequired="{{info.customerActionStatusEmailRequired}}" customerActionStatusSetupRequired="{{info.customerActionStatusSetupRequired}}" customerActionStatusTopCustomer="{{info.customerActionStatusTopCustomer}}"></app-customer-action-status>
+                    <div style="max-width:150px;">
+                        <app-customer-action-status matTooltipPosition="after" customerActionStatusEmailRequired="{{info.customerActionStatusEmailRequired}}" customerActionStatusSetupRequired="{{info.customerActionStatusSetupRequired}}" customerActionStatusTopCustomer="{{info.customerActionStatusTopCustomer}}" moreThan2Badges="{{info.moreThan2Badges}}" toolTipEmailRequired="{{info.toolTipEmailRequired}}" toolTipSetupRequired="{{info.toolTipSetupRequired}}" toolTipTopCustomer="{{info.toolTipTopCustomer}}"></app-customer-action-status>
+                    </div>
                 </td>
             </ng-container>
 
