@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 using FBOLinx.DB.Models.Dega;
-using System.Xml;
 
 namespace FBOLinx.DB.Context
 {
@@ -27,9 +26,6 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<ImportedFboEmails> ImportedFboEmails { get; set; }
         public virtual DbSet<AircraftHexTailMapping> AircraftHexTailMapping { get; set; }
         public virtual DbSet<FAAAircraftMakeModelReference> FAAAircraftMakeModelReference { get; set; }
-        public virtual DbSet<SWIMFlightLeg> SWIMFlightLegs { get; set; }
-        public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
-        public virtual DbSet<SWIMFlightLegDataError> SWIMFlightLegDataErrors { get; set; }
         public virtual DbSet<SWIMUnrecognizedFlightLeg> SWIMUnrecognizedFlightLegs { get; set; }
         public virtual DbSet<AcukwikServicesOffered> AcukwikServicesOffered { get; set; }
 
@@ -61,40 +57,6 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.AircraftHexCode).IsUnicode(false);
 
                 entity.Property(e => e.TailNumber).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<SWIMFlightLeg>(entity =>
-            {
-                entity.HasKey(e => e.Oid)
-                    .HasName("PK_SWIMFlightLegs_OID");
-                entity.HasIndex(x => new { x.AircraftIdentification, x.DepartureICAO, x.ArrivalICAO, x.ATD })
-                    .HasName("IX_SWIMFlightLegs_TailNumber_DepartureICAO_ArrivalICAO_ATD");
-            });
-
-            modelBuilder.Entity<SWIMFlightLegData>(entity =>
-            {
-                entity.HasKey(e => e.Oid)
-                    .HasName("PK_SWIMFlightLegData_OID");
-
-                entity.HasOne(data => data.SWIMFlightLeg)
-                    .WithMany(leg => leg.SWIMFlightLegDataMessages)
-                    .HasForeignKey(data => data.SWIMFlightLegId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_SWIMFlightLegData_SWIMFlightLegs");
-
-                entity.Ignore(x => x.RawXmlMessage);
-            });
-
-            modelBuilder.Entity<SWIMFlightLegDataError>(entity =>
-            {
-                entity.HasKey(e => e.Oid)
-                    .HasName("PK_SWIMFlightLegDataErrors_OID");
-
-                entity.HasOne(data => data.SWIMFlightLegData)
-                    .WithMany(leg => leg.SWIMFlightLegDataErrors)
-                    .HasForeignKey(data => data.SWIMFlightLegDataId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK_SWIMFlightLegDataErrors_SWIMFlightLegData");
             });
 
             modelBuilder.Entity<DatabaseStringSplitResult>(entity =>
