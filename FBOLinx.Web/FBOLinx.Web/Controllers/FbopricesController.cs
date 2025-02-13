@@ -595,7 +595,7 @@ namespace FBOLinx.Web.Controllers
                 if (validPricing == null)
                     return Ok(null);
 
-                var customerTemplates = await _pricingTemplateService.GetCustomerTemplates();
+                var customerTemplates = await _pricingTemplateService.GetCustomerTemplates(customer.Oid);
 
                 var result = (
                     from p in validPricing

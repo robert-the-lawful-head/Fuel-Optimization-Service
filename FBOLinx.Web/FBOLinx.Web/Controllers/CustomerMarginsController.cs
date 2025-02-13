@@ -212,45 +212,53 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Oid == model.pricingTemplateId && s.Fboid == model.fboid);
+            var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
+            var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
+            var customerInfo = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.id && s.GroupId == groupInfo);
+            var newCustomerTypeId = 0;
 
-            if (customerMarginObject != null)
+            if (model.pricingTemplateId > 0)
             {
-                var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
-                
+                var customerMarginObject = _context.PricingTemplate.FirstOrDefault(s => s.Oid == model.pricingTemplateId && s.Fboid == model.fboid);
+
+                if (customerMarginObject != null)
+                {
+                    if (customerMargin != null)
+                    {
+                        customerMargin.CustomerType = customerMarginObject.Oid;
+                        _context.CustomCustomerTypes.Update(customerMargin);
+                    }
+                    else
+                    {
+                        CustomCustomerTypes newType = new CustomCustomerTypes();
+                        newType.CustomerType = customerMarginObject.Oid;
+                        newType.Fboid = model.fboid;
+                        newType.CustomerId = model.id;
+                        _context.CustomCustomerTypes.Add(newType);
+                        await _context.SaveChangesAsync();
+
+                        newCustomerTypeId = _context.CustomCustomerTypes.FirstOrDefault(c => c.CustomerType.Equals(customerMarginObject.Oid)
+                                                                             && c.CustomerId.Equals(model.id)
+                                                                             && c.Fboid.Equals(model.fboid)).Oid;
+                    }
+
+                    if (customerInfo != null)
+                        customerInfo.PricingTemplateRemoved = false;
+                }
+            }
+            else
+            {
                 if (customerMargin != null)
-                {
-                    customerMargin.CustomerType = customerMarginObject.Oid;
-                    _context.CustomCustomerTypes.Update(customerMargin);
-                }
-                else
-                {
-                    CustomCustomerTypes newType = new CustomCustomerTypes();
-                    newType.CustomerType = customerMarginObject.Oid;
-                    newType.Fboid = model.fboid;
-                    newType.CustomerId = model.id;
-                    _context.CustomCustomerTypes.Add(newType);
-                    await _context.SaveChangesAsync();
+                    _context.CustomCustomerTypes.Remove(customerMargin);
 
-                    var NewCustomerTypeId = _context.CustomCustomerTypes.FirstOrDefault(c=>c.CustomerType.Equals(customerMarginObject.Oid)
-                                                                         && c.CustomerId.Equals(model.id) 
-                                                                         && c.Fboid.Equals(model.fboid)).Oid;
-                }
-
-                var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
-                var customerInfo = _context.CustomerInfoByGroup.FirstOrDefault(s => s.CustomerId == model.id && s.GroupId == groupInfo);
-
-                if(customerInfo != null)
-                {
-                    customerInfo.PricingTemplateRemoved = false;
-                    _context.CustomerInfoByGroup.Update(customerInfo);
-                }
-
-                await _context.SaveChangesAsync(model.userId, model.id, groupInfo, model.fboid);
+                if (customerInfo != null)
+                    customerInfo.PricingTemplateRemoved = true;
             }
 
-            
-            return Ok("");
+            _context.CustomerInfoByGroup.Update(customerInfo);
+            await _context.SaveChangesAsync(model.userId, model.id, groupInfo, model.fboid);
+
+            return Ok(newCustomerTypeId);
             // return CreatedAtAction("GetCustomerMargins", new { id = customerMargins.Oid }, customerMargins);
         }
 

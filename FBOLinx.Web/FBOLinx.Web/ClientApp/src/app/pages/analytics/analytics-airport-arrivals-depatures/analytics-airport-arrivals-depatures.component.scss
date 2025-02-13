@@ -58,3 +58,7 @@ tr.example-element-row:not(.example-expanded-row):hover .btn-link {
     color: black;
     text-decoration: underline;
 }
+.mat-column-customerActionStatus {
+    flex: none;
+    min-width: 170px;
+}

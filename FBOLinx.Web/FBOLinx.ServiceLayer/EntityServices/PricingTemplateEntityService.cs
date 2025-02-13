@@ -373,7 +373,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                         Type = p.Type,
                                         Subject = p.Subject,
                                         Email = p.Email,
-                                        IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
+                                        IsPricingExpired = fp == null && p.MarginType != MarginTypes.FlatFee ? true : false,// && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) 
                                         EmailContentId = p.EmailContentId,
                                         DiscountType = p.DiscountType,
                                         AllInPrice = c.AllInPrice,

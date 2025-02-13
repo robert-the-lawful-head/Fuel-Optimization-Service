@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Contacts;
 using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,12 @@ namespace FBOLinx.Web.Controllers
     public class ContactInfoByFboController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly IContactInfoByFboService _contactInfoByFboService;
 
-        public ContactInfoByFboController(FboLinxContext context, ILoggingService logger) : base(logger)
+        public ContactInfoByFboController(FboLinxContext context, ILoggingService logger, IContactInfoByFboService contactInfoByFboService) : base(logger)
         {
             _context = context;
+            _contactInfoByFboService = contactInfoByFboService;
         }
 
         // GET: api/ContactInfoByFbo
@@ -93,7 +96,7 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetContactInfoByFbo", new { id = contactInfoByFbo.Oid }, contactInfoByFbo);
         }
 
-        // DELETE: api/ContactInfoByGroups/5
+        // DELETE: api/ContactInfoByFbo/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContactInfoByFbo([FromRoute] int id)
         {
@@ -112,6 +115,14 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(contactsInfoByFbo);
+        }
+
+        // POST: api/ContactInfoByFboupdate-distribution-all-customer-contacts/1/fbo/2"
+        [HttpPost("update-distribution-all-customer-contacts/{customerId}/fbo/{fboId}/is-enabled/{isEnabled}")]
+        public async Task<IActionResult> UpdateDistributionAllCustomerContacts([FromRoute] int customerId, [FromRoute] int fboId, [FromRoute] int isEnabled)
+        {
+            await _contactInfoByFboService.UpdateDistributionForAllCustomerContactsByCustomerId(customerId, fboId, isEnabled == 1 ? true : false);
+            return Ok();
         }
     }
 }

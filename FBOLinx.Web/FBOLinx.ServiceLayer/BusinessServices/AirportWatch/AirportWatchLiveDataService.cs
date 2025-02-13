@@ -182,7 +182,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             List<AirportWatchLiveDataDto> result = new List<AirportWatchLiveDataDto>();
             if (!string.IsNullOrEmpty(airportIdentifier))
             {
-                _loggingService.LogError("GetLiveData -> airportIdentifier", airportIdentifier, Logging.LogLevel.Info, LogColorCode.Red);
+                //_loggingService.LogError("GetLiveData -> airportIdentifier", airportIdentifier, Logging.LogLevel.Info, LogColorCode.Red);
                 var airportPosition = await _AirportService.GetAirportPositionByAirportIdentifier(airportIdentifier);
                 CoordinateBoundaries boundaries = new CoordinateBoundaries(airportPosition.GetFboCoordinate(), _DistanceInNauticalMiles, DistanceUnit.Miles);
                 result = await GetListbySpec(new AirportWatchLiveDataByBoundarySpecification(

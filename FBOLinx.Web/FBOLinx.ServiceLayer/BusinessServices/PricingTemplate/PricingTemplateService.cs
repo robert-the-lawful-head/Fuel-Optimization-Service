@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 {
     public class PricingTemplateService : IPricingTemplateService
-    {        
+    {
         private IPricingTemplateEntityService _pricingTemplateEntityService;
         private ICustomerTypesEntityService _customerTypesEntityService;
         private ICustomerMarginsEntityService _customerMarginsEntityService;
@@ -91,9 +91,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
 
             var standardTemplates = await _pricingTemplateEntityService.GetStandardTemplatesForAllCustomers(fboId, groupId);
-            
+
             var aircraftPricesResult = await _pricingTemplateEntityService.GetTailSpecificPricingTemplatesForAllCustomers(groupId, fboId);
-            
+
             result.AddRange(standardTemplates);
 
             var allCustomersTailNumberList = await _customerAircraftEntityService.GetTailNumbers(groupId);
@@ -103,8 +103,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             {
                 if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
                     continue;
-                
-                var tailNumberList=allCustomersTailNumberList.Where(x => x.CustomerId== aircraftPricingTemplate.CustomerId && x.PricingTemplateId == aircraftPricingTemplate.Oid).Select(x => x.TailNumber).ToList();
+
+                var tailNumberList = allCustomersTailNumberList.Where(x => x.CustomerId == aircraftPricingTemplate.CustomerId && x.PricingTemplateId == aircraftPricingTemplate.Oid).Select(x => x.TailNumber).ToList();
                 if (tailNumberList == null || tailNumberList.Count == 0)
                     continue;
                 aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
@@ -135,7 +135,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
                     continue;
                 var tailNumberCollection = await _customerAircraftEntityService.GetTailNumbers(groupId, aircraftPricingTemplate.Oid, customer.CustomerId);
                 var tailNumberList = tailNumberCollection.Select(x => x.TailNumber).ToList();
- 
+
                 if (tailNumberList == null || tailNumberList.Count == 0)
                     continue;
                 aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
@@ -170,7 +170,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             return result.Map<PricingTemplateDto>();
         }
         public async Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate)
-        { 
+        {
             var pricingTemplateEntity = pricingTemplate.Map<DB.Models.PricingTemplate>();
             await FixOtherDefaults(pricingTemplateEntity);
             try
@@ -201,7 +201,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             if (pricingTemplate.Default.GetValueOrDefault())
             {
                 var otherDefaults = await _pricingTemplateEntityService.Where(x =>
-                    x.Fboid ==  pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid).ToListAsync();
+                    x.Fboid == pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid).ToListAsync();
                 foreach (var otherDefault in otherDefaults)
                 {
                     otherDefault.Default = false;
@@ -225,11 +225,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
             pricingTemplateEntity = await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
 
-            return pricingTemplateEntity.Map<PricingTemplateDto>(); 
+            return pricingTemplateEntity.Map<PricingTemplateDto>();
         }
         public async Task<PricingTemplateDto> GetDefaultTemplate(int fboId)
         {
-            var pricingTemplate =  await _pricingTemplateEntityService.FirstOrDefaultAsync(s => s.Fboid == fboId && s.Default == true);
+            var pricingTemplate = await _pricingTemplateEntityService.FirstOrDefaultAsync(s => s.Fboid == fboId && s.Default == true);
             return pricingTemplate.Map<PricingTemplateDto>();
         }
         public async Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId)
@@ -239,17 +239,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             return pricingTemplate.Map<PricingTemplateDto>();
         }
 
-        public async Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate,int oid, int fboId)
+        public async Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate, int oid, int fboId)
         {
 
             await _pricingTemplateEntityService.DeleteAsync(pricingTemplate.Oid);
 
 
-            var defaultPricingTemplate = await GetDefaultTemplateIncludeNullCheck(fboId);
+            //var defaultPricingTemplate = await GetDefaultTemplateIncludeNullCheck(fboId);
 
-            if (defaultPricingTemplate == null) return pricingTemplate;
+            //if (defaultPricingTemplate == null) return pricingTemplate;
 
-            await _customCustomerTypeService.SaveCustomersTypes(fboId, oid, defaultPricingTemplate.Oid);
+            //await _customCustomerTypeService.SaveCustomersTypes(fboId, oid, defaultPricingTemplate.Oid);
 
             return pricingTemplate;
 
@@ -298,7 +298,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         public async Task<FbolinxPricingTemplateFileAttachmentDto> GetFileAttachmentObject(int pricingTemplateId)
         {
             var pricingTemplateFile = await _fbolinxPricingTemplateAttachmentsEntityService.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
-            if(pricingTemplateFile == null) return null;
+            if (pricingTemplateFile == null) return null;
             return pricingTemplateFile.Map<FbolinxPricingTemplateFileAttachmentDto>();
         }
 
@@ -308,7 +308,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
             if (pricingTemplateFile == null || pricingTemplateFile.Oid == 0)
                 return "";
-            
+
             return pricingTemplateFile.FileName;
         }
 
@@ -365,11 +365,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             return aircraftPricingTemplates;
         }
 
-        public async Task<List<CustomerPricingTemplatesModel>> GetCustomerTemplates()
+        public async Task<List<CustomerPricingTemplatesModel>> GetCustomerTemplates(int customerId = 0, int fboId = 0)
         {
             var customerTemplates = await
                    (from ct in _context.CustomCustomerTypes
                     join pt in _context.PricingTemplate on ct.CustomerType equals pt.Oid
+                    where (customerId > 0 && ct.CustomerId == customerId) || (fboId > 0 && ct.Fboid == fboId)
                     select new CustomerPricingTemplatesModel
                     {
                         CustomerId = ct.CustomerId,

@@ -287,7 +287,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   CustomerInfoByGroupId = c.Oid,
                                                   Company = c.Company,
                                                   PricingTemplateId = (pt == null ? 0 : pt.Oid),
-                                                  DefaultCustomerType = cct.CustomerType,
+                                                  DefaultCustomerType = cct?.CustomerType,
                                                   MarginType = (pt == null ? 0 : pt.MarginType),
                                                   DiscountType = (pt == null ? 0 : pt.DiscountType),
                                                   FboPrice = (fp == null ? 0 : fp.Price),

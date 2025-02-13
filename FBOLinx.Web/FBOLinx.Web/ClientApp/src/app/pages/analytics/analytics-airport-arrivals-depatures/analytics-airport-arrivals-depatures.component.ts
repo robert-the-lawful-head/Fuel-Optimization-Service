@@ -84,10 +84,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             id: 'company',
             name: 'Company',
         },
-        //{
-        //    id: 'customerActionStatus',
-        //    name: 'Customer Action Status',
-        //},
         {
             id: 'tailNumber',
             name: 'Tail #',
@@ -133,6 +129,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         {
             id: 'originated',
             name: 'Origin ICAO',
+        },
+        {
+            id: 'customerActionStatus',
+            name:'Customer Action Status'
         }
     ];
 
@@ -143,6 +143,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     filtersChangeSubscription: Subscription;
     sortChangeSubscription: Subscription;
+    needsAttentionOptions: any[];
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -205,6 +206,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
             this.saveSettings();
         });
+
+        var needsAttentionOptionsList = ['Email Required', 'Setup Required', 'Top Customer']
+        this.needsAttentionOptions = needsAttentionOptionsList.map((nl) => ({
+            label: nl,
+            value: nl,
+        }));
 
         this.refreshData();
     }
@@ -351,8 +358,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     exportCsv() {
         let computePropertyFnc = (item: any[], id: string): any => {
+            if('isConfirmedVisit' == id)
+                item[id] = item[id] ? 'Yes' : 'No';
+            if(id == 'dateTime')
+                item[id] = this.getlocalDateTime(item[id]);
+            else
             if (id == 'aircraftTypeCode')
                 item[id] = this.getAircraftLabel(item[id]);
+            else if (id == "customerActionStatus") {
+                return this.getNeedsAttentionDisplayString(item);
+            }
             else return null;
         };
         this.exportCsvFile(
@@ -394,6 +409,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         } else {
             return 'Other';
         }
+    }
+
+    getNeedsAttentionDisplayString(customer: any): any {
+        let message = customer.customerNeedsAttention;
+        return message;
     }
 
     openSettings() {

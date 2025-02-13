@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TagsService } from 'src/app/services/tags.service';
@@ -17,6 +17,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AircraftsGridComponent } from '../../aircrafts/aircrafts-grid/aircrafts-grid.component';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
+import { PricingTemplate } from '../../../models';
 
 @Component({
     selector: 'app-customers-home',
@@ -59,7 +60,8 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         private customerAircraftService: CustomeraircraftsService,
         private tagService: TagsService,
         private route: ActivatedRoute,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        private cdr: ChangeDetectorRef
     ) {
         
         this.loadCustomers();
@@ -169,6 +171,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                         value: fv,
                     })),
                 }));
+                this.cdr.detectChanges();
                 this.customersCount = this.customersData.length;
                 this.ngxLoader.stopLoader(this.charNameCustomer);
             });
@@ -184,8 +187,29 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.sharedService.currentUser.groupId
             )
             .subscribe((data: any) => {
+                let blankDefault: PricingTemplate = {
+                    name: '* Missing Template *',
+                    customerId: 0,
+                    customersAssigned: 0,
+                    default: false,
+                    email: '',
+                    emailContentId: 0,
+                    fboid: 0,
+                    intoPlanePrice: 0,
+                    isInvalid: false,
+                    isPricingExpired: false,
+                    margin: 0,
+                    marginType: 0,
+                    marginTypeDescription: '',
+                    notes: '',
+                    oid: 0,
+                    subject: '',
+                    type: 0,
+                    yourMargin: 0
+                };
 
                 this.pricingTemplatesData = data;
+                this.pricingTemplatesData.unshift(blankDefault);
                 this.ngxLoader.stopLoader(this.charNamePricingTemplate);
             });
     }
