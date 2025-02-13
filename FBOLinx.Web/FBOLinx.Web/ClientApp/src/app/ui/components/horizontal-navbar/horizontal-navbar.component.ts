@@ -108,7 +108,17 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     get isMapVisible(): boolean {
         return (this.router.url == '/default-layout/flight-watch' || this.router.url == '/default-layout/dashboard-fbo-updated' || this.isLobbyViewPage) ? true : false;
     }
+    get isOrderIconVisible(): boolean {
+        const blacklistIconroutes = [
+            '/default-layout/groups',
+            '/default-layout/antenna-status',
+            '/public-layout/lobby-view',
+            '/default-layout/fbo-geofencing',
+            '/default-layout/antenna-status'
+        ];
 
+        return blacklistIconroutes.includes(this.router.url) ? false : true;   
+    }
     constructor(
         private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
