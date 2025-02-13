@@ -21,7 +21,12 @@ namespace FBOLinx.DB.Models
         public FBOLinx.Core.Enums.FlightTypeClassifications? FlightTypeClassification { get; set; }
         public FBOLinx.Core.Enums.ApplicableTaxFlights? DepartureType { get; set; }
         public FBOLinx.Core.Enums.FeeCalculationApplyingTypes? WhenToApply { get; set; }
-        public bool? IsOmitted { get; set; }
+        private bool? _IsOmitted = true;
+        public bool? IsOmitted 
+        {
+            get => _IsOmitted;
+            set => _IsOmitted = value ?? true;
+        }
         [NotMapped]
         public string OmittedFor { get; set; }
         #region Relationships
@@ -44,7 +49,7 @@ namespace FBOLinx.DB.Models
         }
         public bool IsOmittedSafe()
         {
-            return IsOmitted ?? true;
+            return _IsOmitted ?? true;
         }
     }
 }
