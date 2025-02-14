@@ -328,7 +328,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             >(AircraftAssignModalComponent, {
                 data: {
                     customers: this.customers,
-                    tailNumber: row.flightNumber,
+                    tailNumber: row.flightNumber == null ? row.tailNumber : row.flightNumber,
                 },
                 panelClass: 'aircraft-assign-modal',
                 width: '450px',
