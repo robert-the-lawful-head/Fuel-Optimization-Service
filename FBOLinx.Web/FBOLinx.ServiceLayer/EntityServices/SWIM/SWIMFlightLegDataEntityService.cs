@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.DTO.SWIM;
 using System.Linq;
 using FBOLinx.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +9,9 @@ using System;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 {
-    public class SWIMFlightLegDataEntityService : Repository<SWIMFlightLegData, DegaContext>
+    public class SWIMFlightLegDataEntityService : Repository<SWIMFlightLegData, FlightDataContext>
     {
-        public SWIMFlightLegDataEntityService(DegaContext context) : base(context)
+        public SWIMFlightLegDataEntityService(FlightDataContext context) : base(context)
         {
         }
 
