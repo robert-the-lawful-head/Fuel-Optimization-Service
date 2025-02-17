@@ -577,13 +577,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                         join d in swimFlightLegsDepartures on s.Oid equals d.Oid
                         into leftJoinDepartures
                         from d in leftJoinDepartures.DefaultIfEmpty()
-                        join nfc in nonFuelerLinxCustomerWithNoEmail on ca.CustomerId equals nfc.CustomerId
+                        join nfc in nonFuelerLinxCustomerWithNoEmail on ca?.CustomerId equals nfc?.CustomerId
                             into leftJoinNfc
                         from nfc in leftJoinNfc.DefaultIfEmpty()
-                        join ct in customerTemplates on ca.CustomerId equals ct.CustomerId
+                        join ct in customerTemplates on ca?.CustomerId equals ct?.CustomerId
                         into leftJoinCt
                         from ct in leftJoinCt.DefaultIfEmpty()
-                        join tc in topCustomers on ca.Customer.Company equals tc.Name
+                        join tc in topCustomers on ca?.Customer.Company equals tc?.Name
                         into leftJoinTc
                         from tc in leftJoinTc.DefaultIfEmpty()
                         select new AirportWatchHistoricalDataResponse
