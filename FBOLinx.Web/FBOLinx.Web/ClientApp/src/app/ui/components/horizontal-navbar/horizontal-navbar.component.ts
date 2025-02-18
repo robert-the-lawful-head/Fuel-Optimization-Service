@@ -108,7 +108,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     get isMapVisible(): boolean {
         return (this.router.url == '/default-layout/flight-watch' || this.router.url == '/default-layout/dashboard-fbo-updated' || this.isLobbyViewPage) ? true : false;
     }
-
+    get isOrderIconVisible(): boolean {
+        const fboid = this.sharedService.currentUser.fboId;
+        return (fboid || fboid > 0 ) ? true : false;  
+    }
     constructor(
         private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
