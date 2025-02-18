@@ -539,36 +539,34 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
         this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
     }
-    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
-        if (!feeAndTax.omitsByPricingTemplate) {
-            feeAndTax.omitsByPricingTemplate = [];
-        }
-        let omitRecord: any = {
-            fboFeeAndTaxId: feeAndTax.oid,
-            oid: 0,
-            pricingTemplateId: this.id,
-        };
-        if (feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid) != undefined) {
-            omitRecord = feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid);
-        } else {
-            feeAndTax.omitsByPricingTemplate.push(omitRecord);
-        }
-        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
-        if (feeAndTax.isOmitted) {
-            omitRecord.oid = 0;
+    async omitFeeAndTaxCheckChanged(feeAndTax: any): Promise<void> {
+        debugger;
+        await this.fboFeesAndTaxesService.update(feeAndTax).toPromise();
+
+        var omitRecord: any = feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid);
+
+        if (feeAndTax.isOmitted && !omitRecord) {
+            omitRecord = {
+                fboFeeAndTaxId: feeAndTax.oid,
+                oid: 0,
+                pricingTemplateId: this.id,
+            };
             this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;
+                    feeAndTax.omitsByPricingTemplate.push(omitRecord);
                     this.recalculatePriceBreakdown();
                 });
-        } else {
+        } else if (omitRecord) {
             this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .remove(omitRecord)
                 .subscribe(() => {
                     feeAndTax.omitsByPricingTemplate = [];
                     this.recalculatePriceBreakdown();
                 });
+        }else{
+            this.recalculatePriceBreakdown();
         }
     }
 
