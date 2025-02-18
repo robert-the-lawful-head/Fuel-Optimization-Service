@@ -8,37 +8,18 @@ import {
     Validators,
 } from '@angular/forms';
 import { validateEmail } from 'src/utils/email';
-import {
-    DetailRowService,
-    FilterSettingsModel,
-    GridComponent,
-    GridModel,
-    SelectionSettingsModel,
-} from '@syncfusion/ej2-angular-grids';
 import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { GroupAnalyticsGenerateDialogData } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 
 @Component({
-    providers: [SharedService, DetailRowService],
+    providers: [SharedService],
     selector: 'app-group-analytics-email-pricing-dialog',
     styleUrls: ['./group-analytics-email-pricing-dialog.component.scss'],
     templateUrl: './group-analytics-email-pricing-dialog.component.html',
 })
 export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
-    @ViewChild('grid') public grid: GridComponent;
-    childGrid: GridModel;
-
-    selectionOptions: SelectionSettingsModel = {
-        checkboxMode: 'ResetOnRowClick',
-    };
-    pageSettings: any = {
-        pageSize: 25,
-        pageSizes: [25, 50, 100, 'All'],
-    };
-    filterSettings: FilterSettingsModel = { type: 'Menu' };
-
     gridData: any[] = [];
 
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
