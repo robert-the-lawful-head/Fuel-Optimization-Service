@@ -162,7 +162,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         this.stagedPrices = undefined;
         this.loadAllPrices();
         this.loadFeesAndTaxes();
-        this.fixCustomCustomerTypes();
+        //this.fixCustomCustomerTypes();
         this.checkDefaultTemplate();
         this.integrationStatus = this.sharedService.currentUser.integrationStatus;
     }

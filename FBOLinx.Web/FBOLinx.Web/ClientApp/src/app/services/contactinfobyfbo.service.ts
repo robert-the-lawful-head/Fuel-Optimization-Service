@@ -55,5 +55,14 @@ export class ContactinfobyfboService {
             );
         }
     }
+
+    public updateDistributionForAllCustomerContacts(customerId, fboId, isEnabled) {
+        return this.http.post(
+            this.accessPointUrl + '/update-distribution-all-customer-contacts/' + customerId + '/fbo/' + fboId + '/is-enabled/' + (isEnabled == true ? 1 : 0),
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }
 

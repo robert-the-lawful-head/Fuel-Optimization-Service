@@ -25,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             var customers = _context.CustomCustomerTypes
             .Where(c => c.Fboid.Equals(fboId) && c.CustomerType.Equals(oid))
             .Select(s => s.CustomerId)
-            .ToList();          
+            .ToList();         
 
             var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == fboId).GroupId;
             _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);

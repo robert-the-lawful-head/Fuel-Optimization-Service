@@ -11,6 +11,10 @@ export class CustomerActionStatusComponent {
     @Input() customerActionStatusEmailRequired: string;
     @Input() customerActionStatusSetupRequired: string;
     @Input() customerActionStatusTopCustomer: string;
+    @Input() toolTipEmailRequired: string;
+    @Input() toolTipSetupRequired: string;
+    @Input() toolTipTopCustomer: string;
+    @Input() moreThan2Badges: string;
 
     constructor(
     ) { }

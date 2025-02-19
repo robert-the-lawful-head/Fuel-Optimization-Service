@@ -141,7 +141,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 return;
             }
 
-            _LoggingService.LogError("Total records posted: " + string.Format("{0:N}", swimFlightLegs.Count()), "", LogLevel.Info, LogColorCode.Blue);
+            //_LoggingService.LogError("Total records posted: " + string.Format("{0:N}", swimFlightLegs.Count()), "", LogLevel.Info, LogColorCode.Blue);
 
             IList<SWIMFlightLegDTO> swimFlightLegDTOs = new List<SWIMFlightLegDTO>();
             foreach (IGrouping<string, SWIMFlightLegDTO> flightLegGrouping in swimFlightLegs.GroupBy(x => x.AircraftIdentification))
@@ -365,7 +365,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (flightLegsToInsert.Count > 0)
             {
-                LogMissedTailNumbers(flightLegsToInsert);
+                //LogMissedTailNumbers(flightLegsToInsert);
                 await _FlightLegEntityService.BulkInsert(flightLegsToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
