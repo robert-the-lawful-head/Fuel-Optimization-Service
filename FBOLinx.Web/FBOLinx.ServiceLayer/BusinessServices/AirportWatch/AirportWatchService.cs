@@ -491,15 +491,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                           from parkingAndLandingAssociation in leftJoinedParkingAndLandingAssociation.DefaultIfEmpty()
                           join hextail in hexTailMappings on h.TailNumber equals hextail.TailNumber into leftJoinedhextail
                           from hextail in leftJoinedhextail.DefaultIfEmpty()
-                          join nfc in nonFuelerLinxCustomerWithNoEmail on cv.CompanyId equals nfc.CustomerId
+                          join nfc in nonFuelerLinxCustomerWithNoEmail on cv?.CompanyId equals nfc?.CustomerId
                             into leftJoinNfc
                           from nfc in leftJoinNfc.DefaultIfEmpty()
-                          join ct in customerTemplates on cv.CompanyId equals ct.CustomerId
+                          join ct in customerTemplates on cv?.CompanyId equals ct?.CustomerId
                           into leftJoinCt
                           from ct in leftJoinCt.DefaultIfEmpty()
-                          join tc in topCustomers on cv.Company equals tc.Name
-                          into leftJoinTc
-                          from tc in leftJoinTc.DefaultIfEmpty()
+                          join tc in topCustomers on cv?.Company equals tc?.Name
                           select new AirportWatchHistoricalDataResponse
                           {
                               AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
@@ -521,8 +519,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               PercentOfVisits = cv?.PercentOfVisits,
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
-                              Originated = request.KeepParkingEvents ? "" : h.AircraftStatusDescription == "Arrival" && h.SwimFlightLegId != null ? (swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : "",
-                              CustomerActionStatusEmailRequired = nfc != null ? true : false,
+                              Originated = request.KeepParkingEvents ? "" : h?.AircraftStatusDescription == "Arrival" && h?.SwimFlightLegId != null ? (swimFlightLegs.Count > 0 && swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : "",
+                              CustomerActionStatusEmailRequired = (nfc != null) ? true : false,
                               CustomerActionStatusSetupRequired = (h.CustomerId > 0 && ct == null ? true : false),// || nfc != null
                               CustomerActionStatusTopCustomer = tc != null ? true : false,
                               ToolTipEmailRequired = (nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
