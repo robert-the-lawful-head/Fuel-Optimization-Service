@@ -519,7 +519,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               PercentOfVisits = cv?.PercentOfVisits,
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
-                              Originated = request.KeepParkingEvents ? "" : h?.AircraftStatusDescription == "Arrival" && h?.SwimFlightLegId != null ? (swimFlightLegs.Count > 0 && swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault().DepartureICAO : "") : "",
+                              Originated = request.KeepParkingEvents ? "" : h?.AircraftStatusDescription == "Arrival" && h?.SwimFlightLegId != null ? (swimFlightLegs.Count > 0 && swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault()?.DepartureICAO : "") : "",
                               CustomerActionStatusEmailRequired = (nfc != null) ? true : false,
                               CustomerActionStatusSetupRequired = (h.CustomerId > 0 && ct == null ? true : false),// || nfc != null
                               CustomerActionStatusTopCustomer = tc != null ? true : false,
@@ -581,7 +581,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                         join ct in customerTemplates on ca?.CustomerId equals ct?.CustomerId
                         into leftJoinCt
                         from ct in leftJoinCt.DefaultIfEmpty()
-                        join tc in topCustomers on ca?.Customer.Company equals tc?.Name
+                        join tc in topCustomers on ca?.Customer?.Company equals tc?.Name
                         into leftJoinTc
                         from tc in leftJoinTc.DefaultIfEmpty()
                         select new AirportWatchHistoricalDataResponse
