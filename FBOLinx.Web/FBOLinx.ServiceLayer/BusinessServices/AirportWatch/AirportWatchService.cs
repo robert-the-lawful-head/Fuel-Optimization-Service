@@ -525,7 +525,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               CustomerActionStatusTopCustomer = tc != null ? true : false,
                               ToolTipEmailRequired = (nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
                               ToolTipSetupRequired = (h.CustomerId > 0 && ct == null) ? "This customer was added and needs to be setup with an appropriate ITP template." : "",// || nfc != null
-                              ToolTipTopCustomer = (tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : ""
+                              ToolTipTopCustomer = (tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : "",
+                              MoreThan2Badges = nfc != null && (h.CustomerId > 0 && ct == null) && tc != null ? true : false,
                           }).ToList();
 
             result.ForEach(r => r.CustomerNeedsAttention =
