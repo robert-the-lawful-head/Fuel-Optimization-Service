@@ -520,13 +520,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
                               ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
                               Originated = request.KeepParkingEvents ? "" : h?.AircraftStatusDescription == "Arrival" && h?.SwimFlightLegId != null ? (swimFlightLegs.Count > 0 && swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId) != null ? swimFlightLegs.Where(s => s.Oid == h.SwimFlightLegId).FirstOrDefault()?.DepartureICAO : "") : "",
-                              CustomerActionStatusEmailRequired = (nfc != null) ? true : false,
-                              CustomerActionStatusSetupRequired = (h.CustomerId > 0 && ct == null ? true : false),// || nfc != null
-                              CustomerActionStatusTopCustomer = tc != null ? true : false,
-                              ToolTipEmailRequired = (nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
-                              ToolTipSetupRequired = (h.CustomerId > 0 && ct == null) ? "This customer was added and needs to be setup with an appropriate ITP template." : "",// || nfc != null
-                              ToolTipTopCustomer = (tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : "",
-                              MoreThan2Badges = nfc != null && (h.CustomerId > 0 && ct == null) && tc != null ? true : false,
+                              CustomerActionStatusEmailRequired = (h.CustomerInfoByGroupID > 0 && nfc != null) ? true : false,
+                              CustomerActionStatusSetupRequired = (h.CustomerInfoByGroupID > 0 && ct == null ? true : false),// || nfc != null
+                              CustomerActionStatusTopCustomer = h.CustomerInfoByGroupID > 0 && tc != null ? true : false,
+                              ToolTipEmailRequired = (h.CustomerInfoByGroupID > 0 && nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
+                              ToolTipSetupRequired = (h.CustomerInfoByGroupID > 0 && ct == null) ? "This customer was added and needs to be setup with an appropriate ITP template." : "",// || nfc != null
+                              ToolTipTopCustomer = (h.CustomerInfoByGroupID > 0 && tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : "",
+                              MoreThan2Badges = h.CustomerInfoByGroupID > 0 && nfc != null && ct == null && tc != null ? true : false,
                           }).ToList();
 
             result.ForEach(r => r.CustomerNeedsAttention =
@@ -595,12 +595,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             Company = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Company.ToUpper()).FirstOrDefault() : s.FAARegisteredOwner,
                             CompanyId = ca != null && ca.CustomerId > 0 ? ca.CustomerId : 0,
                             CustomerInfoByGroupID = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0,
-                            CustomerActionStatusEmailRequired = nfc != null ? true : false,
-                            CustomerActionStatusSetupRequired = (ct == null ? true : false),// || nfc != null
-                            CustomerActionStatusTopCustomer = tc != null ? true : false,
-                            ToolTipEmailRequired = (nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
-                            ToolTipSetupRequired = (ct == null) ? "This customer was added and needs to be setup with an appropriate ITP template." : "",// || nfc != null
-                            ToolTipTopCustomer = (tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : "",
+                            CustomerActionStatusEmailRequired = (ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && nfc != null) ? true : false,
+                            CustomerActionStatusSetupRequired = (ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && ct == null ? true : false),// || nfc != null
+                            CustomerActionStatusTopCustomer = ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && tc != null ? true : false,
+                            ToolTipEmailRequired = (ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && nfc != null) ? "This customer is missing an email address. Add an email to distribute pricing." : "",
+                            ToolTipSetupRequired = (ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && ct == null) ? "This customer was added and needs to be setup with an appropriate ITP template." : "",// || nfc != null
+                            ToolTipTopCustomer = (ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && tc != null) ? "FuelerLinx has detected that this customer frequently dispatches fuel at your location." : "",
+                            MoreThan2Badges = ca != null && ca.CustomerId > 0 && customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() > 0 && nfc != null && ct == null && tc != null ? true : false,
                         }).ToList();
             
             response.ForEach(r => r.CustomerNeedsAttention =
