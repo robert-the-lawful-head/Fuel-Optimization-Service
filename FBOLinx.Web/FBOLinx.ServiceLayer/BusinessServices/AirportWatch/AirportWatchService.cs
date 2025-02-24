@@ -498,6 +498,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                           into leftJoinCt
                           from ct in leftJoinCt.DefaultIfEmpty()
                           join tc in topCustomers on cv?.Company equals tc?.Name
+                          into leftJoinTc
+                          from tc in leftJoinTc.DefaultIfEmpty()
                           select new AirportWatchHistoricalDataResponse
                           {
                               AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
