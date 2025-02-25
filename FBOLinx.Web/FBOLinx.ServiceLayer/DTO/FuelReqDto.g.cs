@@ -130,9 +130,9 @@ namespace FBOLinx.Service.Mapping.Dto
 
                 return fuelRequest;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
-                throw new Exception("Error casting FuelReqDto from Fuelerlinx Transaction", ex);
+                throw new System.Exception("Error casting FuelReqDto from Fuelerlinx Transaction", ex);
             }
 
             return new FuelReqDto();
