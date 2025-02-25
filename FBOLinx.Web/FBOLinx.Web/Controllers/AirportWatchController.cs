@@ -184,7 +184,7 @@ namespace FBOLinx.Web.Controllers
             {
                 if (!startDateTimeUtc.HasValue || !endDateTimeUtc.HasValue)
                 {
-                    throw new System.Exception("Start and end date time are required.  Please provide startDateTimeUtc and endDateTimeUtc values in the querystring.");
+                    throw new Exception("Start and end date time are required.  Please provide startDateTimeUtc and endDateTimeUtc values in the querystring.");
                 }
 
                 var result = await _IntraNetworkAntennaDataReportService.GenerateReportForNetwork(groupId,fboId, startDateTimeUtc.Value, endDateTimeUtc.Value);

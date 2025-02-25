@@ -76,7 +76,7 @@ namespace FBOLinx.ServiceLayer.Extensions
                 .Map(dest => dest.IsActive, src => true)
                 .Map(dest => dest.Oid, src => src.HandlerId.ToString()+src.ServiceOfferedId.ToString());
 
-                TypeAdapterConfig<AcukwikServicesOffered, FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>
+                TypeAdapterConfig<AcukwikServicesOffered, ServiceTypeResponse>
                 .NewConfig()
                 .Map(dest => dest.IsCustom, src => false);
     
@@ -91,7 +91,7 @@ namespace FBOLinx.ServiceLayer.Extensions
                 .Map(dest => dest.IsActive, src => true)
                 .Map(dest => dest.IsCustom, src => false);
 
-                TypeAdapterConfig<FboCustomServicesAndFees, FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>
+                TypeAdapterConfig<FboCustomServicesAndFees, ServiceTypeResponse>
                 .NewConfig()
                 .Map(dest => dest.CreatedByUser, src => src.CreatedByUser.Username)
                 .Map(dest => dest.IsCustom, src => true);

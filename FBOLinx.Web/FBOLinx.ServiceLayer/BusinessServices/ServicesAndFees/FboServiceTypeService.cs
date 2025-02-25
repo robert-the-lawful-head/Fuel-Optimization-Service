@@ -13,9 +13,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
 {
     public interface IFboServiceTypeService
     {
-        Task<List<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>> Get(int fboId);
-        Task<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse> Create(int fboId, FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse serviceType);
-        Task<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse> Update(int serviceTypeId, FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse serviceType);
+        Task<List<ServiceTypeResponse>> Get(int fboId);
+        Task<ServiceTypeResponse> Create(int fboId, ServiceTypeResponse serviceType);
+        Task<ServiceTypeResponse> Update(int serviceTypeId, ServiceTypeResponse serviceType);
         Task<bool> Delete(int serviceTypeId);
     }
     public class FboServiceTypeService : IFboServiceTypeService
@@ -29,11 +29,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             _fboCustomEntityTypeRepo = fboCustomEntityTypeRepo;
         }
 
-        public async Task<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse> Create(int fboId, FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse serviceType)
+        public async Task<ServiceTypeResponse> Create(int fboId, ServiceTypeResponse serviceType)
         {
             var entity = serviceType.Adapt<FboCustomServiceType>();
             entity.FboId = fboId;
-            return (await _fboCustomEntityTypeRepo.AddAsync(entity)).Adapt<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>();
+            return (await _fboCustomEntityTypeRepo.AddAsync(entity)).Adapt<ServiceTypeResponse>();
         }
 
         public async Task<bool> Delete(int serviceTypeId)
@@ -45,12 +45,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             return true;
         }
 
-        public async Task<List<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>> Get(int fboId)
+        public async Task<List<ServiceTypeResponse>> Get(int fboId)
         {
-            return (await _fboCustomEntityTypeRepo.Get().ToListAsync()).Adapt<List<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>>();
+            return (await _fboCustomEntityTypeRepo.Get().ToListAsync()).Adapt<List<ServiceTypeResponse>>();
         }
 
-        public async Task<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse> Update(int serviceTypeId, FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse serviceType)
+        public async Task<ServiceTypeResponse> Update(int serviceTypeId, ServiceTypeResponse serviceType)
         {
             var entity = await _fboCustomEntityTypeRepo.FindAsync(serviceTypeId);
 
@@ -58,7 +58,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                 return null;
             entity.Name = serviceType.Name;
             await _fboCustomEntityTypeRepo.UpdateAsync(entity);
-            return  entity.Adapt<FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees.ServiceTypeResponse>();
+            return  entity.Adapt<ServiceTypeResponse>();
         }
     }
 }

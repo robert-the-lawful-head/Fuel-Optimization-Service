@@ -392,7 +392,7 @@ namespace FBOLinx.Web.Controllers
                 _context.Fbos.Remove(fbos);
                 await _context.SaveChangesAsync();
             }
-            catch(System.Exception ex)
+            catch(Exception ex)
             {
                 BadRequest();
             }
@@ -442,7 +442,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return Ok(new { Message = "" });
             }
@@ -468,7 +468,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return Ok(new { Message = "" });
             }

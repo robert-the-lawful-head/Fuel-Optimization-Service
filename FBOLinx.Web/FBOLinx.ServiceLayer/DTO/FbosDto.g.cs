@@ -57,7 +57,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public string SenderAddress { get; set; }
         public string ReplyTo { get; set; }
         public string AntennaName { get; set; }
-        public FBOLinx.Core.Enums.AccountTypes AccountType { get; set; }
+        public AccountTypes AccountType { get; set; }
         public bool? IsJetNetIntegrationEnabled { get; set; } = false;
         public bool? IntegrationStatus { get; set; } = false;
         public GroupDTO Group { get; set; }

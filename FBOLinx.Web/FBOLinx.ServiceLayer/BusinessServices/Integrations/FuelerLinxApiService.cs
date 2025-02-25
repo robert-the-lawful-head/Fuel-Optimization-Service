@@ -208,7 +208,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         public async Task<List<GeneralAirportInformation>> GetAllAirportGeneralInformation()
         {
             var apiClient = await GetApiClient();
-            var result = await apiClient.Airport_GetGeneralAirportInfoListAsync(null, null);
+            var result = await apiClient.Airport_GetGeneralAirportInfoListAsync();
             return result?.ToList();
         }
 
@@ -270,7 +270,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                     }
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return "";
             }
