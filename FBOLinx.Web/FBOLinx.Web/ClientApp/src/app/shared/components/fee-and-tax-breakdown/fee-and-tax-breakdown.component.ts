@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FeeAndTaxBreakdownDisplayModes } from 'src/app/enums/price.enum';
-import { FeeCalculationTypes } from 'src/app/enums/fee-calculation-types';
+import { DiscountType, FeeCalculationTypes } from 'src/app/enums/fee-calculation-types';
 import { MarginType } from 'src/app/enums/margin-type.enum';
+import { FlightTypeClassifications } from 'src/app/enums/flight-type-classifications';
+import { ApplicableTaxFlights } from 'src/app/enums/applicable-tax-flights';
 
 @Component({
     selector: 'fee-and-tax-breakdown',
@@ -23,11 +25,11 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
     fboPrice: number;
     @Input()
-    validDepartureTypes: Array<number> = [0, 1, 2, 3];
+    validDepartureTypes: Array<ApplicableTaxFlights> = [ApplicableTaxFlights.Never, ApplicableTaxFlights.DomesticOnly, ApplicableTaxFlights.InternationalOnly, ApplicableTaxFlights.All];
     @Input()
-    validFlightTypes: Array<number> = [0, 1, 2, 3];
+    validFlightTypes: Array<FlightTypeClassifications> = [FlightTypeClassifications.NotSet, FlightTypeClassifications.Private, FlightTypeClassifications.Commercial,FlightTypeClassifications.All];
     @Input()
-    discountType: number;
+    discountType: DiscountType;
     @Input()
     isMember: boolean;
     @Output()
@@ -94,10 +96,10 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
             return;
         }
         this.aboveTheLineTaxes = this.feesAndTaxes.filter(
-            (tax) => tax.whenToApply === 0
+            (tax) => tax.whenToApply === FeeCalculationTypes.FlatPerGallon
         );
         this.belowTheLineTaxes = this.feesAndTaxes.filter(
-            (tax) => tax.whenToApply === 1
+            (tax) => tax.whenToApply === FeeCalculationTypes.Percentage
         );
     }
 
@@ -110,8 +112,8 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
 
     private calcItpMargin() {
         //Cost+ Mode
-        if (this.marginType == 0) {
-            if (this.discountType == 1) {
+        if (this.marginType == MarginType.CostPlus) {
+            if (this.discountType == DiscountType.Percentage) {
                 this.marginITP = (this.fboPrice * this.customerMargin) / 100;
             } else {
                 this.marginITP = this.customerMargin;
@@ -122,7 +124,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
 
         // Retail- Mode
         else {
-            if (this.discountType == 1) {
+            if (this.discountType == DiscountType.Percentage) {
                 this.marginITP = (this.fboPrice * this.customerMargin) / 100;
             } else {
                 this.marginITP = this.customerMargin;
@@ -137,9 +139,9 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         const basePrice = this.fboPrice;
 
         this.aboveTheLineTaxes.forEach((fee) => {
-            if (fee.calculationType === 0) {
+            if (fee.calculationType === FeeCalculationTypes.FlatPerGallon) {
                 fee.amount = fee.value;
-            } else if (fee.calculationType === 1) {
+            } else if (fee.calculationType === FeeCalculationTypes.Percentage) { FeeCalculationTypes.Percentage
                 fee.amount = (fee.value / 100.0) * basePrice;
             }
             if (this.isFeeValidForTotal(fee)) {
@@ -147,7 +149,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
             }
         });
 
-        if (this.marginType === 1) {
+        if (this.marginType == MarginType.RetailMinus) {
             this.preMarginSubTotal = this.fboPrice;
         } else {
             this.preMarginSubTotal = result;
@@ -160,8 +162,8 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         }
 
         this.subTotalWithMargin = 0;
-        if (this.marginType == 0) {
-            if (this.discountType == 1) {
+        if (this.marginType == MarginType.CostPlus) {
+            if (this.discountType == DiscountType.Percentage) {
                 this.marginITP = (this.fboPrice * this.customerMargin) / 100;
             } else {
                 this.marginITP = this.customerMargin;
@@ -172,7 +174,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
 
         // Retail- Mode
         else {
-            if (this.discountType == 1) {
+            if (this.discountType == DiscountType.Percentage) {
                 this.marginITP = (this.fboPrice * this.customerMargin) / 100;
             } else {
                 this.marginITP = this.customerMargin;
@@ -186,9 +188,9 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         let result = this.subTotalWithMargin;
 
         this.belowTheLineTaxes.forEach((fee) => {
-            if (fee.calculationType === 0) {
+            if (fee.calculationType === FeeCalculationTypes.FlatPerGallon) {
                 fee.amount = fee.value;
-            } else if (fee.calculationType === 1) {
+            } else if (fee.calculationType === FeeCalculationTypes.Percentage) {
                 fee.amount = (fee.value / 100.0) * this.subTotalWithMargin;
             }
             if (this.isFeeValidForTotal(fee)) {
