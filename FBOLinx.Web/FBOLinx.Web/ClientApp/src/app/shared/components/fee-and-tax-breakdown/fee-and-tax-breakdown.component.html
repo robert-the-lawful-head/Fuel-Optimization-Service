@@ -18,7 +18,7 @@
         <div class="row mb-3">
             <div *ngIf="isCustomerOmitting" class="col-1"></div>
             <div class="col ml-4">
-                {{ marginType == 0 ? "Cost" : "Retail" }}
+                {{ isCostPlus ? "Cost" : "Retail" }}
             </div>
             <div class="col"></div>
             <div class="col text-right">${{ fboPrice | decimalPrecision }}</div>
@@ -29,7 +29,7 @@
             *ngFor="let aboveLineTax of aboveTheLineTaxes"
             class="row font-italic"
             [ngClass]="{
-                'faded-text': isTextFaded(aboveLineTax)
+                'faded-text': isOmmited(aboveLineTax)
             }"
         >
             <!-- aboveLineTax1: {{ aboveLineTax.whenToApply }} -->
@@ -38,7 +38,7 @@
                     (change)="omitChanged(aboveLineTax)"
                     [(ngModel)]="aboveLineTax.isOmitted"
                     type="checkbox"
-                    *ngIf="marginType != 1"
+                    *ngIf="!isRetailMinus"
                     [disabled]="isMember"
                 ></mat-checkbox>
             </div>
@@ -51,10 +51,7 @@
                 >
                 <sup
                     class="pl-1"
-                    *ngIf="
-                        aboveLineTax.omittedFor &&
-                        aboveLineTax.omittedFor.length > 0
-                    "
+                    *ngIf="isOmmited(aboveLineTax)"
                     >{{ aboveLineTax.omittedFor }}</sup
                 >
             </div>
@@ -64,7 +61,7 @@
                 }"
                 class="col text-right"
             >
-                <span *ngIf="aboveLineTax.calculationType == 1"
+                <span *ngIf="isCalculationTypePercentage(aboveLineTax)"
                     >{{ aboveLineTax.value | decimalPrecision }}%</span
                 >
             </div>
@@ -74,10 +71,10 @@
                 }"
                 class="col text-right"
             >
-                <span *ngIf="marginType == 0">{{
+                <span *ngIf="isCostPlus">{{
                     aboveLineTax.amount | currencyPresicion
                 }}</span>
-                <span *ngIf="marginType == 1">Applied</span>
+                <span *ngIf="isRetailMinus">Applied</span>
             </div>
         </div>
 
@@ -94,11 +91,11 @@
         <!--ITP Margin-->
         <div *ngIf="customerMargin != null" class="row">
             <div *ngIf="isCustomerOmitting" class="col-1"></div>
-            <div class="col ml-4" *ngIf="marginType == 0">ITP-Margin</div>
-            <div class="col ml-4" *ngIf="marginType == 1">Discount</div>
+            <div class="col ml-4" *ngIf="isCostPlus">ITP-Margin</div>
+            <div class="col ml-4" *ngIf="isRetailMinus">Discount</div>
             <div class="col"></div>
             <div class="col text-right">
-                <span *ngIf="marginType == 1">-</span>${{
+                <span *ngIf="isRetailMinus">-</span>${{
                     marginITP | decimalPrecision
                 }}
             </div>
@@ -128,7 +125,7 @@
             *ngFor="let belowLineTax of belowTheLineTaxes"
             class="row font-italic"
             [ngClass]="{
-                'faded-text': isTextFaded(belowLineTax)
+                'faded-text': isOmmited(belowLineTax)
             }"
         >
             <!-- aboveLineTax2: {{ belowLineTax.whenToApply }} -->
@@ -149,10 +146,7 @@
                 >
                 <sup
                     class="pl-1"
-                    *ngIf="
-                        belowLineTax.omittedFor &&
-                        belowLineTax.omittedFor.length > 0
-                    "
+                    *ngIf="isOmmited(belowLineTax)"
                     >{{ belowLineTax.omittedFor }}</sup
                 >
             </div>
@@ -162,7 +156,7 @@
                 }"
                 class="col text-right"
             >
-                <span *ngIf="belowLineTax.calculationType == 1"
+                <span *ngIf="isCalculationTypePercentage(belowLineTax)"
                     >{{ belowLineTax.value | decimalPrecision }}%</span
                 >
             </div>
@@ -196,7 +190,7 @@
             </div>
             <div class="col-6 label-tax-fees">
                 <div class="no-padding-label">
-                    {{ marginType == 0 ? "Cost" : "Posted Retail" }}
+                    {{ isCostPlus ? "Cost" : "Posted Retail" }}
                 </div>
             </div>
         </div>
@@ -210,18 +204,15 @@
                         'strike-through': isTextStrikeThrough(aboveLineTax)
                     }"
                 >
-                    <div *ngIf="marginType == 1" class="font-italic">
+                    <div *ngIf="isRetailMinus" class="font-italic">
                         Applied
                     </div>
-                    <div *ngIf="marginType == 0">
-                        <div *ngIf="aboveLineTax.calculationType == 1">
+                    <div *ngIf="isCostPlus">
+                        <div *ngIf="isCalculationTypePercentage(aboveLineTax)">
                             {{ aboveLineTax.value | decimalPrecision }}%
                         </div>
                         <div
-                            *ngIf="
-                                aboveLineTax.calculationType == 0 &&
-                                aboveLineTax.amount
-                            "
+                            *ngIf="isCalculationTypeFlatPerGallon(aboveLineTax)"
                         >
                             {{ aboveLineTax.amount | currencyPresicion }}
                         </div>
@@ -258,14 +249,11 @@
                     }"
                     class=""
                 >
-                    <div *ngIf="belowLineTax.calculationType == 1">
+                    <div *ngIf="isCalculationTypePercentage(belowLineTax)">
                         {{ belowLineTax.value | decimalPrecision }}%
                     </div>
                     <div
-                        *ngIf="
-                            belowLineTax.calculationType == 0 &&
-                            belowLineTax.amount
-                        "
+                        *ngIf="isCalculationTypeFlatPerGallon(belowLineTax)"
                     >
                         {{ belowLineTax.amount | decimalPrecision }}
                     </div>

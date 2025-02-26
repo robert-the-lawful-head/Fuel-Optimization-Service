@@ -17,18 +17,13 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import {
-    FeeAndTaxBreakdownComponent,
-    FeeAndTaxBreakdownDisplayModes,
+    FeeAndTaxBreakdownComponent
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FeeAndTaxBreakDown, FeeAndTaxBreakdownDialogWrapperComponent } from './fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
+import { FeeAndTaxBreakdownDisplayModes, PriceBreakdownDisplayTypes } from 'src/app/enums/price.enum';
 
-export enum PriceBreakdownDisplayTypes {
-    SingleColumnAllFlights = 0,
-    TwoColumnsDomesticInternationalOnly = 1,
-    TwoColumnsApplicableFlightTypesOnly = 2,
-    FourColumnsAllRules = 3,
-}
+
 
 @Component({
     selector: 'price-breakdown',

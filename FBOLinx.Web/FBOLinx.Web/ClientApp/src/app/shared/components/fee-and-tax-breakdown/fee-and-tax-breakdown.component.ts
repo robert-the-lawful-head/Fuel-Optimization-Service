@@ -1,10 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-
-export enum FeeAndTaxBreakdownDisplayModes {
-    PriceTaxBreakdown = 0,
-    CustomerOmitting = 1,
-    PricingPanel = 2,
-}
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FeeAndTaxBreakdownDisplayModes } from 'src/app/enums/price.enum';
+import { FeeCalculationTypes } from 'src/app/enums/fee-calculation-types';
+import { MarginType } from 'src/app/enums/margin-type.enum';
 
 @Component({
     selector: 'fee-and-tax-breakdown',
@@ -36,8 +33,6 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 
-    public displayModeType = FeeAndTaxBreakdownDisplayModes;
-
     public aboveTheLineTaxes: Array<any> = [];
     public belowTheLineTaxes: Array<any> = [];
     public preMarginSubTotal = 0;
@@ -62,18 +57,25 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         this.calculatePrices();
     }
     get isPriceTaxBreakdown(): boolean {
-        return (
-            this.displayMode ===
-            FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown
-        );
+        return this.displayMode === FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     }
     get isCustomerOmitting(): boolean {
-        return (
-            this.displayMode === FeeAndTaxBreakdownDisplayModes.CustomerOmitting
-        );
+        return this.displayMode === FeeAndTaxBreakdownDisplayModes.CustomerOmitting;
     }
     get isPricingPanel(): boolean {
         return this.displayMode === FeeAndTaxBreakdownDisplayModes.PricingPanel;
+    }
+    get isRetailMinus(): boolean {
+        return this.marginType == MarginType.RetailMinus;
+    }
+    get isCostPlus(): boolean {
+        return this.marginType == MarginType.CostPlus;
+    }
+    isCalculationTypePercentage(lineTax: any): boolean {
+        return lineTax.calculationType === FeeCalculationTypes.Percentage;
+    }
+    isCalculationTypeFlatPerGallon(lineTax: any): boolean {
+        return lineTax.calculationType === FeeCalculationTypes.FlatPerGallon;
     }
     isTextStrikeThrough(lineTax: any): boolean {
         return (
@@ -83,7 +85,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
                 -1
         );
     }
-    isTextFaded(lineTax: any): boolean {
+    isOmmited(lineTax: any): boolean {
         return lineTax.omittedFor && lineTax.omittedFor.length > 0;
     }
     // Private Methods
