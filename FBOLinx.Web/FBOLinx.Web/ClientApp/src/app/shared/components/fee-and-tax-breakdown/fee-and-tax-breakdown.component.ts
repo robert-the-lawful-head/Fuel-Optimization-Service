@@ -36,6 +36,8 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     @Output()
     omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 
+    public displayModeType = FeeAndTaxBreakdownDisplayModes;
+
     public aboveTheLineTaxes: Array<any> = [];
     public belowTheLineTaxes: Array<any> = [];
     public preMarginSubTotal = 0;
@@ -59,7 +61,31 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         this.prepareTaxes();
         this.calculatePrices();
     }
-
+    get isPriceTaxBreakdown(): boolean {
+        return (
+            this.displayMode ===
+            FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown
+        );
+    }
+    get isCustomerOmitting(): boolean {
+        return (
+            this.displayMode === FeeAndTaxBreakdownDisplayModes.CustomerOmitting
+        );
+    }
+    get isPricingPanel(): boolean {
+        return this.displayMode === FeeAndTaxBreakdownDisplayModes.PricingPanel;
+    }
+    isTextStrikeThrough(lineTax: any): boolean {
+        return (
+            lineTax.isOmitted ||
+            this.validDepartureTypes.indexOf(lineTax.departureType) == -1 ||
+            this.validFlightTypes.indexOf(lineTax.flightTypeClassification) ==
+                -1
+        );
+    }
+    isTextFaded(lineTax: any): boolean {
+        return lineTax.omittedFor && lineTax.omittedFor.length > 0;
+    }
     // Private Methods
     private prepareTaxes() {
         if (!this.feesAndTaxes) {
