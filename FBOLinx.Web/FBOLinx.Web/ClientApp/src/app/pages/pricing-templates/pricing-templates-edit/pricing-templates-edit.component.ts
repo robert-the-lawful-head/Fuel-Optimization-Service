@@ -174,7 +174,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 this.jetACost = jetACostRecords[0].price;
             }
             if (jetARetailRecords && jetARetailRecords.length > 0) {
-                console.log(jetACostRecords);
                 this.jetARetail = jetARetailRecords[0].price;
 
             }
@@ -539,7 +538,9 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
         this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
     }
-    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+    async omitFeeAndTaxCheckChanged(feeAndTax: any): Promise<void> {
+        await this.fboFeesAndTaxesService.update(feeAndTax).toPromise();
+
         if (!feeAndTax.omitsByPricingTemplate) {
             feeAndTax.omitsByPricingTemplate = [];
         }
@@ -554,21 +555,24 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             feeAndTax.omitsByPricingTemplate.push(omitRecord);
         }
         omitRecord.fboFeeAndTaxId = feeAndTax.oid;
-        if (feeAndTax.isOmitted) {
-            omitRecord.oid = 0;
+        if (feeAndTax.isOmitted && omitRecord.oid == 0) {
             this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;
                     this.recalculatePriceBreakdown();
                 });
-        } else {
+        } else if(omitRecord.oid != 0){
             this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .remove(omitRecord)
                 .subscribe(() => {
                     feeAndTax.omitsByPricingTemplate = [];
                     this.recalculatePriceBreakdown();
                 });
+        }
+        else{
+            feeAndTax.omitsByPricingTemplate = [];
+            this.recalculatePriceBreakdown();
         }
     }
 
@@ -684,9 +688,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                     if (margins[i].allin) {
                         margins[i].itp = margins[i].allin - this.jetACost;
                     }
-
-                    console.log(i + "   " + margins[i].itp + '   ' + this.jetARetail)
-
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
