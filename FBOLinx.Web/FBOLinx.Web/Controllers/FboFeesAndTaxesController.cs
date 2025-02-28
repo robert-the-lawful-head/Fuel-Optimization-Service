@@ -77,12 +77,14 @@ namespace FBOLinx.Web.Controllers
         {
             var fboFeesAndTaxes = await (from f in _context.FbofeesAndTaxes where f.Fboid == fboId select f).ToListAsync();
 
+            var template = await (from t in _context.PricingTemplate where t.Oid == pricingTemplateId select t).FirstOrDefaultAsync();
+
             var fboFeeAndTaxOmitsByPricingTemplate = await (from ot in _context.FboFeeAndTaxOmitsByPricingTemplate where ot.PricingTemplateId == pricingTemplateId select ot).ToListAsync();
 
             fboFeesAndTaxes.ForEach(x =>
             {
                 x.OmitsByPricingTemplate = fboFeeAndTaxOmitsByPricingTemplate;
-                x.IsOmitted = fboFeeAndTaxOmitsByPricingTemplate.Any(o => o.FboFeeAndTaxId == x.Oid);
+                x.IsOmitted = (template.MarginType == Core.Enums.MarginTypes.RetailMinus) ? x.IsOmittedDefault ?? true : fboFeeAndTaxOmitsByPricingTemplate.Any(o => o.FboFeeAndTaxId == x.Oid);
                 if (x.IsOmitted)
                     x.OmittedFor = "P";
             });

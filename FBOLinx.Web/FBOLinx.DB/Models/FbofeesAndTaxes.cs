@@ -20,9 +20,15 @@ namespace FBOLinx.DB.Models
         public FBOLinx.Core.Enums.FlightTypeClassifications? FlightTypeClassification { get; set; }
         public FBOLinx.Core.Enums.ApplicableTaxFlights? DepartureType { get; set; }
         public FBOLinx.Core.Enums.FeeCalculationApplyingTypes? WhenToApply { get; set; }
+        public bool? IsOmittedDefault { get; set; }
 
         [NotMapped]
-        public bool IsOmitted { get;set; }
+        public bool IsOmitted
+        {
+            get => IsOmittedDefault ?? false;
+            set => IsOmittedDefault = value;  
+        }
+
         [NotMapped]
         public string OmittedFor { get; set; }
 
