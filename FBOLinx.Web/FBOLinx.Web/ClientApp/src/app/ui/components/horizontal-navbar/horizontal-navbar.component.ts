@@ -40,6 +40,7 @@ import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 import { IncomingFavoriteAircraftInfoComponent } from '../incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 import { Local } from 'protractor/built/driverProviders';
+import { PriceCheckerDialogComponent } from '../../../pages/fbo-prices/price-checker-dialog/price-checker-dialog.component';
 
 @Component({
     host: {
@@ -98,6 +99,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft: FlightWatchModelResponse[] = [];
     integrationStatus: boolean = false;
+    getScreenWidth: any;
+    getScreenHeight: any;
 
 
     routeSubscription: Subscription;
@@ -125,7 +128,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fuelReqsService: FuelreqsService,
         private winRef: WindowRef,
         private Location: Location,
-        private flightWatchService: FlightWatchService
+        private flightWatchService: FlightWatchService,
+        private priceCheckerDialog: MatDialog
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -637,6 +641,35 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
     goToFlightWatch(flightwatch: FlightWatchModelResponse):void{
         this.incomingFavoriteAircraftInfoComponent.goToFlightWatch(flightwatch);
+    }
+
+    openPriceChecker(): void {
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
+
+        var dialogWidth = "650px";
+        var dialogHeight = "600px";
+
+        if (this.getScreenWidth <= 543) {
+            dialogWidth = "100%";
+            dialogHeight = "80%";
+        }
+
+        const dialogRef = this.priceCheckerDialog.open(
+            PriceCheckerDialogComponent
+            ,
+            {
+                width: dialogWidth,
+                height: dialogHeight
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+
+            if (!result) {
+                return;
+            }
+        });
     }
     // Private Methods
     private notifyIncomingAircrafts(data: FlightWatchModelResponse[]) {

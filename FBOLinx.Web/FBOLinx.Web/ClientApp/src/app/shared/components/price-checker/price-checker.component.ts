@@ -105,8 +105,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
             });
 
-        this.tab = 'customer';
-        this.priceCheckerLookupType = 0;
+        this.tab = 'tail';
+        this.priceCheckerLookupType = 1;
     }
 
     ngOnDestroy(): void {

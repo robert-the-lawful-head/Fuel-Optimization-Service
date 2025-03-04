@@ -1,11 +1,17 @@
 <nav class="navbar-wrap">
     <button (click)="openSidebar()" *ngIf="!isPublicView"
-    [ngClass]="{ open: openedSidebar }"
-    mat-icon-button aria-label="open side nav bar">
+            [ngClass]="{ open: openedSidebar }"
+            mat-icon-button aria-label="open side nav bar">
         <mat-icon>menu</mat-icon>
     </button>
 
     <div class="page-title">FBOLinx</div>
+    <div *ngIf="!integrationStatus">
+        <button (click)="openPriceChecker()" view="'default'" size="small" class="btn-sm" ni-button>
+            Price Checker
+        </button>
+    </div>
+
     <div *ngIf="!isPublicView">
         <button (click)="showWidget()" mat-stroked-button class="navbar-button live-chat">
             Live Chat
@@ -172,22 +178,22 @@
                                 <span class="desc p-1">
                                     {{flightwatch.tailNumber}}
                                     <span *ngIf="flightwatch.icaoAircraftCode">
-                                    ({{flightwatch.icaoAircraftCode}})
+                                        ({{flightwatch.icaoAircraftCode}})
                                     </span> has been detected ETA: {{flightwatch.etaLocal | date: "HH:mm" }}
                                 </span>
                                 <div class="text-right p-1">
                                     <button (click)="removeFavoriteAircraft(flightwatch)"
-                                    [view]="'error'"
-                                    class="mr-1"
-                                    ni-button
-                                    size="small">
+                                            [view]="'error'"
+                                            class="mr-1"
+                                            ni-button
+                                            size="small">
                                         Dismiss
                                     </button>
                                     <button (click)="goToFlightWatch(flightwatch)"
-                                    [view]="'accent'"
-                                    class="mr-1"
-                                    ni-button
-                                    size="small">
+                                            [view]="'accent'"
+                                            class="mr-1"
+                                            ni-button
+                                            size="small">
                                         Show me
                                     </button>
                                 </div>
@@ -251,7 +257,7 @@
                     </li>
                     <li *ngIf="isLobbyViewVisible()">
                         <a target="_blank" [routerLink]="['/public-layout/lobby-view']"
-                        style="cursor: pointer">
+                           style="cursor: pointer">
                             <span class="icon sli-map"></span>
                             Lobby View
                         </a>
