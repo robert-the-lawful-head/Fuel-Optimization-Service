@@ -45,7 +45,7 @@
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
                 <input [(ngModel)]="data.phone"
-                       [textMask]="{ mask: phoneMask }"
+                       [mask]="phoneMask" [prefix]="prefix"
                        matInput
                        placeholder="Phone" />
             </mat-form-field>
@@ -60,7 +60,7 @@
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
                 <input [(ngModel)]="data.mobile"
-                       [textMask]="{ mask: phoneMask }"
+                       [mask]="phoneMask" [prefix]="prefix"
                        matInput
                        placeholder="Mobile" />
             </mat-form-field>
@@ -68,7 +68,7 @@
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
                 <input [(ngModel)]="data.fax"
-                       [textMask]="{ mask: phoneMask }"
+                       [mask]="phoneMask" [prefix]="prefix"
                        matInput
                        placeholder="Fax" />
             </mat-form-field>

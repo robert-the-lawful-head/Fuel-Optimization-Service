@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { NgxUiLoaderService } from "ngx-ui-loader";
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { FboGeofencingDialogNewClusterComponent } from
     "../fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component";
 

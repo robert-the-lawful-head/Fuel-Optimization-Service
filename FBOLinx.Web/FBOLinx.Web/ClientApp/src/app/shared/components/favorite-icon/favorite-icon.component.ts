@@ -3,7 +3,7 @@ import { SharedService } from 'src/app/layouts/shared-service';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../aircraft-assign-modal/aircraft-assign-modal.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Aircraftwatch } from 'src/app/models/flight-watch';
 import { FlightWatchMapSharedService } from 'src/app/pages/flight-watch/services/flight-watch-map-shared.service';
 export enum CallbackComponent {

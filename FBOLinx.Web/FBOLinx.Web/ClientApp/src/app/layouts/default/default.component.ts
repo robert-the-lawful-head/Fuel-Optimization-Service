@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, HostListener, Renderer2 } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';

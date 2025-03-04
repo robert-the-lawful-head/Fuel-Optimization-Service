@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {
-    MAT_DIALOG_DATA,
-    MatDialog,
-    MatDialogRef,
-} from '@angular/material/dialog';
+    MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+    MatLegacyDialog as MatDialog,
+    MatLegacyDialogRef as MatDialogRef,
+} from '@angular/material/legacy-dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
@@ -23,11 +23,11 @@ import { StringHelperService } from 'src/app/helpers/strings/stringHelper.servic
 import { Subscription } from 'rxjs';
 
 export interface NewPricingTemplateMargin {
-    allin: FormControl;
-    amount: FormControl;
-    itp: FormControl;
-    max: FormControl;
-    min: FormControl;
+    allin: UntypedFormControl;
+    amount: UntypedFormControl;
+    itp: UntypedFormControl;
+    max: UntypedFormControl;
+    min: UntypedFormControl;
 }
 
 @Component({
@@ -40,7 +40,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     @ViewChild('typeNotes') rteObj: RichTextEditorComponent;
     @ViewChild('stepper') stepper: MatStepper;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     jetACost: number;
     jetARetail: number;
@@ -72,7 +72,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private dialogRef: MatDialogRef<PricingTemplatesDialogNewTemplateComponent>,
         private closeConfirmationDialog: MatDialog,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
         private fboPricesService: FbopricesService,
@@ -117,8 +117,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     get customerMarginsFormArray() {
-        const secondStep = this.form.controls.secondStep as FormGroup;
-        return secondStep.controls.customerMargins as FormArray;
+        const secondStep = this.form.controls.secondStep as UntypedFormGroup;
+        return secondStep.controls.customerMargins as UntypedFormArray;
     }
 
     get marginType() {
@@ -148,11 +148,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             secondStep: this.formBuilder.group({
                 customerMargins: this.formBuilder.array([
                     this.formBuilder.group({
-                            allin: new FormControl(0),
-                            amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0),true)),
-                            itp: new FormControl(0),
-                            max: new FormControl({value: 99999, disabled: true}, Validators.required),
-                            min: new FormControl(1),
+                            allin: new UntypedFormControl(0),
+                            amount: new UntypedFormControl(this.decimalPrecisionPipe.transform(Number(0),true)),
+                            itp: new UntypedFormControl(0),
+                            max: new UntypedFormControl({value: 99999, disabled: true}, Validators.required),
+                            min: new UntypedFormControl(1),
                         },
                         {
                             updateOn: 'blur',
@@ -168,7 +168,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             }),
         });
 
-        const secondStep = this.form.controls.secondStep as FormGroup;
+        const secondStep = this.form.controls.secondStep as UntypedFormGroup;
         this.valueChangeSubscription = secondStep.valueChanges.subscribe(() => {
             const updatedMargins = this.updateMargins(
                 this.customerMarginsFormArray.getRawValue(),
@@ -182,16 +182,16 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     marginTypeChange() {
-        const secondStep = this.form.controls.secondStep as FormGroup;
+        const secondStep = this.form.controls.secondStep as UntypedFormGroup;
         secondStep.setControl(
             'customerMargins',
             this.formBuilder.array([
                 this.formBuilder.group({
-                        allin: new FormControl(0),
-                        amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0))),
-                        itp: new FormControl(0),
-                        max: new FormControl({value: 99999, disabled: true}, Validators.required),
-                        min: new FormControl(1),
+                        allin: new UntypedFormControl(0),
+                        amount: new UntypedFormControl(this.decimalPrecisionPipe.transform(Number(0))),
+                        itp: new UntypedFormControl(0),
+                        max: new UntypedFormControl({value: 99999, disabled: true}, Validators.required),
+                        min: new UntypedFormControl(1),
                     },
                     {
                         updateOn: 'blur'
@@ -207,11 +207,11 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     addCustomerMargin() {
         const customerMargin: NewPricingTemplateMargin = {
-            allin: new FormControl(0),
-            amount: new FormControl(this.decimalPrecisionPipe.transform(Number(0))),
-            itp: new FormControl(0),
-            max: new FormControl({value: 99999, disabled: true}, Validators.required),
-            min: new FormControl(1),
+            allin: new UntypedFormControl(0),
+            amount: new UntypedFormControl(this.decimalPrecisionPipe.transform(Number(0))),
+            itp: new UntypedFormControl(0),
+            max: new UntypedFormControl({value: 99999, disabled: true}, Validators.required),
+            min: new UntypedFormControl(1),
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;

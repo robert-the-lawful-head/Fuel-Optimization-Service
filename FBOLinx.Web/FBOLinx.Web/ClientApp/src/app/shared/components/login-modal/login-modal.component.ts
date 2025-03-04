@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -16,13 +16,13 @@ import { UserRole } from 'src/app/enums/user-role';
     templateUrl: './login-modal.component.html',
 })
 export class LoginModalComponent {
-    loginForm: FormGroup;
+    loginForm: UntypedFormGroup;
     error: '';
     public groupsFbosData: any;
 
     constructor(
         public dialogRef: MatDialogRef<LoginModalComponent>,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private router: Router,
         private authenticationService: AuthenticationService,
         private sharedService: SharedService,
@@ -30,9 +30,9 @@ export class LoginModalComponent {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.loginForm = this.formBuilder.group({
-            password: new FormControl(''),
-            remember: new FormControl(false),
-            username: new FormControl(''),
+            password: new UntypedFormControl(''),
+            remember: new UntypedFormControl(false),
+            username: new UntypedFormControl(''),
         });
         authenticationService.logout();
     }

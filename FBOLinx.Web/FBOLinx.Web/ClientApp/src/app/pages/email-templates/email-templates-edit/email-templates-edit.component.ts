@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FileInfo, SelectedEventArgs } from '@syncfusion/ej2-angular-inputs';
 import { HtmlEditorService, ImageService, ImageSettingsModel, LinkService, ToolbarService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -18,7 +18,7 @@ export class EmailTemplatesEditComponent extends EditorBase implements OnInit {
     @ViewChild('fileUpload') fileUploadName;
     private id: any;
     public pageTitle = 'Edit Email Template';
-    public emailTemplateForm: FormGroup;
+    public emailTemplateForm: UntypedFormGroup;
     public emailTemplate: any;
     public canSave: boolean = true;
     public isSaving = false;

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, SimpleChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';

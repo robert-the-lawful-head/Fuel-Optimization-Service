@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import {
     AbstractControl,
-    FormControl,
-    FormGroup,
+    UntypedFormControl,
+    UntypedFormGroup,
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { GroupsService } from 'src/app/services/groups.service';
@@ -23,7 +23,7 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
     isLogoUploading = false;
     logoUrl = '';
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
@@ -33,20 +33,20 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
         private readonly sharedService: SharedService,
         private readonly groupsService: GroupsService
     ) {
-        this.form = new FormGroup({
-            emailContentHtml: new FormControl(
+        this.form = new UntypedFormGroup({
+            emailContentHtml: new UntypedFormControl(
                 this.data.emailContentHtml
             ),
-            fromAddress: new FormControl(this.data.fromAddress, [
+            fromAddress: new UntypedFormControl(this.data.fromAddress, [
                 this.fromAddressValidator,
             ]),
-            replyTo: new FormControl(
+            replyTo: new UntypedFormControl(
                 this.data.replyTo,
                 Validators.pattern(
                     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 )
             ),
-            subject: new FormControl(this.data.subject, Validators.required),
+            subject: new UntypedFormControl(this.data.subject, Validators.required),
         });
     }
 
