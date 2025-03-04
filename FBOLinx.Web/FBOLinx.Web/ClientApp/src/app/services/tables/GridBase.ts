@@ -21,6 +21,10 @@ export abstract class GridBase {
     pageSize: number = 30;
     selectedRowIndex: number = null;
     dataSource: any = new MatTableDataSource([]); //data source to be displayed on scroll
+    //might be good to set as part of grid base but this involves changing all grid, and remove from function parameters
+    //think about removing the setVirtualScrollVariables function and set directly in parent 
+    //columns: ColumnType = [];
+    //tableLocalStorageKey = [];
 
     //for reports grid
     private _icaoFilter: string;
@@ -248,7 +252,13 @@ export abstract class GridBase {
             sort.sortables.get(sortedColumn?.id) as MatSortHeader
         )?._setAnimationTransitionState({ toState: 'active' });
     }
-    getEndOfDayTime(date: Date, utcDate: boolean = false): Date {
+    public getFilteredTableColumns(columns) {
+        return columns
+            .filter((column) => !column.hidden)
+            .map((column) => column.id);
+    }
+    // todo: methods used on grids, need to be move into an utils service since not all grids use it
+    public getEndOfDayTime(date: Date, utcDate: boolean = false): Date {
         return utcDate
             ? new Date(
                   Date.UTC(
@@ -269,7 +279,7 @@ export abstract class GridBase {
                   59
               );
     }
-    getStartOfDayTime(date: Date, utcDate: boolean = false): Date {
+    public getStartOfDayTime(date: Date, utcDate: boolean = false): Date {
         return utcDate
             ? new Date(
                   Date.UTC(

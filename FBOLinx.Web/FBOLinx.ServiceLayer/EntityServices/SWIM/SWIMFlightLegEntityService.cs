@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using Fuelerlinx.SDK;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 {
-    public class SWIMFlightLegEntityService : Repository<SWIMFlightLeg, DegaContext>
+    public class SWIMFlightLegEntityService : Repository<SWIMFlightLeg, FlightDataContext>
     {
         private FboLinxContext _fboLinxContext;
-        public SWIMFlightLegEntityService(DegaContext context, FboLinxContext fboLinxContext) : base(context)
+        public SWIMFlightLegEntityService(FlightDataContext context, FboLinxContext fboLinxContext) : base(context)
         {
             _fboLinxContext = fboLinxContext;
         }

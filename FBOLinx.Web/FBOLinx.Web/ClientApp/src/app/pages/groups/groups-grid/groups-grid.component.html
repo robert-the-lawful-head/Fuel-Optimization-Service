@@ -1,17 +1,21 @@
 <div class="row">
     <div class="col-6 col-md-10">
         <mat-form-field class="filter">
-            <input (keyup)="applyFilter($event.target.value)"
-                   [value]="searchValue"
-                   matInput
-                   placeholder="Search by Group, FBO, User, ..." />
+            <input
+                (keyup)="applyFilter($event.target.value)"
+                [value]="searchValue"
+                matInput
+                placeholder="Search by Group, FBO, User, ..."
+            />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
         <mat-form-field class="account-filter">
             <mat-label>Group Status</mat-label>
-            <mat-select [(ngModel)]="groupAccountType"
-                        (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="groupAccountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
@@ -20,8 +24,10 @@
 
         <mat-form-field class="account-filter">
             <mat-label>FBO Active Status</mat-label>
-            <mat-select [(ngModel)]="fboActiveAccountType"
-                        (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="fboActiveAccountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
@@ -30,26 +36,25 @@
 
         <mat-form-field class="account-filter">
             <mat-label>FBO Account Type</mat-label>
-            <mat-select [(ngModel)]="fboAccountType"
-                        (selectionChange)="filterChanged()">
+            <mat-select
+                [(ngModel)]="fboAccountType"
+                (selectionChange)="filterChanged()"
+            >
                 <mat-option value="all">All</mat-option>
                 <mat-option value="premium">Premium</mat-option>
                 <mat-option value="freemium">Freemium</mat-option>
             </mat-select>
         </mat-form-field>
 
-        <button (click)="mergeGroups()"
-                color="warn"
-                mat-flat-button
-                [disabled]="selectedRows.length < 2">
+        <button
+            (click)="mergeGroups()"
+            color="warn"
+            mat-flat-button
+            [disabled]="selection.selected.length < 2"
+        >
             <mat-icon>merge_type</mat-icon>
             Merge Groups
         </button>
-
-        <!--<button (click)="addAssociation()"
-           mat-flat-button>
-        Add Association
-    </button>-->
     </div>
 
     <div class="actions col-6 col-md-2">
@@ -58,7 +63,7 @@
                 aria-hidden="true"
                 class="mat-icon material-icons"
                 role="img"
-               >settings</mat-icon
+                >settings</mat-icon
             >
         </button>
         <mat-menu
@@ -70,94 +75,156 @@
         </mat-menu>
     </div>
 </div>
-
-<ejs-grid
-    #grid
-    (rowDeselected)="rowDeselected()"
-    (rowSelected)="rowSelected($event)"
-    (actionComplete)="actionHandler($event)"
-    [allowPaging]="true"
-    [allowSorting]="true"
-    [allowFiltering]="true"
-    [childGrid]="childGrid"
-    [dataSource]="groupDataSource"
-    [filterSettings]="filterSettings"
-    [pageSettings]="pageSettings"
-    [selectionSettings]="selectionOptions"
-    [showColumnMenu]="true"
+<div
+    class="w-100 table-container"
+    style="overflow-x: auto; position: relative"
+    (scroll)="onTableScroll($event)"
 >
-    <e-columns>
-        <e-column type="checkbox" width="50"></e-column>
-        <e-column field="groupName" headerText="Group"></e-column>
-        <e-column field="expiredFboPricingCount" headerText="Pricing Expired">
-            <ng-template #template let-data>
-                <span [ngClass]="{ good: isValidPricing(data) }"
-                      class="status">
-                    {{
-                        isValidPricing(data)
-                            ? "All Pricing Live"
-                            : (data.activeFboCount > 0
-                            ? (data.expiredFboPricingCount +
-                              " of " +
-                              data.activeFboCount +
-                              " Expired")
-                            : "No Active FBOs")
-                    }}
-                </span>
-            </ng-template>
-        </e-column>
-        <e-column field="needAttentionCustomers" headerText="Need Attentions">
-            <ng-template #template let-data>
-                <span
-                    [ngClass]="{ good: data.needAttentionCustomers == 0}"
-                    class="status"
+    <table
+        mat-table
+        matSort
+        [dataSource]="dataSource"
+        multiTemplateDataRows
+        class="mat-elevation-z8"
+    >
+        <!-- expand collaps Column icon -->
+        <ng-container matColumnDef="expandIcon">
+            <th mat-header-cell *matHeaderCellDef>&nbsp;</th>
+            <td mat-cell *matCellDef="let element">
+                <button
+                    mat-icon-button
+                    aria-label="expand row"
+                    (click)="
+                        expandedElement =
+                            expandedElement === element ? null : element;
+                        $event.stopPropagation()
+                    "
                 >
-                    {{ data.needAttentionCustomers }} Need Attentions
-                </span>
-            </ng-template>
-        </e-column>
-        <e-column
-            field="lastLogin"
-            headerText="Last Login Date"
-            [sortComparer]="dateSortComparer"
+                    <mat-icon *ngIf="expandedElement !== element"
+                        >keyboard_arrow_down</mat-icon
+                    >
+                    <mat-icon *ngIf="expandedElement === element"
+                        >keyboard_arrow_up</mat-icon
+                    >
+                </button>
+            </td>
+        </ng-container>
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox
+                    (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                    [aria-label]="checkboxLabel()"
+                >
+                </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <mat-checkbox
+                    (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)"
+                >
+                </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <ng-container
+            matColumnDef="{{ column }}"
+            *ngFor="let column of dataColumns"
         >
-            <ng-template #template let-data>
-                {{ data.lastLogin | date: "medium" }}
-            </ng-template>
-        </e-column>
-        <e-column field="active" headerText="Active"></e-column>
-        <e-column field="users" headerText="Users">
-            <ng-template #template let-data>
-                {{ data.users.length }}
-            </ng-template>
-        </e-column>
-        <e-column
-            field="quotes30Days"
-            headerText="Quotes (last 30 days)"
-        ></e-column>
-        <e-column
-            field="orders30Days"
-            headerText="Fuel Orders (last 30 days)"
-        ></e-column>
-        <e-column field="expiredFboAccountCount" headerText="Active / Inactive">
-            <ng-template #template let-data>
-                <span [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
-                      class="status">
-                    {{
-                        data.expiredFboAccountCount == 0 && data.fboCount > 0
-                            ? "All Active"
-                            : (data.fboCount > 0)
-                            ? (data.expiredFboAccountCount +
-                              " of " +
-                              data.fboCount +
-                              " Inactive")
-                            : "No FBOs Found"
-                    }}
-                </span>
-            </ng-template>
-        </e-column>
-        <e-column width="200">
-            <ng-template #headerTemplate let-data>
+            <th mat-header-cell *matHeaderCellDef>
+                <app-table-column-filter
+                    [matDataSource]="dataSource"
+                    [matSort]="sort"
+                    columnId="{{ column }}"
+                    propertyName="{{ column }}"
+                >
+                    <span> {{ getColumnDisplayString(column) }} </span>
+                </app-table-column-filter>
+            </th>
+            <td mat-cell *matCellDef="let data">
+                <ng-container *ngIf="!isCustomContent(column)">
+                    {{ data[column] }}
+                </ng-container>
+                <ng-container *ngIf="column == 'expiredFboPricingCount'">
+                    <span
+                        [ngClass]="{ good: isValidPricing(data) }"
+                        class="status"
+                    >
+                        {{
+                            isValidPricing(data)
+                                ? "All Pricing Live"
+                                : data.activeFboCount > 0
+                                ? data.expiredFboPricingCount +
+                                  " of " +
+                                  data.activeFboCount +
+                                  " Expired"
+                                : "No Active FBOs"
+                        }}
+                    </span>
+                </ng-container>
+                <ng-container *ngIf="column == 'needAttentionCustomers'">
+                    <span
+                        [ngClass]="{ good: data.needAttentionCustomers == 0 }"
+                        class="status"
+                    >
+                        {{ data.needAttentionCustomers }} Need Attentions
+                    </span>
+                </ng-container>
+                <ng-container *ngIf="column == 'lastLogin'">
+                    {{ data.lastLogin | date : "medium" }}
+                </ng-container>
+                <ng-container *ngIf="column == 'active'">
+                    {{ data.active | booleanToText }}
+                </ng-container>
+                <ng-container *ngIf="column == 'users'">
+                    {{ data.users.length }}
+                </ng-container>
+                <ng-container *ngIf="column == 'expiredFboAccountCount'">
+                    <span
+                        [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
+                        class="status"
+                    >
+                        {{
+                            data.expiredFboAccountCount == 0 &&
+                            data.fboCount > 0
+                                ? "All Active"
+                                : data.fboCount > 0
+                                ? data.expiredFboAccountCount +
+                                  " of " +
+                                  data.fboCount +
+                                  " Inactive"
+                                : "No FBOs Found"
+                        }}
+                    </span>
+                </ng-container>
+                <ng-container *ngIf="column == 'actions'">
+                    <span
+                        [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
+                        class="status"
+                    >
+                        {{
+                            data.expiredFboAccountCount == 0 &&
+                            data.fboCount > 0
+                                ? "All Active"
+                                : data.fboCount > 0
+                                ? data.expiredFboAccountCount +
+                                  " of " +
+                                  data.fboCount +
+                                  " Inactive"
+                                : "No FBOs Found"
+                        }}
+                    </span>
+                </ng-container>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>
                 <button
                     (click)="addNewGroupOrFbo()"
                     [view]="'accent'"
@@ -166,8 +233,8 @@
                 >
                     Add New
                 </button>
-            </ng-template>
-            <ng-template #template let-data>
+            </th>
+            <td mat-cell *matCellDef="let data">
                 <button
                     [matMenuTriggerFor]="menu"
                     aria-label="Group Actions"
@@ -177,28 +244,36 @@
                     <mat-icon>settings</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <button (click)="editGroup(data)"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="editGroup(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>edit</mat-icon>
                         <span>Edit Group</span>
                     </button>
-                    <button (click)="addNewFbo(data)"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="addNewFbo(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>add</mat-icon>
                         <span>Add FBO</span>
                     </button>
-                    <button (click)="deleteGroup(data)"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        (click)="deleteGroup(data)"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>
                     </button>
-                    <button [disabled]="!getGroupFbos(data.oid).length"
-                            [matMenuTriggerFor]="fbosMenu"
-                            clickStopPropagation
-                            mat-menu-item>
+                    <button
+                        [disabled]="!getGroupFbos(data.oid).length"
+                        [matMenuTriggerFor]="fbosMenu"
+                        clickStopPropagation
+                        mat-menu-item
+                    >
                         <span>Delete FBO</span>
                     </button>
                 </mat-menu>
@@ -213,52 +288,51 @@
                         <span>{{ fbo.fbo }}</span>
                     </button>
                 </mat-menu>
-            </ng-template>
-        </e-column>
-    </e-columns>
-</ejs-grid>
+            </td>
+        </ng-container>
 
-<ng-template #pricingExpiredTemplate let-data>
-    <span [ngClass]="{ good: !data.pricingExpired }" class="status">
-        {{ data.pricingExpired ? "Expired" : "Pricing Live" }}
-    </span>
-</ng-template>
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+            <td
+                mat-cell
+                *matCellDef="let element"
+                [attr.colspan]="columnsToDisplay.length"
+            >
+                <div
+                    class="example-element-detail"
+                    [class.expanded-detail]="element === expandedElement"
+                    [@detailExpand]="
+                        element == expandedElement ? 'expanded' : 'collapsed'
+                    "
+                >
+                    <app-group-fbos-grid
+                    [dataSource]="fboDataSourceDictionary[element.oid]"
+                    [isNetworkFbo]="isNetworkFbo(element.oid)"
+                    ></app-group-fbos-grid>
+                </div>
+            </td>
+        </ng-container>
 
-<ng-template #fboManageTemplate let-data>
-    <button
-        (click)="editFBO(data)"
-        [view]="'warning'"
-        beforeIcon="fa fa-pencil"
-        clickStopPropagation
-        ni-button
-        size="small"
-    >
-        Edit FBO
-    </button>
-</ng-template>
-
-<ng-template #needAttentionTemplate let-data>
-    <span [ngClass]="{ good: data.needAttentionCustomers == 0 }" class="status">
-        {{ data.needAttentionCustomers }} Need Attentions
-    </span>
-</ng-template>
-
-<ng-template #usersTemplate let-data>
-    <span>{{ data.users.length }}</span>
-</ng-template>
-
-<ng-template #lastLoginTemplate let-data>
-    {{ data.lastLogin | date: "medium" }}
-</ng-template>
-
-<ng-template #accountExpiredTemplate let-data>
-    <span [ngClass]="{ good: !data.accountExpired }" class="status">
-        {{ data.accountExpired ? "Inactive" : "Active" }}
-    </span>
-</ng-template>
-
-<ng-template #accountTypeTemplate let-data>
-    <span>
-        {{ data.accountType ? "Freemium" : "Premium"}}
-    </span>
-</ng-template>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr
+            mat-row
+            *matRowDef="let element; columns: columnsToDisplay"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element"
+            (click)="manageGroup(element)"
+        ></tr>
+        <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+        ></tr>
+    </table>
+    <div class="invisible">
+        <mat-paginator
+            (page)="(0); onPageChanged($event)"
+            [length]="groupDataSource.length"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            [pageSize]="pageSize"
+        ></mat-paginator>
+    </div>
+</div>

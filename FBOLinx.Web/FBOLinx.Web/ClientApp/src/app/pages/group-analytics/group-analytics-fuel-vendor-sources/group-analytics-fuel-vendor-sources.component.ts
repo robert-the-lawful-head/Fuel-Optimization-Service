@@ -158,6 +158,10 @@ export class GroupAnalyticsFuelVendorSourcesComponent
                 const vendors = uniq(
                     flatMap(data, (row) => row.vendorOrders).map(
                         (v) => v.contractFuelVendor
+                    ).filter((vendor) => 
+                        vendor != null && 
+                        vendor !== undefined && 
+                        vendor.trim() !== ''
                     )
                 );
                 if (!isEqual(this.vendors, vendors)) {

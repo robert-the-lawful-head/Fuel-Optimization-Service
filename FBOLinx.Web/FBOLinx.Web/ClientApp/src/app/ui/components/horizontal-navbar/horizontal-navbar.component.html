@@ -22,14 +22,16 @@
     <div class="nav-items" *ngIf="!isPublicView">
         <!--Fuel order notifications-->
         <div class="nav-item fuel-order" [ngClass]="{ opened: fuelOrderNotificationsMenu.isOpened }" *ngIf="!integrationStatus">
-            <a (click)="openFuelOrdersUpdate()" class="nav-link">
-                <span *ngIf="fuelOrders && fuelOrders.length > 0">
-                    <mat-icon [matBadge]="fuelOrders.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
-                </span>
-                <span *ngIf="!fuelOrders || fuelOrders.length == 0">
-                    <mat-icon aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
-                </span>
-            </a>
+            <ng-container *ngIf="isOrderIconVisible">
+                <a (click)="openFuelOrdersUpdate()" class="nav-link">
+                    <span *ngIf="fuelOrders && fuelOrders.length > 0">
+                        <mat-icon [matBadge]="fuelOrders.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
+                    </span>
+                    <span *ngIf="!fuelOrders || fuelOrders.length == 0">
+                        <mat-icon aria-hidden="false" aria-label="Fuel orders">local_gas_station</mat-icon>
+                    </span>
+                </a>
+            </ng-container>
             <div class="dropdown-menu">
                 <h4 *ngIf="fuelOrders && fuelOrders.length > 0"
                     class="menu-title">

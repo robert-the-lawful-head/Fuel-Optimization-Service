@@ -72,18 +72,6 @@ export class GroupsHomeComponent implements OnInit {
         this.router.navigate(['/default-layout/groups/' + group.oid]);
     }
 
-    editFboClicked(event) {
-        const { fbo, searchValue } = event;
-        this.store.dispatch(
-            groupGridSet({
-                filter: searchValue,
-            })
-        );
-        this.router.navigate(['/default-layout/fbos/' + fbo.oid]);
-    }
-
-    deleteFboClicked() { }
-
     deleteGroup(event) {
         const { isDeletingGroup } = event;
         this.isDeletingGroup = isDeletingGroup;

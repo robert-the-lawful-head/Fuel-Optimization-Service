@@ -2,7 +2,7 @@
 
 .mat-dialog-title {
     padding: 10px 20px;
-    margin: 0;
+    margin: -24px -24px 0 -24px;
     background: main-color(500);
     color: white;
 }
@@ -29,8 +29,6 @@
 
 .mat-dialog-actions {
     justify-content: flex-end;
-    margin: 0;
-    padding: 0 40px 20px;
 
     button {
         width: 183px;
