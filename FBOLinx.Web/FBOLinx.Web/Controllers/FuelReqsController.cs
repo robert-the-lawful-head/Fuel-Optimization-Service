@@ -634,7 +634,7 @@ namespace FBOLinx.Web.Controllers
                     return Ok();
                 }
             }
-            catch(Exception ex)
+            catch(System.Exception ex)
             {
                 return BadRequest("There was an error saving the order.");
             }
@@ -906,7 +906,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(customerFuelReqsByCustomer);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1027,7 +1027,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(fuelReqsTotalOrdersByMonthVM);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1073,7 +1073,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(fuelReqsByAircraftSizeVM);
             }
-            catch (Exception exception)
+            catch (System.Exception exception)
             {
                 var test = exception;
                 return null;
@@ -1109,7 +1109,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1237,7 +1237,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(chartData);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1298,7 +1298,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(fuelReqsByMonth);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1328,7 +1328,7 @@ namespace FBOLinx.Web.Controllers
                 });
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1380,7 +1380,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(chartData);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1404,12 +1404,14 @@ namespace FBOLinx.Web.Controllers
                                        fa.Icao,
                                        f.Fbo,
                                        f.Oid,
+                                       f.AcukwikFBOHandlerId
                                    }).ToListAsync();
 
                 foreach (var location in locations)
                 {
                     if (!request.IcaosFbos.ContainsKey(location.Icao))
                         request.IcaosFbos.Add(location.Icao, location.Fbo);
+                    request.AcukwikFboHandlerIds.Add(location.AcukwikFBOHandlerId.GetValueOrDefault());
                 }
 
                 var fbosOrders = await (from fr in _context.FuelReq
@@ -1442,7 +1444,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1491,7 +1493,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(chartData);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1514,10 +1516,12 @@ namespace FBOLinx.Web.Controllers
                                    {
                                        fa.Icao,
                                        f.Fbo,
+                                       f.AcukwikFBOHandlerId
                                    }).ToListAsync();
 
                 request.Icaos = icaos.Select(f => f.Icao).ToList();
                 request.Fbos = icaos.Select(f => f.Fbo).Distinct().ToList();
+                request.AcukwikFboHandlerIds=icaos.Select(f => f.AcukwikFBOHandlerId.GetValueOrDefault()).Distinct().ToList();
 
                 FBOLinxGroupOrdersResponse fuelerlinxFBOsOrdersCount = await _fuelerLinxService.GetTransactionsCountForFbosAndAirports(request);
 
@@ -1547,7 +1551,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1561,7 +1565,7 @@ namespace FBOLinx.Web.Controllers
                 var chartData = await _fuelReqService.GetCustomersBreakdown(fboId, groupId, request.customerId, request.StartDateTime, request.EndDateTime);
                 return Ok(chartData);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1587,10 +1591,10 @@ namespace FBOLinx.Web.Controllers
                 int? customeridval = request.customerId;
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, customeridval).ToListAsync();
-
-                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime, null);
-
                 var fbo = await _fboService.GetFbo(fboId);
+
+                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime, null, fbo.AcukwikFBOHandlerId.GetValueOrDefault());
+
                 var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, request.StartDateTime, request.EndDateTime);
 
                 List<AirportWatchHistoricalDataResponse> airportWatchHistoricalDataResponse = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = request.StartDateTime, EndDateTime = request.EndDateTime, KeepParkingEvents = true});
@@ -1655,7 +1659,7 @@ namespace FBOLinx.Web.Controllers
                 }
                 return Ok(tableData);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -1667,10 +1671,10 @@ namespace FBOLinx.Web.Controllers
                 var icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, null).ToListAsync();
-
-                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, startDateTime, endDateTime, null);
-
                 var fbo = await _fboService.GetFbo(fboId);
+
+                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, startDateTime, endDateTime, null, fbo.AcukwikFBOHandlerId.GetValueOrDefault());
+
                 var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, startDateTime, endDateTime);
 
                 //Fill-in customers that don't exist in the group anymorer
@@ -1770,6 +1774,7 @@ namespace FBOLinx.Web.Controllers
                     var fbo = await _fboService.GetFbo(fboId);
                     if (!fbolinxOrdersRequest.IcaosFbos.ContainsKey(fbo.FboAirport.Icao))
                         fbolinxOrdersRequest.IcaosFbos.Add(fbo.FboAirport.Icao, fbo.Fbo);
+                    fbolinxOrdersRequest.AcukwikFboHandlerIds.Add(fbo.AcukwikFBOHandlerId.GetValueOrDefault());
                 }
 
                 FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForMultipleAirports(fbolinxOrdersRequest);
@@ -1812,7 +1817,7 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(tableData);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return BadRequest(ex);
             }
