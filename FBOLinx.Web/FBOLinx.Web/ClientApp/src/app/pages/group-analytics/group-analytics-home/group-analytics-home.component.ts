@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { EmailTemplate } from 'src/app/models/email-template';
 import { GroupsService } from 'src/app/services/groups.service';
 

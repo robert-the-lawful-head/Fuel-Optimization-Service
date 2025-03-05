@@ -1,6 +1,6 @@
 import { Inject, OnInit } from '@angular/core';
 import { Component, } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { Company, JetNet, AircraftResult } from '../../../models/jetnet-information';
 import { CustomersDialogNewCustomerComponent } from '../../../pages/customers/customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { JetNetService } from '../../../services/jetnet.service';

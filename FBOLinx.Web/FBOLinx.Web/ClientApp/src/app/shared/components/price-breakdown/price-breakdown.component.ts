@@ -19,7 +19,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import {
     FeeAndTaxBreakdownComponent
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { FeeAndTaxBreakDown, FeeAndTaxBreakdownDialogWrapperComponent } from './fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 import { FeeAndTaxBreakdownDisplayModes, PriceBreakdownDisplayTypes } from 'src/app/enums/price.enum';
 

@@ -141,7 +141,6 @@
             }
         }
     },
-    "defaultProject": "FBOLinx",
     "cli": {
         "analytics": "b19e29ac-4458-4353-bbfb-5176d4287b9b"
     }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
 import { swimTableColumns, swimTableColumnsDisplayText } from 'src/app/models/swim';

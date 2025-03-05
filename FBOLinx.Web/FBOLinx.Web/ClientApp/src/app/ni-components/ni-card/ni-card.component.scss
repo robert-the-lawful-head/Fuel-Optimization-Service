@@ -1,8 +1,9 @@
+@use 'sass:math';
 @import "../../../assets/sass/variable";
 
 :host {
     display: block;
-    margin: 0 0 ($module-rem * 2);
+    margin: 0 0 (math.div($module-rem, 2));
 
     .card-wrap {
         background-color: #fff;
@@ -108,7 +109,7 @@
             position: relative;
 
             @media only screen and (max-width: 991px) {
-                padding: $module-rem / 2;
+                padding: math.div($module-rem, 2);
             }
 
             &.tiny-content {
