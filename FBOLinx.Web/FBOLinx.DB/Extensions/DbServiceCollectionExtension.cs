@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace FBOLinx.DB.Extensions
 {
@@ -9,48 +10,26 @@ namespace FBOLinx.DB.Extensions
     {
         public static IServiceCollection RegisterDbConnections(this IServiceCollection services, IConfiguration configuration)
         {
-            return services.RegisterDBConnections(configuration.GetConnectionString("DegaContext"),
-                configuration.GetConnectionString("FboLinxContext"),
-                configuration.GetConnectionString("FuelerLinxContext"),
-                configuration.GetConnectionString("FilestorageContext"),
-                configuration.GetConnectionString("ServiceLogsContext"));
+            services.RegisterDBConnection<DegaContext>(configuration.GetConnectionString("DegaContext"));
+            services.RegisterDBConnection<FboLinxContext>(configuration.GetConnectionString("FboLinxContext"));
+            services.RegisterDBConnection<FuelerLinxContext>(configuration.GetConnectionString("FuelerLinxContext"));
+            services.RegisterDBConnection<FilestorageContext>(configuration.GetConnectionString("FilestorageContext"));
+            services.RegisterDBConnection<ServiceLogsContext>(configuration.GetConnectionString("ServiceLogsContext"));
+            services.RegisterDBConnection<FlightDataContext>(configuration.GetConnectionString("FlightDataContext"));
+
+            return services;
         }
 
-        public static IServiceCollection RegisterDBConnections(this IServiceCollection services,
-            string degaDbConnectionString = "", string fbolinxDbConnectionString = "",
-            string fuelerlinxDbConnectionString = "", string fileStorageDbConnectionString = "", string serviceLogsDbConnectionString = "")
-        {
-            if (!string.IsNullOrEmpty(degaDbConnectionString))
-                services.AddDbContext<DegaContext>(options => {
-                    options.UseSqlServer(degaDbConnectionString,
-                        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 1));
-                });
+        public static IServiceCollection RegisterDBConnection<T>(this IServiceCollection services, string connectionString) where T : DbContext {
+            
+            if (string.IsNullOrEmpty(connectionString))
+                return services;
 
-            if (!string.IsNullOrEmpty(fbolinxDbConnectionString))
-                services.AddDbContext<FboLinxContext>(options => {
-                    options.UseSqlServer(fbolinxDbConnectionString,
-                        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 1));
-                });
-
-            if (!string.IsNullOrEmpty(fuelerlinxDbConnectionString))
-                services.AddDbContext<FuelerLinxContext>(options => {
-                    options.UseSqlServer(fuelerlinxDbConnectionString,
-                        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 1));
-                });
-
-            if (!string.IsNullOrEmpty(fileStorageDbConnectionString))
-                services.AddDbContext<FilestorageContext>(options => {
-                    options.UseSqlServer(fileStorageDbConnectionString,
-                        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 1));
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                });
-
-            if (!string.IsNullOrEmpty(serviceLogsDbConnectionString))
-                services.AddDbContext<ServiceLogsContext>(options => {
-                    options.UseSqlServer(serviceLogsDbConnectionString,
-                        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 1));
-                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                });
+            services.AddDbContext<T>(options => {
+                options.UseSqlServer(connectionString,
+                    sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(maxRetryCount: 1));
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            });
 
             return services;
         }

@@ -16,7 +16,6 @@
         </div>
         <div *ngIf="!currentGroup">
             <app-groups-grid
-                (editFboClicked)="editFboClicked($event)"
                 (editGroupClicked)="editGroupClicked($event)"
                 [groupsFbosData]="groupsFbosData"
                 [groupGridState]="groupGridState"

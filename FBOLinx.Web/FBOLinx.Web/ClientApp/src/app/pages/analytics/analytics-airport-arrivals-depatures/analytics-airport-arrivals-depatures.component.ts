@@ -129,6 +129,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         {
             id: 'originated',
             name: 'Origin ICAO',
+        },
+        {
+            id: 'customerActionStatus',
+            name:'Customer Action Status'
         }
     ];
 
@@ -139,6 +143,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     filtersChangeSubscription: Subscription;
     sortChangeSubscription: Subscription;
+    needsAttentionOptions: any[];
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -201,6 +206,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
             this.saveSettings();
         });
+
+        var needsAttentionOptionsList = ['Email Required', 'Setup Required', 'Top Customer']
+        this.needsAttentionOptions = needsAttentionOptionsList.map((nl) => ({
+            label: nl,
+            value: nl,
+        }));
 
         this.refreshData();
     }
@@ -328,7 +339,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             >(AircraftAssignModalComponent, {
                 data: {
                     customers: this.customers,
-                    tailNumber: row.flightNumber,
+                    tailNumber: row.flightNumber == null ? row.tailNumber : row.flightNumber,
                 },
                 panelClass: 'aircraft-assign-modal',
                 width: '450px',
@@ -354,6 +365,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             else
             if (id == 'aircraftTypeCode')
                 item[id] = this.getAircraftLabel(item[id]);
+            else if (id == "customerActionStatus") {
+                return this.getNeedsAttentionDisplayString(item);
+            }
             else return null;
         };
         this.exportCsvFile(
@@ -395,6 +409,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         } else {
             return 'Other';
         }
+    }
+
+    getNeedsAttentionDisplayString(customer: any): any {
+        let message = customer.customerNeedsAttention;
+        return message;
     }
 
     openSettings() {

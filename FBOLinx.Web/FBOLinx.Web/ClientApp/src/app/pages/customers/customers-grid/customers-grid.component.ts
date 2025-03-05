@@ -51,8 +51,8 @@ const initialColumns: ColumnType[] = [
         sort: 'asc',
     },
     {
-        id: 'needsAttention',
-        name: 'Needs Attention',
+        id: 'actionStatus',
+        name: 'Action Status',
     },
     {
         id: 'pricingTemplateName',
@@ -288,7 +288,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                 return  item[id].map(x => x.name).join(', ');
             else if(id == "fuelVendors")
                 return  item[id].map(x => x.label).join(', ');
-            else if(id == "needsAttention"){
+            else if(id == "actionStatus"){
                 return this.getNeedsAttentionDisplayString(item);
             }
             else
@@ -297,13 +297,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc,exportSelectedCustomers);
     }
     getNeedsAttentionDisplayString(customer: any): any{
-        let message = '';
-        if(customer.needsAttention){
-            message = 'Needs Attention';
-        }
-        if(!customer.isFuelerLinxCustomer && !customer.contactExists){
-            message = message+' '+'This customer does not have any contacts setup to receive price distribution.';
-        }
+        let message = customer.customerNeedsAttention;
         return message;
     }
     getAllIPriceDisplayString(customer: any): any{
@@ -437,7 +431,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             .filter((column) => !column.hidden)
             .map((column) => column.id);
     }
-
+    // this might be repeeated on all grids
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(
             TableSettingsComponent,
@@ -449,16 +443,9 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             if (result) {
                 this.columns = [...result];
                 this.refreshSort(this.sort, this.columns);
-                this.saveSettings();
+                this.saveSettings(this.tableLocalStorageKey,this.columns);
             }
         });
-    }
-
-    saveSettings() {
-        localStorage.setItem(
-            this.tableLocalStorageKey,
-            JSON.stringify(this.columns)
-        );
     }
 
     onFuelVendorUpdate(event: any, customer: any) {
@@ -589,7 +576,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                         name: column.name,
                     }
             );
-            this.saveSettings();
+            this.saveSettings(this.tableLocalStorageKey,this.columns);
         });
         this.dataSource.data = this.customersData.filter(
             (element: any) => {

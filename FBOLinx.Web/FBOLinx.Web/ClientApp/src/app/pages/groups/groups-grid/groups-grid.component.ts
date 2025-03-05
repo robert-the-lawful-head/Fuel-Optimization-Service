@@ -1,5 +1,4 @@
 import {
-    AfterViewInit,
     Component,
     EventEmitter,
     Input,
@@ -11,21 +10,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import {
-    Column,
-    ColumnMenuService,
-    DetailRowService,
-    FilterSettingsModel,
-    GridComponent,
-    GridModel,
-    RecordClickEventArgs,
-    SelectionSettingsModel,
-    SortEventArgs,
-} from '@syncfusion/ej2-angular-grids';
-import { first, last } from 'lodash';
+import { Dictionary, groupBy } from 'lodash';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { accountTypeChangedEvent, fboChangedEvent } from '../../../constants/sharedEvents';
+import {
+    accountTypeChangedEvent,
+} from '../../../constants/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -44,8 +34,21 @@ import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-
 import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { UserRole } from 'src/app/enums/user-role';
+import { accountStatusType, AccountType, userAccountType, UserRole } from 'src/app/enums/user-role';
 import { GroupFboViewModel } from 'src/app/models/groups';
+import {
+    animate,
+    state,
+    style,
+    transition,
+    trigger,
+} from '@angular/animations';
+import { MatSort } from '@angular/material/sort';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatTableDataSource } from '@angular/material/table';
+import { GridBase } from 'src/app/services/tables/GridBase';
+import { MatPaginator } from '@angular/material/paginator';
+import { GroupFbosGridComponent } from '../group-fbos-grid/group-fbos-grid.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -84,64 +87,70 @@ const initialColumns: ColumnType[] = [
     {
         id: 'expiredFboAccountCount',
         name: 'Accounts Expired',
-    },
+    }
 ];
 
 @Component({
-    providers: [DetailRowService, ColumnMenuService],
     selector: 'app-groups-grid',
     styleUrls: ['./groups-grid.component.scss'],
     templateUrl: './groups-grid.component.html',
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed', style({ height: '0px', minHeight: '0' })),
+            state('expanded', style({ height: '*' })),
+            transition(
+                'expanded <=> collapsed',
+                animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+            ),
+        ]),
+    ],
 })
-export class GroupsGridComponent implements OnInit, AfterViewInit {
-    @ViewChild('grid') public grid: GridComponent;
-    @ViewChild('fboManageTemplate', { static: true })
-    public fboManageTemplate: any;
-    @ViewChild('needAttentionTemplate', { static: true })
-    public needAttentionTemplate: any;
-    @ViewChild('lastLoginTemplate', { static: true })
-    public lastLoginTemplate: any;
-    @ViewChild('pricingExpiredTemplate', { static: true })
-    public pricingExpiredTemplate: any;
-    @ViewChild('accountExpiredTemplate', { static: true })
-    public accountExpiredTemplate: any;
-    @ViewChild('accountTypeTemplate', { static: true })
-    public accountTypeTemplate: any;
-    @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
+export class GroupsGridComponent extends GridBase implements OnInit {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(GroupFbosGridComponent) groupFbosGridComponent: GroupFbosGridComponent;
+
 
     // Input/Output Bindings
     @Input() groupsFbosData: GroupFboViewModel;
     @Input() groupGridState: GroupGridState;
     @Output() editGroupClicked = new EventEmitter<any>();
-    @Output() editFboClicked = new EventEmitter<any>();
     @Output() deleteGroupClicked = new EventEmitter<any>();
-
-    childGrid: GridModel;
-    selectionOptions: SelectionSettingsModel = {
-        checkboxMode: 'ResetOnRowClick',
-    };
 
     // Members
     pageTitle = 'Groups';
     searchValue = '';
-    groupAccountType: 'all' | 'active' | 'inactive' = 'all';
-    fboActiveAccountType: 'all' | 'active' | 'inactive' = 'all';
-    fboAccountType: 'all' | 'premium' | 'freemium' = 'premium';
-    pageSettings: any = {
-        pageSize: 25,
-        pageSizes: [25, 50, 100, 'All'],
-    };
-    public filterSettings: FilterSettingsModel = { type: 'Menu' };
+
+    groupAccountType = accountStatusType;
+    fboActiveAccountType = accountStatusType;
+    fboAccountType =  userAccountType;
 
     groupDataSource: any[];
-    fboDataSource: any[];
-
-    selectedRows: any[] = [];
+    fboDataSourceDictionary: Dictionary<any>;
 
     tableLocalStorageKey = 'conductor-group-grid-settings';
     tableLocalStorageFilterKey = 'conductor-group-grid-filter';
     columns: ColumnType[] = [];
 
+    expandedElement: any = null;
+    columnsToDisplay: string[] = [];
+    dataColumns: string[] = [];
+
+    customColumContent = [
+        'expiredFboPricingCount',
+        'needAttentionCustomers',
+        'active',
+        'lastLogin',
+        'users',
+        'expiredFboAccountCount',
+    ];
+
+    dataSource = new MatTableDataSource<any>();
+    selection = new SelectionModel<any>(true, []);
+
+    isCustomContent(columnId) {
+        return this.customColumContent.includes(columnId);
+    }
     constructor(
         private router: Router,
         private viewContainerRef: ViewContainerRef,
@@ -159,7 +168,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private snackBar: MatSnackBar,
         private addAssociationDialog: MatDialog,
         private manageFboGroupsService: ManageFboGroupsService
-    ) {}
+    ) {
+        super();
+    }
 
     ngOnInit() {
         this.refreshGrid();
@@ -167,69 +178,17 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
     refreshGrid() {
         this.groupDataSource = this.groupsFbosData.groups;
-        this.fboDataSource = this.groupsFbosData.fbos;
-
-        
-        const self = this;
-        this.childGrid = {
-            columns: [
-                { field: 'icao', headerText: 'ICAO' },
-                { field: 'fbo', headerText: 'FBO' },
-                {
-                    headerText: 'Pricing Expired',
-                    template: this.pricingExpiredTemplate,
-                },
-                {
-                    headerText: 'Need Attentions',
-                    template: this.needAttentionTemplate,
-                },
-                {
-                    headerText: 'Last Login Date',
-                    template: this.lastLoginTemplate,
-                },
-                { headerText: 'Users', template: this.usersTemplate },
-                { field: 'quotes30Days', headerText: 'Quotes (last 30 days)' },
-                {
-                    field: 'orders30Days',
-                    headerText: 'Fuel Orders (last 30 days)',
-                },
-                {
-                    headerText: 'Account Expired',
-                    template: this.accountExpiredTemplate,
-                },
-                {
-                    headerText: 'Account Type',
-                    template: this.accountTypeTemplate,
-                },
-                { template: this.fboManageTemplate, width: 150 },
-            ],
-            dataSource: this.fboDataSource,
-            load() {
-                this.registeredTemplate = {}; // set registertemplate value as empty in load event
-                (this as GridComponent).parentDetails.parentKeyFieldValue = (
-                    (this as GridComponent).parentDetails.parentRowData as {
-                        oid?: string;
-                    }
-                ).oid;
-            },
-            queryString: 'groupId',
-            recordClick: (args: RecordClickEventArgs) => {
-                self.manageFBO(args.rowData);
-            },
-        };
-
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            const savedColumns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            ) as ColumnType[];
-            if (savedColumns.length === initialColumns.length) {
-                this.columns = savedColumns;
-            } else {
-                this.columns = initialColumns;
+        this.fboDataSourceDictionary = groupBy(
+            this.groupsFbosData.fbos,
+            (gf) => {
+                return gf.groupId;
             }
-        } else {
-            this.columns = initialColumns;
-        }
+        );
+
+        this.columns = this.getClientSavedColumns(
+            this.tableLocalStorageKey,
+            initialColumns
+        );
 
         if (this.groupGridState.filter) {
             this.applyFilter(this.groupGridState.filter);
@@ -240,55 +199,28 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         } else {
             this.applyFilter('');
         }
+
+        this.setTableColumns();
+
+        this.setVirtualScrollVariables(
+            this.paginator,
+            this.sort,
+            this.groupDataSource
+        );
     }
-
-    ngAfterViewInit() {
-        this.fboManageTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.fboManageTemplate.elementRef.nativeElement.propName = 'template';
-
-        this.needAttentionTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.needAttentionTemplate.elementRef.nativeElement.propName =
-            'template';
-
-        this.lastLoginTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.lastLoginTemplate.elementRef.nativeElement.propName = 'template';
-
-        this.pricingExpiredTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.pricingExpiredTemplate.elementRef.nativeElement.propName =
-            'template';
-
-        this.accountExpiredTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.accountExpiredTemplate.elementRef.nativeElement.propName =
-            'template';
-
-        this.usersTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.usersTemplate.elementRef.nativeElement.propName = 'template';
-
-        this.accountTypeTemplate.elementRef.nativeElement._viewContainerRef =
-            this.viewContainerRef;
-        this.accountTypeTemplate.elementRef.nativeElement.propName =
-            'template';
-
-        setTimeout(() => {
-            this.refreshColumns();
-        }, 100);
+    //todo: ot might be moved to base  grid
+    private setTableColumns() {
+        this.dataColumns = this.getFilteredTableColumns(this.columns);
+        this.columnsToDisplay = this.getFilteredTableColumns(this.columns);
+        this.columnsToDisplay.push('actions');
+        this.columnsToDisplay.unshift('expandIcon', 'select');
     }
-
-    get columnsString() {
-        return this.columns
-            .map(
-                (column) =>
-                    column.id + ' ' + (column.hidden ? 'hidden' : 'visible')
-            )
-            .join(', ');
+    getColumnDisplayString(columnId){
+        let column  = this.columns.filter(obj => {
+            return obj.id == columnId
+          });
+        return column[0]?.name ?? '';
     }
-
     deleteGroup(record) {
         const dialogRef = this.deleteGroupDialog.open(
             DeleteConfirmationComponent,
@@ -298,7 +230,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     fullDescription:
                         'You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?',
                     item: record,
-                    includeThis: true
+                    includeThis: true,
                 },
             }
         );
@@ -309,7 +241,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             }
 
             this.deleteGroupClicked.emit({
-                isDeletingGroup: true
+                isDeletingGroup: true,
             });
 
             const deleteIndex = this.groupsFbosData.groups.findIndex(
@@ -345,30 +277,30 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             }
 
             this.fbosService.remove(record).subscribe(() => {
-                const fboIndex = this.groupsFbosData.fbos.findIndex(
-                    (fbo) => fbo.oid === record.oid
+                debugger;
+                const fboIndexaux = this.fboDataSourceDictionary[
+                    record.groupId
+                ].findIndex((fbo) => fbo.oid === record.oid);
+                this.fboDataSourceDictionary[record.groupId].splice(
+                    fboIndexaux,
+                    1
                 );
-                this.groupsFbosData.fbos.splice(fboIndex, 1);
+
+                let dicCpy = Object.assign(
+                    {},
+                    this.fboDataSourceDictionary[record.groupId]
+                );
+                this.fboDataSourceDictionary[record.groupId] = Object.assign(
+                    {},
+                    dicCpy
+                );
+
                 this.snackBar.open(record.fbo + ' is deleted', '', {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
                 });
-                //this.grid.refresh();
-                this.applyFilter('');
             });
         });
-    }
-
-    rowSelected(event: any) {
-        if (!event.isInteracted) {
-            this.manageGroup(event.data);
-        } else {
-            this.selectedRows = this.grid.getSelectedRecords();
-        }
-    }
-
-    rowDeselected() {
-        this.selectedRows = this.grid.getSelectedRecords();
     }
 
     addNewGroupOrFbo() {
@@ -393,10 +325,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     searchValue: this.searchValue,
                 });
             } else {
-                this.editFboClicked.emit({
-                    fbo: result.data,
-                    searchValue: this.searchValue,
-                });
+                this.groupFbosGridComponent.editFBO(result);
             }
         });
     }
@@ -413,14 +342,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.editFboClicked.emit({
-                    fbo: result,
-                    searchValue: this.searchValue,
-                });
+                this.groupFbosGridComponent.editFBO(result);
             }
         });
     }
-
     manageGroup(group: any) {
         if (!group.active) {
             this.notification.open(NotificationComponent, {
@@ -453,76 +378,24 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     this.searchValue
                 );
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
+                this.sharedService.setCurrentUserPropertyValue(
+                    localStorageAccessConstant.managerGroupId,
+                    this.sharedService.currentUser.groupId.toString()
+                );
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,group.oid);
+                this.sharedService.setCurrentUserPropertyValue(
+                    localStorageAccessConstant.groupId,
+                    group.oid
+                );
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole, UserRole.GroupAdmin);
-                
+                this.sharedService.setCurrentUserPropertyValue(
+                    localStorageAccessConstant.impersonatedrole,
+                    UserRole.GroupAdmin
+                );
+
                 this.sharedService.emitChange(accountTypeChangedEvent);
 
                 this.router.navigate(['/default-layout/fbos/']);
-            });
-        }
-    }
-
-    manageFBO(fbo: any) {
-        if (!fbo.active) {
-            this.notification.open(NotificationComponent, {
-                data: {
-                    text: "You can't manage an inactive fbo!",
-                    title: 'Inactive fbo',
-                },
-            });
-        } else {
-            const dialogRef = this.manageDialog.open(
-                ManageConfirmationComponent,
-                {
-                    autoFocus: false,
-                    data: {
-                        description:
-                            'This will temporarily switch your account to a primary user for this FBO.  Would you like to continue?',
-                        fboId: fbo.oid,
-                        title: 'Manage FBO?',
-                    },
-                    width: '450px',
-                }
-            );
-
-            dialogRef.afterClosed().subscribe(async (result) => {
-                if (!result) {
-                    return;
-                }
-
-                localStorage.setItem(
-                    this.tableLocalStorageFilterKey,
-                    this.searchValue
-                );
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,fbo.groupId);
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole, UserRole.Primary);
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.conductorFbo, true);
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fbo.oid);
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,fbo.icao);
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo.groupId).toString());
-
-                var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
-
-                this.sharedService.emitChange(fboChangedEvent);
-                this.sharedService.emitChange(accountTypeChangedEvent);
-
-                this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
             });
         }
     }
@@ -532,7 +405,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             GroupsMergeDialogComponent,
             {
                 data: {
-                    groups: this.selectedRows,
+                    groups: this.selection.selected,
                 },
                 width: '450px',
             }
@@ -542,7 +415,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 return;
             }
 
-            this.grid.clearSelection();
+            this.selection.clear();
 
             this.groupsFbosData.groups = this.groupsFbosData.groups.filter(
                 (group) =>
@@ -554,16 +427,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             );
             this.groupDataSource = this.groupsFbosData.groups;
 
-            this.groupsFbosData.fbos = this.groupsFbosData.fbos.map((fbo) => {
-                if (result.groups.find((bg) => bg.oid === fbo.groupId)) {
-                    fbo.groupId = result.baseGroupId;
-                }
-                return fbo;
-            });
-            this.fboDataSource = this.groupsFbosData.fbos;
-            this.childGrid.dataSource = this.fboDataSource;
-
-            this.grid.refresh();
+            this.dataSource.data = this.groupDataSource;
         });
     }
 
@@ -585,32 +449,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.searchValue = filterValue;
         localStorage.setItem(this.tableLocalStorageFilterKey, filterValue);
 
-        const filteredFbos = this.groupsFbosData.fbos.filter(
-            (fbo) =>
-                (this.fboActiveAccountType === 'all' ||
-                (this.fboActiveAccountType === 'active' && !fbo.accountExpired) ||
-                (this.fboActiveAccountType === 'inactive' && fbo.accountExpired))
-                &&
-                (
-                    (this.fboAccountType === 'all' ||
-                        (this.fboAccountType === 'premium' && !fbo.accountType) ||
-                        (this.fboAccountType === 'freemium' && fbo.accountType))
-                )
-        );
-        const filteredGroups = this.groupsFbosData.groups.filter(
-            (group) =>
-                (this.fboAccountType == "freemium" || this.fboAccountType == "premium") ? ((
-                    (this.fboAccountType == "freemium" && !group.hasPremiumFbos) || (this.fboAccountType == "premium" && group.hasPremiumFbos))
-                    && group.fboCount > 0 && (this.fboActiveAccountType == "all" || ((this.fboActiveAccountType == "active" && group.hasActiveFbos) || this.fboActiveAccountType == "inactive" && !group.hasActiveFbos))) :
-                (this.groupAccountType === 'all' ||
-                (this.groupAccountType === 'active' && group.active) ||
-                (this.groupAccountType == 'inactive' && !group.active))
-        );
+        const {filteredFbos, filteredGroups} = this.filterAccountTypeAndStatus();
 
         if (!filterValue) {
             this.groupDataSource = filteredGroups;
-            this.fboDataSource = filteredFbos;
-            this.childGrid.dataSource = this.fboDataSource;
+            this.dataSource.data = this.groupDataSource;
             return;
         }
 
@@ -619,18 +462,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.ifStringContains(fbo.icao, filterValue) ||
                 this.ifStringContains(fbo.fbo, filterValue) ||
                 fbo.users?.find(
-                    (user) =>
-                        this.ifStringContains(
-                            user.firstName + ' ' + user.lastName,
-                            filterValue
-                        ) || this.ifStringContains(user.username, filterValue)
-                )
-        );
-
-        const firstFilteredGroups = filteredGroups.filter(
-            (group) =>
-                this.ifStringContains(group.groupName, filterValue) ||
-                group.users?.find(
                     (user) =>
                         this.ifStringContains(
                             user.firstName + ' ' + user.lastName,
@@ -652,37 +483,37 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 firstFilteredFbos.find((fbo) => fbo.groupId === group.oid)
         );
 
-        const secondFilteredFbos = filteredFbos.filter(
+        this.groupDataSource = secondFilteredGroups;
+
+        this.dataSource.data = this.groupDataSource;
+    }
+    private filterAccountTypeAndStatus() {
+        let filteredFbos = this.groupsFbosData.fbos.filter(
             (fbo) =>
-                firstFilteredGroups.find(
-                    (group) => group.oid === fbo.groupId
-                ) ||
-                this.ifStringContains(fbo.icao, filterValue) ||
-                this.ifStringContains(fbo.fbo, filterValue) ||
-                fbo.users?.find(
-                    (user) =>
-                        this.ifStringContains(
-                            user.firstName + ' ' + user.lastName,
-                            filterValue
-                        ) || this.ifStringContains(user.username, filterValue)
+                (this.fboActiveAccountType === 'all' ||
+                (this.fboActiveAccountType === 'active' && !fbo.accountExpired) ||
+                (this.fboActiveAccountType === 'inactive' && fbo.accountExpired))
+                &&
+                (
+                (this.fboAccountType === 'all' ||
+                    (this.fboAccountType === 'premium' && !fbo.accountType) ||
+                    (this.fboAccountType === 'freemium' && fbo.accountType))
                 )
         );
-
-        this.groupDataSource = secondFilteredGroups;
-        this.fboDataSource = secondFilteredFbos;
-        this.childGrid.dataSource = this.fboDataSource;
+        let filteredGroups = this.groupsFbosData.groups.filter(
+            (group) =>
+                (this.fboAccountType == "freemium" || this.fboAccountType == "premium") ? ((
+                    (this.fboAccountType == "freemium" && !group.hasPremiumFbos) || (this.fboAccountType == "premium" && group.hasPremiumFbos))
+                    && group.fboCount > 0 && (this.fboActiveAccountType == "all" || ((this.fboActiveAccountType == "active" && group.hasActiveFbos) || this.fboActiveAccountType == "inactive" && !group.hasActiveFbos))) :
+                (this.groupAccountType === 'all' ||
+                  (this.groupAccountType === 'active' && group.active) ||
+                (this.groupAccountType == 'inactive' && !group.active))
+        );
+        return {filteredFbos, filteredGroups};
     }
-
     editGroup(group: any) {
         this.editGroupClicked.emit({
             group,
-            searchValue: this.searchValue,
-        });
-    }
-
-    editFBO(fbo: any) {
-        this.editFboClicked.emit({
-            fbo,
             searchValue: this.searchValue,
         });
     }
@@ -701,41 +532,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
             this.columns = [...result];
 
-            this.refreshColumns();
-            this.saveSettings();
+            this.setTableColumns();
+
+            this.refreshSort(this.sort, this.columns);
+
+            this.saveSettings(this.tableLocalStorageKey, this.columns);
         });
-    }
-
-    dateSortComparer(reference: string, comparer: string) {
-        const a = reference ? new Date(reference) : new Date(-8640000000000000);
-        const b = comparer ? new Date(comparer) : new Date(-8640000000000000);
-
-        if (a < b) {
-            return -1;
-        }
-        if (a > b) {
-            return 1;
-        }
-        return 0;
-    }
-
-    actionHandler(args: SortEventArgs) {
-        if (args.requestType === 'sorting') {
-            this.columns = this.columns.map((column) =>
-                column.id === args.columnName && !column.hidden
-                    ? {
-                          ...column,
-                          sort: args.direction === 'Ascending' ? 'asc' : 'desc',
-                      }
-                    : {
-                          hidden: column.hidden,
-                          id: column.id,
-                          name: column.name,
-                      }
-            );
-
-            this.saveSettings();
-        }
     }
 
     filterChanged() {
@@ -745,54 +547,46 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         return data.expiredFboPricingCount === 0 && data.activeFboCount > 0;
     }
     getGroupFbos(groupId: number) {
-        return this.manageFboGroupsService.getGroupFbos(this.groupsFbosData,groupId);
+        return this.fboDataSourceDictionary[groupId];
     }
-    private saveSettings() {
-        localStorage.setItem(
-            this.tableLocalStorageKey,
-            JSON.stringify(this.columns)
+
+    isNetworkFbo(groupId: number) {
+        return this.manageFboGroupsService.isNetworkFbo(
+            this.groupsFbosData,
+            groupId
         );
     }
 
-    private refreshColumns() {
-        const invisibleColumns = this.columns
-            .filter((c) => c.hidden)
-            .map((c) => c.name);
-        const visibleColumns = this.columns
-            .filter((c) => !c.hidden)
-            .map((c) => c.name);
-
-        const sortedColumn = this.columns.filter((c) => c.sort)[0];
-
-        this.reorderColumns();
-
-        this.grid.showColumns(visibleColumns);
-        this.grid.hideColumns(invisibleColumns);
-
-        if (sortedColumn) {
-            this.grid.sortColumn(
-                sortedColumn.id,
-                sortedColumn.sort === 'asc' ? 'Ascending' : 'Descending'
-            );
-        }
-    }
-
-    private reorderColumns() {
-        const gridColumns = this.grid.columns as Column[];
-        const newColumns: Column[] = [first(gridColumns)];
-
-        for (const column of this.columns) {
-            newColumns.push(gridColumns.find((c) => c.field === column.id));
-        }
-
-        newColumns.push(last(gridColumns));
-
-        this.grid.columns = newColumns;
-    }
-
+    //todo: move to utils service
     private ifStringContains(str1: string, str2: string) {
         return (!str1 ? '' : str1)
             .toLowerCase()
             .includes((!str2 ? '' : str2).toLowerCase());
+    }
+
+    /** Whether the number of selected elements matches the total number of rows. */
+    isAllSelected() {
+        const numSelected = this.selection.selected.length;
+        const numRows = this.dataSource.data.length;
+        return numSelected === numRows;
+    }
+
+    /** Selects all rows if they are not all selected; otherwise clear selection. */
+    masterToggle() {
+        if (this.isAllSelected()) {
+            this.selection.clear();
+            return;
+        }
+
+        this.selection.select(...this.dataSource.data);
+    }
+    /** The label for the checkbox on the passed row */
+    checkboxLabel(row?: any): string {
+        if (!row) {
+            return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+        }
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
+            row.position + 1
+        }`;
     }
 }
