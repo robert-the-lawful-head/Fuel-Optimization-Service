@@ -149,6 +149,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         }
     }
 
+    get priceCheckerVisible() {
+        return (
+            this.sharedService.currentUser?.fboId > 0 &&
+            this.sharedService.currentUser?.accountType == AccountType.Premium &&
+            !this.integrationStatus
+        );
+    }
+
     get notificationVisible() {
         return (
             this.sharedService.currentUser?.fboId > 0 &&

@@ -6,7 +6,7 @@
     </button>
 
     <div class="page-title">FBOLinx</div>
-    <div *ngIf="!integrationStatus">
+    <div *ngIf="priceCheckerVisible">
         <button (click)="openPriceChecker()" view="'default'" size="small" class="btn-sm" ni-button>
             Price Checker
         </button>

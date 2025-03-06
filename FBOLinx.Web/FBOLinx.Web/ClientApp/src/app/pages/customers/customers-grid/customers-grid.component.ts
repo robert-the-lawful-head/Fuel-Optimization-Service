@@ -111,6 +111,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
     @Input() customersData: any[];
     @Input() pricingTemplatesData: any[];
+    @Input() pricingTemplatesDataMissingTemplate: any[];
     @Input() aircraftData: any[];
     @Input() customerGridState: CustomerGridState;
     @Input() fuelVendors: any[];
@@ -344,6 +345,38 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             const id = this.route.snapshot.paramMap.get('id');
 
             vm.pricingTemplateId = changedPricingTemplate.oid;
+
+            this.customerMarginsService.updatecustomermargin(vm).subscribe((data: number) => {
+                this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
+
+                if (data > 0 && !customer.isFuelerLinxCustomer) {
+                    const closeDialogRef = this.closeConfirmationDialog.open(
+                        CloseConfirmationComponent,
+                        {
+                            autoFocus: false,
+                            data: {
+                                cancel: 'No',
+                                customText: 'Would you like to enable email distribution for all contacts within this flight dept?',
+                                customTitle: 'Enable Email Distribution?',
+                                ok: 'Yes',
+                            },
+                        }
+                    );
+                    closeDialogRef.afterClosed().subscribe((result) => {
+                        if (result === true) {
+                            this.contactInfoByFboService.updateDistributionForAllCustomerContacts(customer.customerId, this.sharedService.currentUser.fboId, true).subscribe(() => {
+
+                            });
+                        }
+                        else {
+                            this.contactInfoByFboService.updateDistributionForAllCustomerContacts(customer.customerId, this.sharedService.currentUser.fboId, false).subscribe(() => {
+
+                            });
+                        }
+                    });
+                }
+
+            });
         }
         else {
             customer.pricingFormula = "NULL";
@@ -352,38 +385,6 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             customer.customerActionStatusSetupRequired = true;
             customer.ToolTipSetupRequired = "This customer was added and needs to be setup with an appropriate ITP template and/or contact email address.";
         }
-
-        this.customerMarginsService.updatecustomermargin(vm).subscribe((data: number) => {
-            this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
-
-            if (data > 0 && !customer.isFuelerLinxCustomer) {
-                const closeDialogRef = this.closeConfirmationDialog.open(
-                    CloseConfirmationComponent,
-                    {
-                        autoFocus: false,
-                        data: {
-                            cancel: 'No',
-                            customText: 'Would you like to enable email distribution for all contacts within this flight dept?',
-                            customTitle: 'Enable Email Distribution?',
-                            ok: 'Yes',
-                        },
-                    }
-                );
-                closeDialogRef.afterClosed().subscribe((result) => {
-                    if (result === true) {
-                        this.contactInfoByFboService.updateDistributionForAllCustomerContacts(customer.customerId, this.sharedService.currentUser.fboId, true).subscribe(() => {
-
-                        });
-                    }
-                    else {
-                        this.contactInfoByFboService.updateDistributionForAllCustomerContacts(customer.customerId, this.sharedService.currentUser.fboId, false).subscribe(() => {
-
-                        });
-                    }
-                });
-            }
-
-        });
     }
 
     bulkMarginTemplateUpdate(event: MatSelectChange) {
