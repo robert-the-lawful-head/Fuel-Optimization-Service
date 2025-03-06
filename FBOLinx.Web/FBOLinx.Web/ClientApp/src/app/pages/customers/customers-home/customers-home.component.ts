@@ -33,6 +33,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     aircraftData: any[];
     fullAicraftDataCpy: any[];
     pricingTemplatesData: any[];
+    pricingTemplatesDataMissingTemplate: any[];
     locationChangedSubscription: any;
     customerGridState: CustomerGridState;
     fuelVendors: any[];
@@ -181,6 +182,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.ngxLoader.startLoader(this.charNamePricingTemplate);
 
         this.pricingTemplatesData = null;
+        this.pricingTemplatesDataMissingTemplate = null;
         this.pricingTemplatesService
             .getByFbo(
                 this.sharedService.currentUser.fboId,
@@ -209,7 +211,8 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 };
 
                 this.pricingTemplatesData = data;
-                this.pricingTemplatesData.unshift(blankDefault);
+                this.pricingTemplatesDataMissingTemplate = [...data];
+                this.pricingTemplatesDataMissingTemplate.unshift(blankDefault);
                 this.ngxLoader.stopLoader(this.charNamePricingTemplate);
             });
     }
