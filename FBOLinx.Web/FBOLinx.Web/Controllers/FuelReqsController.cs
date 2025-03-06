@@ -1411,6 +1411,10 @@ namespace FBOLinx.Web.Controllers
                 {
                     if (!request.IcaosFbos.ContainsKey(location.Icao))
                         request.IcaosFbos.Add(location.Icao, location.Fbo);
+                    if (request.AcukwikFboHandlerIds == null)
+                    {
+                        request.AcukwikFboHandlerIds = new List<int>();
+                    }
                     request.AcukwikFboHandlerIds.Add(location.AcukwikFBOHandlerId.GetValueOrDefault());
                 }
 
@@ -1774,6 +1778,10 @@ namespace FBOLinx.Web.Controllers
                     var fbo = await _fboService.GetFbo(fboId);
                     if (!fbolinxOrdersRequest.IcaosFbos.ContainsKey(fbo.FboAirport.Icao))
                         fbolinxOrdersRequest.IcaosFbos.Add(fbo.FboAirport.Icao, fbo.Fbo);
+                    if(fbolinxOrdersRequest.AcukwikFboHandlerIds == null)
+                    {
+                        fbolinxOrdersRequest.AcukwikFboHandlerIds = new List<int>();
+                    }
                     fbolinxOrdersRequest.AcukwikFboHandlerIds.Add(fbo.AcukwikFBOHandlerId.GetValueOrDefault());
                 }
 
