@@ -335,7 +335,7 @@
                                                  [columnFormat]="10"
                                                  optionLabel="name"
                                                  optionValue="oid"
-                                                 [options]="pricingTemplatesData">
+                                                 [options]="pricingTemplatesDataMissingTemplate">
                             <span>ITP Margin Template</span>
                         </app-table-column-filter>
                     </span>
@@ -346,7 +346,7 @@
                             class="dropdownHeight select-dropdown"
                             id="pricingtemplates"
                             name="ddlPricingTemplate">
-                        <option *ngFor="let pricingTemplate of pricingTemplatesData"
+                        <option *ngFor="let pricingTemplate of pricingTemplatesDataMissingTemplate"
                                 value="{{ pricingTemplate.oid }}">
                             {{ pricingTemplate.name }}
                         </option>
