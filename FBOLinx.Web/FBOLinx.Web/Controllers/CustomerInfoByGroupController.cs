@@ -1432,6 +1432,7 @@ namespace FBOLinx.Web.Controllers
 
                             //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
                             //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                            var isRetailMinus = false;
                             resultsWithFees.ForEach(y =>
                             {
                                 y.FeesAndTaxes.ForEach(fee =>
@@ -1440,15 +1441,15 @@ namespace FBOLinx.Web.Controllers
                                         fee.OmitsByPricingTemplate.Any(o =>
                                             o.PricingTemplateId == y.PricingTemplateId))
                                     {
-                                        fee.IsOmitted = true;
-                                        fee.OmittedFor = "P";
+                                        isRetailMinus = customerPricingResults.Where(x => x.PricingTemplateId == y.PricingTemplateId).FirstOrDefault().MarginType == MarginTypes.RetailMinus;
+                                        fee.SetIsOmittedForPricing((int)y.PricingTemplateId,isRetailMinus);
                                     }
 
                                     if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
                                         o.CustomerId == x.CustomerId)))
                                     {
-                                        fee.IsOmitted = true;
-                                        fee.OmittedFor = "C";
+                                        isRetailMinus = customerPricingResults.Where(x => x.CustomerId == x.CustomerId).FirstOrDefault().MarginType == MarginTypes.RetailMinus;
+                                        fee.SetIsomittedForCustomer(x.CustomerId, isRetailMinus);
                                     }
                                 });
                             });
