@@ -139,6 +139,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     }
 
     public feeAndTaxChanged(feeAndTax, avoidRecalculation = false): void {
+        feeAndTax.isOmitted = feeAndTax.whenToApply === FeeCalculationApplyingTypes.PostMargin;
+
         feeAndTax.requiresUpdate = true;
         this.requiresSaving = true;
         if (!avoidRecalculation) {
