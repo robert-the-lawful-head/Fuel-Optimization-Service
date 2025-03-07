@@ -29,7 +29,15 @@ import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-
 // Components
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
+import { MarginType } from 'src/app/enums/margin-type.enum';
 
+export interface FboFeeAndTaxOmitsByCustomer
+{
+    oid: number;
+    fboFeeAndTaxId: number;
+    customerId: number;
+    isOmitted: boolean | null;
+}
 @Component({
     selector: 'app-customers-edit',
     styleUrls: ['./customers-edit.component.scss'],
@@ -451,46 +459,53 @@ export class CustomersEditComponent implements OnInit {
         }
     }
 
-    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
-        if (!feeAndTax.omitsByCustomer) {
-            feeAndTax.omitsByCustomer = [];
-        }
-        let matchingOmitRecords = feeAndTax.omitsByCustomer.filter(x => x.customerId == this.customerInfoByGroup.customerId &&
+    async omitFeeAndTaxCheckChanged(feeAndTax: any): Promise<void> {
+        feeAndTax.omitsByCustomer = feeAndTax.omitsByCustomer ?? [];
+
+        let omitRecord: FboFeeAndTaxOmitsByCustomer = feeAndTax.omitsByCustomer.find(x => x.customerId == this.customerInfoByGroup.customerId &&
             x.fboFeeAndTaxId == feeAndTax.oid);
-        let omitRecord: any = {
-            customerId: this.customerInfoByGroup.customerId,
-            fboFeeAndTaxId: feeAndTax.oid,
-            oid: 0,
-        };
-        if (matchingOmitRecords && matchingOmitRecords.length > 0) {
-            omitRecord = matchingOmitRecords[0];
-        } else {
-            feeAndTax.omitsByCustomer.push(omitRecord);
+
+        let pricingTemplate = this.pricingTemplatesData.find(x => x.oid == this.customCustomerType.customerType);
+
+        if(pricingTemplate.marginType == MarginType.RetailMinus){
+            if(omitRecord){
+                omitRecord.isOmitted = feeAndTax.isOmitted;
+                await this.fboFeeAndTaxOmitsbyCustomerService.update(omitRecord).toPromise();
+            }else{
+                omitRecord = {
+                    customerId: this.customerInfoByGroup.customerId,
+                    fboFeeAndTaxId: feeAndTax.oid,
+                    oid: 0,
+                    isOmitted: feeAndTax.isOmitted
+                };    
+                await this.fboFeeAndTaxOmitsbyCustomerService.add(omitRecord).toPromise();
+            }
+            this.recalculatePriceBreakdown();
+            return;
         }
-        //if (feeAndTax.omitsByCustomer.length > 0) {
-        //    omitRecord = feeAndTax.omitsByCustomer[0];
-        //} else {
-        //    feeAndTax.omitsByCustomer.push(omitRecord);
-        //}
-        //omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+
         if (feeAndTax.isOmitted) {
+            omitRecord = {
+                customerId: this.customerInfoByGroup.customerId,
+                fboFeeAndTaxId: feeAndTax.oid,
+                oid: 0,
+                isOmitted: feeAndTax.isOmitted
+            };   
             this.fboFeeAndTaxOmitsbyCustomerService
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;
+                    feeAndTax.omitsByCustomer.push(omitRecord);
                     this.recalculatePriceBreakdown();
-                });
-        } else {
+                });   
+        }else {
             this.fboFeeAndTaxOmitsbyCustomerService
                 .remove(omitRecord)
                 .subscribe(() => {
-                    feeAndTax.omitsByCustomer = [];
+                    feeAndTax.omitsByCustomer.splice(feeAndTax.omitsByCustomer.indexOf(omitRecord), 1);
                     this.recalculatePriceBreakdown();
                 });
         }
-
-
-
     }
 
     public priceBreakdownCalculationsCompleted(
@@ -653,7 +668,8 @@ export class CustomersEditComponent implements OnInit {
         this.fboFeesAndTaxesService
             .getByFboAndCustomer(
                 this.sharedService.currentUser.fboId,
-                this.customerInfoByGroup.customerId
+                this.customerInfoByGroup.customerId,
+                this.customCustomerType.customerType
             )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
