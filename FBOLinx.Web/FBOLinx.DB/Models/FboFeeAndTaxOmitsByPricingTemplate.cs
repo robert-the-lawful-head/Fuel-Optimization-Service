@@ -15,6 +15,7 @@ namespace FBOLinx.DB.Models
         [Column("PricingTemplateID")]
         [Required]
         public int PricingTemplateId { get; set; }
+        public bool? IsOmitted { get; set; }
 
         #region Relationships
         [JsonIgnore]
