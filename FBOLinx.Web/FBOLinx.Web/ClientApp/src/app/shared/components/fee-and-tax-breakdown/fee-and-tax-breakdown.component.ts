@@ -4,6 +4,7 @@ import { DiscountType, FeeCalculationTypes } from 'src/app/enums/fee-calculation
 import { MarginType } from 'src/app/enums/margin-type.enum';
 import { FlightTypeClassifications } from 'src/app/enums/flight-type-classifications';
 import { ApplicableTaxFlights } from 'src/app/enums/applicable-tax-flights';
+import { FeeCalculationApplyingTypes } from 'src/app/enums/fee-calculation-applying-types';
 
 @Component({
     selector: 'fee-and-tax-breakdown',
@@ -49,6 +50,16 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         this.performRecalculation();
         this.calcItpMargin();
     }
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes.validFlightTypes){
+            let validFlightTypes = this.validFlightTypes.map(value => [value,FlightTypeClassifications[value]]);
+            console.log("🚀 ~ FeeAndTaxBreakdownComponent ~ ngOnChanges ~ validFlightTypes:", validFlightTypes)
+        }
+        if(changes.validDepartureTypes){
+            let validDepartureTypes = this.validDepartureTypes.map(value => [value,ApplicableTaxFlights[value]]);
+            console.log("🚀 ~ FeeAndTaxBreakdownComponent ~ ngOnChanges ~ validDepartureTypes:", validDepartureTypes)            
+        }
+    }
 
     public omitChanged(fee: any): void {
         this.omitCheckChanged.emit(fee);
@@ -87,7 +98,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
                 -1
         );
     }
-    isOmmited(lineTax: any): boolean {
+    isOmittedManually(lineTax: any): boolean {
         return lineTax.omittedFor && lineTax.omittedFor.length > 0;
     }
     // Private Methods
@@ -96,10 +107,10 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
             return;
         }
         this.aboveTheLineTaxes = this.feesAndTaxes.filter(
-            (tax) => tax.whenToApply === FeeCalculationTypes.FlatPerGallon
+            (tax) => tax.whenToApply === FeeCalculationApplyingTypes.PreMargin
         );
         this.belowTheLineTaxes = this.feesAndTaxes.filter(
-            (tax) => tax.whenToApply === FeeCalculationTypes.Percentage
+            (tax) => tax.whenToApply === FeeCalculationApplyingTypes.PostMargin
         );
     }
 

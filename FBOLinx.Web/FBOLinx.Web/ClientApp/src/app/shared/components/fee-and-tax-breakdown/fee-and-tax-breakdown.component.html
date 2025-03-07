@@ -29,7 +29,7 @@
             *ngFor="let aboveLineTax of aboveTheLineTaxes"
             class="row font-italic"
             [ngClass]="{
-                'faded-text': isOmmited(aboveLineTax)
+                'faded-text': isOmittedManually(aboveLineTax)
             }"
         >
             <div *ngIf="isCustomerOmitting" class="col-1">
@@ -50,7 +50,7 @@
                 >
                 <sup
                     class="pl-1"
-                    *ngIf="isOmmited(aboveLineTax)"
+                    *ngIf="isOmittedManually(aboveLineTax)"
                     >{{ aboveLineTax.omittedFor }}</sup
                 >
             </div>
@@ -124,7 +124,7 @@
             *ngFor="let belowLineTax of belowTheLineTaxes"
             class="row font-italic"
             [ngClass]="{
-                'faded-text': isOmmited(belowLineTax)
+                'faded-text': isOmittedManually(belowLineTax)
             }"
         >
             <div *ngIf="isCustomerOmitting" class="col-1">
@@ -144,7 +144,7 @@
                 >
                 <sup
                     class="pl-1"
-                    *ngIf="isOmmited(belowLineTax)"
+                    *ngIf="isOmittedManually(belowLineTax)"
                     >{{ belowLineTax.omittedFor }}</sup
                 >
             </div>
@@ -238,7 +238,7 @@
 
         <!--Below the line taxes - Display mode 2-->
         <div *ngFor="let belowLineTax of belowTheLineTaxes" class="row">
-            <div class="col-6 label-tax-fees" style="padding-right: 0px">
+            <div class="col-xl-6 label-tax-fees" style="padding-right: 0px">
                 <div
                     [ngClass]="{
                         'strike-through': isTextStrikeThrough(belowLineTax)
