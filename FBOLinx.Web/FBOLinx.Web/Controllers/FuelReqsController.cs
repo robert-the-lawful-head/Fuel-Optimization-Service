@@ -352,7 +352,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var orderDetails = new OrderDetailsDto();
-            orderDetails.ConfirmationEmail = request.Email == "" ? " " : request.Email;
+            orderDetails.ConfirmationEmail = request.Email == null || request.Email == ""  ? " " : request.Email;
             orderDetails.FuelVendor = request.FuelVendor;
             orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
             orderDetails.PaymentMethod = request.PaymentMethod;

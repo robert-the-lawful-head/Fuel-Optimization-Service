@@ -1003,8 +1003,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             await UpdateAsync(fuelReq);
 
                             var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel")).FirstOrDefault();
-                            fuelServiceLineItem.ServiceName = "Fuel: " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "") + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C");
-                            await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
+                            if (fuelServiceLineItem != null)
+                            {
+                                fuelServiceLineItem.ServiceName = "Fuel: " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "") + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C");
+                                await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
+                            }
+                            else
+                            {
+                                ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                                fuelServiceOrderItem.ServiceOrderId = serviceOrder.Oid;
+                                fuelServiceOrderItem.ServiceName = "Fuel: " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "") + "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C");
+                                fuelServiceOrderItem.IsCompleted = false;
+                                await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
+                            }
                         }
                         else
                         {
