@@ -335,13 +335,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
                         {
                             y.FeesAndTaxes.ForEach(fee =>
                             {
-                                if (fee.OmitsByPricingTemplate != null &&
-                                    fee.OmitsByPricingTemplate.Any(o =>
-                                        o.PricingTemplateId == y.PricingTemplateId))
-                                {
+
                                     isRetailMinus = customerPricingResults.Where(x => x.PricingTemplateId == y.PricingTemplateId).FirstOrDefault().MarginType == MarginTypes.RetailMinus;
                                     fee.SetIsOmittedForPricing((int)y.PricingTemplateId,isRetailMinus);
-                                }
                             });
                         });
 
