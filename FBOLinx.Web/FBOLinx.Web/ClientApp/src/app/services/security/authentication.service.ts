@@ -50,25 +50,7 @@ export class AuthenticationService {
             )
             .pipe(
                 map((user) => {
-                    // login successful if there's a jwt token in the response
-                    if (user) {
-                        if (user.fbo != null)
-                            user.integrationStatus = user.fbo.integrationStatus;
-
-                        if (user.role === 7)
-                            user.integrationStatus = true;
-
-                        localStorage.setItem(
-                            localStorageAccessConstant.currentUser,
-                            JSON.stringify(user)
-                        );
-                        localStorage.setItem(
-                            localStorageAccessConstant.groupId,
-                            JSON.stringify(user.groupId)
-                        );
-
-                        this.currentUserSubject.next(user);
-                    }
+                    this.setCurrentUser(user);
 
                     return user;
                 })
@@ -92,31 +74,54 @@ export class AuthenticationService {
         //call prepare session controller method
 
         return this.http
-            .get<any>(this.accessPointUrl + '/prepare-token-auth', {
+            .get<any>(this.accessPointUrl + '/prepare-token-auth/' + token, {
                 headers: this.headers,
-            })
-            .pipe(
-                map((user) => {
-                    // login successful if there's a jwt token in the response
-                    if (user) {
+            });
+            //.pipe(
+            //    map((user) => {
+            //        // login successful if there's a jwt token in the response
+            //        if (user) {
 
-                        // store user details and jwt token in local storage to keep user logged in between page refreshes
-                        localStorage.setItem(
-                            localStorageAccessConstant.currentUser,
-                            JSON.stringify(user)
-                        );
-                        this.currentUserSubject.next(user);
-                    }
+            //            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            //            localStorage.setItem(
+            //                localStorageAccessConstant.currentUser,
+            //                JSON.stringify(user)
+            //            );
+            //            this.currentUserSubject.next(user);
+            //        }
 
-                    return user;
-                })
-            );
+            //        return user;
+            //    })
+        //);
+
     }
 
     postAuth(): Observable<any> {
         return this.http.post(this.accessPointUrl + '/run-login-checks', {
             headers: this.headers,
         });
+    }
+
+    setCurrentUser(user): void {
+        // login successful if there's a jwt token in the response
+        if (user) {
+            if (user.fbo != null)
+                user.integrationStatus = user.fbo.integrationStatus;
+
+            if (user.role === 7)
+                user.integrationStatus = true;
+
+            localStorage.setItem(
+                localStorageAccessConstant.currentUser,
+                JSON.stringify(user)
+            );
+            localStorage.setItem(
+                localStorageAccessConstant.groupId,
+                JSON.stringify(user.groupId)
+            );
+
+            this.currentUserSubject.next(user);
+        }
     }
 
     logout(): void {

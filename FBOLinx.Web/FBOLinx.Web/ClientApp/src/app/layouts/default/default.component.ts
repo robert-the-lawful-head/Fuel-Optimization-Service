@@ -57,6 +57,7 @@ export class DefaultLayoutComponent implements OnInit {
     public getScreenHeight: any;
 
     isExpiredPricingDialogBlocked: boolean = true;
+    isExpiredPricingDialogVisible: boolean = false;
 
     valueChangedSubscription: Subscription;
     changeEmittedSubscription: Subscription;
@@ -274,16 +275,6 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     checkCurrentPrices() {
-        if(this.isCsr) return;
-
-        const currentRoute = this.router.url;
-
-        if(this.sharedService.currentUser.accountType == AccountType.Freemium) return;
-
-        if (currentRoute == '/default-layout/groups') return;
-
-        if (!this.sharedService.currentUser.fboId) return;
-
         const remindMeLaterFlag = localStorage.getItem(
             'pricingExpiredNotification'
         );
@@ -305,7 +296,7 @@ export class DefaultLayoutComponent implements OnInit {
                 this.fboPricesService
                     .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
                     .subscribe((data: any) => {
-                        if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !data) {
+                        if (!this.isExpiredPricingDialogVisible && this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !data) {
                             const dialogRef = this.expiredPricingDialog.open(
                                 PricingExpiredNotificationComponent,
                                 {
@@ -314,6 +305,7 @@ export class DefaultLayoutComponent implements OnInit {
                                 }
                             );
                             dialogRef.afterClosed().subscribe();
+                            this.isExpiredPricingDialogVisible = true;
                         }
                     },
                         (error: any) => {
@@ -448,6 +440,9 @@ export class DefaultLayoutComponent implements OnInit {
             this.loadFboPreferences().subscribe(() => {
                 this.subscriptions.push(
                     this.loadFboPrices().subscribe(() => {
+                        if (this.isCsr || this.sharedService.currentUser.accountType == AccountType.Freemium || !this.sharedService.currentUser.fboId)
+                            return;
+
                         var checkPricesResult = this.checkCurrentPrices();
                         if (!checkPricesResult)
                             return;
