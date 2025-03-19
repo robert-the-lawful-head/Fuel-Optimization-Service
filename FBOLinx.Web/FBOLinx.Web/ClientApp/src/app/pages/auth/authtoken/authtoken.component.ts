@@ -49,6 +49,8 @@ export class AuthtokenComponent {
         } else {
             const decodedToken = decodeURIComponent(this.tokenParam);
 
+            console.log(window.location.hostname);
+
             this.authenticationService
                 .getAuthToken(decodedToken)
                 // .pipe(first())
