@@ -278,7 +278,7 @@ export class FbosGridComponent implements OnInit {
             if (hostName === 'support.fbolinx.com') {
                 href = href.replace(hostName, "www.fbolinx.com");
             }
-            else if (hostName === 'qa-support.fbolinx.com') {
+            else if (hostName === 'support-qa.fbolinx.com') {
                 href = href.replace(hostName, "qa-app.fbolinx.com");
             }
             //else if (hostName === 'st-support.fbolinx.com') {
