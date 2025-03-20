@@ -44,7 +44,7 @@ export class GroupFbosGridComponent implements OnInit {
 
     ngOnInit()
     {
-        console.log(window.location.hostname);
+        
         
     }
 

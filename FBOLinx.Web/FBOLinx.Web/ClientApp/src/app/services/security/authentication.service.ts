@@ -74,7 +74,7 @@ export class AuthenticationService {
         //call prepare session controller method
 
         return this.http
-            .get<any>(this.accessPointUrl + '/prepare-token-auth/' + token, {
+            .get<any>(this.accessPointUrl + '/prepare-token-auth/?token=' + token, {
                 headers: this.headers,
             });
             //.pipe(

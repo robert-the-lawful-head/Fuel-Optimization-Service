@@ -65,8 +65,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("prepare-token-auth/{token}")]
-        public async Task<IActionResult> PrepareTokenAuthentication([FromRoute] string token)
+        [HttpGet("prepare-token-auth")]
+        public async Task<IActionResult> PrepareTokenAuthentication([FromQuery] string token)
         {
             SetHttpOnlyCookie(_securitySettings.TokenKey, token, _securitySettings.TokenExpirationInMinutes);
 
