@@ -2,10 +2,10 @@ import { ActivatedRoute } from '@angular/router';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { CustomerHistoryDetailsComponent } from '../customer-history-details/customer-history-details.component';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { Subscription } from 'rxjs';
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +7,7 @@ import { FormControl } from '@angular/forms';
 export class FormValidationHelperService {
 
     constructor() { }
-    public noWhitespaceValidator(control: FormControl) {
+    public noWhitespaceValidator(control: UntypedFormControl) {
         return (control.value || '' ).trim().length? null : { 'whitespace': true };
     }
 }

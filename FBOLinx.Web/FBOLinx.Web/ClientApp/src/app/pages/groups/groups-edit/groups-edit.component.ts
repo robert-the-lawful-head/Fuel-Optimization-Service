@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentTypeEnum, DocumentTypeEnumDescription } from 'src/app/enums/documents..enum';
 import { DocumentService } from 'src/app/services/documents.service';

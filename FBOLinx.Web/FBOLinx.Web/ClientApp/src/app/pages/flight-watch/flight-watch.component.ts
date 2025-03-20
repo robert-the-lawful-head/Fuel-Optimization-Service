@@ -6,7 +6,7 @@ import {
     OnInit,
     ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty } from 'lodash';
@@ -21,7 +21,7 @@ import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-servi
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import * as SharedEvents from 'src/app/constants/sharedEvents';
 import { Subscription } from 'rxjs';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';

@@ -7,8 +7,8 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { UntypedFormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -48,7 +48,7 @@ export class MultiselectAutocompleteComponent {
     private onTouched: () => void = () => {};
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
-    optionCtrl = new FormControl();
+    optionCtrl = new UntypedFormControl();
     filteredOptions: Observable<MultiSelectElement[]>;
     inputPlaceholder = this.enableAddNew
         ? 'Add new Option...'

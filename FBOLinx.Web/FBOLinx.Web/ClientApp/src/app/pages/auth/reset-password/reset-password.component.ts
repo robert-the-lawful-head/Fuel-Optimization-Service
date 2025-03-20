@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {
     AbstractControl,
-    FormBuilder,
-    FormControl,
-    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormControl,
+    UntypedFormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 })
 export class ResetPasswordComponent implements OnInit {
     token: string;
-    form: FormGroup;
+    form: UntypedFormGroup;
     submit: boolean;
     validated: boolean;
     validationError: boolean;
@@ -33,7 +33,7 @@ export class ResetPasswordComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private userService: UserService,
-        private formBuilder: FormBuilder
+        private formBuilder: UntypedFormBuilder
     ) {}
 
     ngOnInit() {
@@ -50,9 +50,9 @@ export class ResetPasswordComponent implements OnInit {
                 (user: User) => {
                     this.form = this.formBuilder.group(
                         {
-                            confirmPassword: new FormControl(''),
-                            email: new FormControl(user.username),
-                            newPassword: new FormControl(''),
+                            confirmPassword: new UntypedFormControl(''),
+                            email: new UntypedFormControl(user.username),
+                            newPassword: new UntypedFormControl(''),
                         },
                         {
                             validators: this.passwordConfirming,

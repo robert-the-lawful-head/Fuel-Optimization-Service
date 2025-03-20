@@ -11,25 +11,8 @@ export class ContactsEditComponent {
     @Input() contactInfo: any;
 
     // Masks
-    phoneMask: any[] = [
-        '+',
-        '1',
-        ' ',
-        '(',
-        /[1-9]/,
-        /\d/,
-        /\d/,
-        ')',
-        ' ',
-        /\d/,
-        /\d/,
-        /\d/,
-        '-',
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-    ];
+    phoneMask = '(000) 000-0000';
+    prefix = '+1 ';
 
     constructor() {}
 
@@ -41,3 +24,7 @@ export class ContactsEditComponent {
         this.cancelEditClicked.emit();
     }
 }
+function provideNgxMask(): import("@angular/core").Provider {
+    throw new Error('Function not implemented.');
+}
+

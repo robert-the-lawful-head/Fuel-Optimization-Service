@@ -5,14 +5,14 @@ import {
     OnDestroy,
     Output,
     ViewChild} from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest, Subscription } from 'rxjs';
 import {
-    MatDialog,
-} from '@angular/material/dialog';
+    MatLegacyDialog as MatDialog,
+} from '@angular/material/legacy-dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services
@@ -57,7 +57,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
     pricingTemplate: any;
     id             :any;
-    pricingTemplateForm: FormGroup;
+    pricingTemplateForm: UntypedFormGroup;
     pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
@@ -98,7 +98,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private customerMarginsService: CustomermarginsService,
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
@@ -119,7 +119,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     get customerMarginsFormArray() {
-        return this.pricingTemplateForm.controls.customerMargins as FormArray;
+        return this.pricingTemplateForm.controls.customerMargins as UntypedFormArray;
     }
 
     get isMember() {
@@ -188,7 +188,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
             this.fileName = fileAttachmentName;
 
-            let customerMargins: FormArray = this.formBuilder.array([]);
+            let customerMargins: UntypedFormArray = this.formBuilder.array([]);
             if (this.pricingTemplate.customerMargins) {
                 customerMargins = this.formBuilder.array(
                     this.pricingTemplate.customerMargins.map(

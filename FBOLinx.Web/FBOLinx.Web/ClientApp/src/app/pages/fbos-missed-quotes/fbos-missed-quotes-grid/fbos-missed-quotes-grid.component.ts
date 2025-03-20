@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { forEach } from 'lodash';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { PriceCheckerDialogComponent } from '../../fbo-prices/price-checker-dialog/price-checker-dialog.component';
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // Services
@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 export class LoginComponent implements OnInit {
     partner: string;
     redirectTo: string;
-    loginForm: FormGroup;
+    loginForm: UntypedFormGroup;
     error: string;
     submit: boolean;
 
@@ -24,11 +24,11 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private oauthService: OAuthService,
-        private formBuilder: FormBuilder
+        private formBuilder: UntypedFormBuilder
     ) {
         this.loginForm = this.formBuilder.group({
-            password: new FormControl(''),
-            username: new FormControl(''),
+            password: new UntypedFormControl(''),
+            username: new UntypedFormControl(''),
         });
     }
 

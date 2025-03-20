@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 body {
     .mat-button-toggle,
     .mat-button-base,
@@ -104,7 +106,7 @@ body {
         }
 
         .mat-input-subscript-wrapper {
-            padding-top: ($module-rem / 2);
+            padding-top:  math.div($module-rem, 2);
             top: 100%;
         }
     }

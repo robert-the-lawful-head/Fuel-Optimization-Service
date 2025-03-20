@@ -8,7 +8,7 @@ import {
     ViewChild,
     ViewChildren,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { interval, Observable, Subscription } from 'rxjs';

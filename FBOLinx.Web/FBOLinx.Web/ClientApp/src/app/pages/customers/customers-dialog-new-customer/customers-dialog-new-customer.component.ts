@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -44,7 +44,7 @@ enum WizardStep {
 export class CustomersDialogNewCustomerComponent implements OnInit {
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
-    customerForm: FormGroup;
+    customerForm: UntypedFormGroup;
     companyInfoDetailOpenState = false;
     certificateTypes: CertificateType[] = [];
     customerCompanyTypes: CustomerCompanyType[] = [];
@@ -77,22 +77,22 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
         private route : ActivatedRoute,
         private formValidationHelperService: FormValidationHelperService
     ) {
-        this.customerForm = new FormGroup({
-            aircraft: new FormArray([]),
-            company: new FormGroup({
-                address: new FormControl(),
-                certificateType: new FormControl(),
-                city: new FormControl(),
-                company: new FormControl('', [Validators.required, this.formValidationHelperService.noWhitespaceValidator]),
-                country: new FormControl(),
-                mainPhone: new FormControl(),
-                state: new FormControl(),
-                website: new FormControl(),
-                zipCode: new FormControl(),
+        this.customerForm = new UntypedFormGroup({
+            aircraft: new UntypedFormArray([]),
+            company: new UntypedFormGroup({
+                address: new UntypedFormControl(),
+                certificateType: new UntypedFormControl(),
+                city: new UntypedFormControl(),
+                company: new UntypedFormControl('', [Validators.required, this.formValidationHelperService.noWhitespaceValidator]),
+                country: new UntypedFormControl(),
+                mainPhone: new UntypedFormControl(),
+                state: new UntypedFormControl(),
+                website: new UntypedFormControl(),
+                zipCode: new UntypedFormControl(),
             }),
-            contact: new FormArray([]),
-            template: new FormGroup({
-                customerMarginTemplate: new FormControl(
+            contact: new UntypedFormArray([]),
+            template: new UntypedFormGroup({
+                customerMarginTemplate: new UntypedFormControl(
                     undefined,
                     Validators.required
                 ),
@@ -145,24 +145,24 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                                 }
                                 else {
                                     this.contactFormArray.push(
-                                        new FormGroup({
-                                            address: new FormControl(),
-                                            city: new FormControl(),
-                                            copyAlerts: new FormControl(true),
-                                            country: new FormControl(),
-                                            email: new FormControl('', [
+                                        new UntypedFormGroup({
+                                            address: new UntypedFormControl(),
+                                            city: new UntypedFormControl(),
+                                            copyAlerts: new UntypedFormControl(true),
+                                            country: new UntypedFormControl(),
+                                            email: new UntypedFormControl('', [
                                                 Validators.required,
                                                 Validators.email,
                                             ]),
-                                            extension: new FormControl(),
-                                            fax: new FormControl(),
-                                            firstName: new FormControl(),
-                                            lastName: new FormControl(),
-                                            mobile: new FormControl(),
-                                            phone: new FormControl(),
-                                            primary: new FormControl(),
-                                            state: new FormControl(),
-                                            title: new FormControl(),
+                                            extension: new UntypedFormControl(),
+                                            fax: new UntypedFormControl(),
+                                            firstName: new UntypedFormControl(),
+                                            lastName: new UntypedFormControl(),
+                                            mobile: new UntypedFormControl(),
+                                            phone: new UntypedFormControl(),
+                                            primary: new UntypedFormControl(),
+                                            state: new UntypedFormControl(),
+                                            title: new UntypedFormControl(),
                                         })
                                     );
 
@@ -183,19 +183,19 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
         }
     }
     get companyFormGroup() {
-        return this.customerForm.controls.company as FormGroup;
+        return this.customerForm.controls.company as UntypedFormGroup;
     }
 
     get contactFormArray() {
-        return this.customerForm.controls.contact as FormArray;
+        return this.customerForm.controls.contact as UntypedFormArray;
     }
 
     get templateFormGroup() {
-        return this.customerForm.controls.template as FormGroup;
+        return this.customerForm.controls.template as UntypedFormGroup;
     }
 
     get aircraftFormArray() {
-        return this.customerForm.controls.aircraft as FormArray;
+        return this.customerForm.controls.aircraft as UntypedFormArray;
     }
 
     get backDisabled() {
@@ -312,34 +312,34 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
 
     addNewContact() {
         this.contactFormArray.push(
-            new FormGroup({
-                address: new FormControl(),
-                city: new FormControl(),
-                copyAlerts: new FormControl(true),
-                country: new FormControl(),
-                email: new FormControl('', [
+            new UntypedFormGroup({
+                address: new UntypedFormControl(),
+                city: new UntypedFormControl(),
+                copyAlerts: new UntypedFormControl(true),
+                country: new UntypedFormControl(),
+                email: new UntypedFormControl('', [
                     Validators.required,
                     Validators.email,
                 ]),
-                extension: new FormControl(),
-                fax: new FormControl(),
-                firstName: new FormControl(),
-                lastName: new FormControl(),
-                mobile: new FormControl(),
-                phone: new FormControl(),
-                primary: new FormControl(),
-                state: new FormControl(),
-                title: new FormControl(),
+                extension: new UntypedFormControl(),
+                fax: new UntypedFormControl(),
+                firstName: new UntypedFormControl(),
+                lastName: new UntypedFormControl(),
+                mobile: new UntypedFormControl(),
+                phone: new UntypedFormControl(),
+                primary: new UntypedFormControl(),
+                state: new UntypedFormControl(),
+                title: new UntypedFormControl(),
             })
         );
     }
 
     addNewAircraft() {
         this.aircraftFormArray.push(
-            new FormGroup({
-                aircraft: new FormControl(undefined, Validators.required),
-                aircraftPricingTemplate: new FormControl(),
-                tailNumber: new FormControl(undefined, Validators.required),
+            new UntypedFormGroup({
+                aircraft: new UntypedFormControl(undefined, Validators.required),
+                aircraftPricingTemplate: new UntypedFormControl(),
+                tailNumber: new UntypedFormControl(undefined, Validators.required),
             })
         );
     }

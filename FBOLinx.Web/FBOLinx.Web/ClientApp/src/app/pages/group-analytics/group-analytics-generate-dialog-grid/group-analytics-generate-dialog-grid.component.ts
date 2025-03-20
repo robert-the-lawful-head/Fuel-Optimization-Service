@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatTableModule } from '@angular/material/table'
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { forEach } from 'lodash';
 import {
     ColumnType,

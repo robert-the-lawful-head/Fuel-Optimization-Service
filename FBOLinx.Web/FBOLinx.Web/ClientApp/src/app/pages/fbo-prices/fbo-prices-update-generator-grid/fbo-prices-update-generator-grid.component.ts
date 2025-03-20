@@ -3,7 +3,7 @@ import {
     ViewChildren, QueryList, } from '@angular/core';
 
 import { Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { forEach } from 'lodash';
 import {
     ColumnType,
@@ -11,7 +11,7 @@ import {
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as moment from 'moment';
 import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';

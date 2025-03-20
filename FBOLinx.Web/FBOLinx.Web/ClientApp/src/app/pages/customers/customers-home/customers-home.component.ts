@@ -13,7 +13,7 @@ import { customerGridSet } from '../../../store/actions';
 import { State } from '../../../store/reducers';
 import { CustomerGridState } from '../../../store/reducers/customer';
 import { getCustomerGridState } from '../../../store/selectors';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { AircraftsGridComponent } from '../../aircrafts/aircrafts-grid/aircrafts-grid.component';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';

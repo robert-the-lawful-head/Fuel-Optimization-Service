@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { User } from '../../models/user';
 import { localStorageAccessConstant } from '../../constants/LocalStorageAccessConstant';
 import { Router } from '@angular/router';
-
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     public currentUser: Observable<User>;

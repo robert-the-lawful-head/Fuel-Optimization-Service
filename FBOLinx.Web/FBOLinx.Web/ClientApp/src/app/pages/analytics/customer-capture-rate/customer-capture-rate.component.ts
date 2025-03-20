@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
 import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
 import { ReportFilterItems } from '../analytics-report-popup/report-filters/report-filters.component';
@@ -8,7 +8,7 @@ import { ColumnType } from 'src/app/shared/components/table-settings/table-setti
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { CustomerCaptureRateReport } from 'src/app/models/customer-capture-rate-report';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { Subscription } from 'rxjs';
