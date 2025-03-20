@@ -74,7 +74,7 @@ namespace FBOLinx.Web.Controllers
         public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndPricingTemplate([FromRoute] int fboId, [FromRoute] int pricingTemplateId)
         {
             var fboFeesAndTaxes = await (from f in _context.FbofeesAndTaxes where f.Fboid == fboId select f)
-                .Include(x => x.OmitsByPricingTemplate)
+                .Include(x => x.OmitsByPricingTemplate.Where(y => y.PricingTemplateId == pricingTemplateId))
                 .ToListAsync();
 
             var template = await (from t in _context.PricingTemplate where t.Oid == pricingTemplateId select t).FirstOrDefaultAsync();
