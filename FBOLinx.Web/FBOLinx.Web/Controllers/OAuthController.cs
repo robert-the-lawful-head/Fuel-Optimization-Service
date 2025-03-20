@@ -71,7 +71,12 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var response = await _oAuthService.GenerateAuthToken(request.AccessToken);
+
+            var response = new AuthTokenResponse();
+            if (request.AccessToken.Length < 50)
+                response = await _oAuthService.GenerateAuthToken(request.AccessToken);
+            else
+                response = _oAuthService.CheckAuthToken(request.AccessToken);
             return Ok(response);
         }
 
