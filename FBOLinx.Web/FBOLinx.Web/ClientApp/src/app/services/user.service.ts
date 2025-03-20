@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { User } from '../models/user';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -13,7 +15,7 @@ export class UserService {
         this.accessPointUrl = baseUrl + 'api/users';
     }
 
-    getCurrentUser() {
+    getCurrentUser(): Observable<any> {
         return this.http.get(this.accessPointUrl + '/current', {
             headers: this.headers,
         });

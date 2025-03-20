@@ -1,12 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Router } from '@angular/router';
-import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import {
-    accountTypeChangedEvent,
-    fboChangedEvent,
-} from 'src/app/constants/sharedEvents';
-import { UserRole } from 'src/app/enums/user-role';
+import { lastValueFrom } from 'rxjs';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { GroupsService } from 'src/app/services/groups.service';
 import { ManageConfirmationComponent } from 'src/app/shared/components/manage-confirmation/manage-confirmation.component';
@@ -44,9 +39,15 @@ export class GroupFbosGridComponent implements OnInit {
         private manageDialog: MatDialog,
         private groupsService: GroupsService,
         private router: Router,
+
     ) {}
 
-    ngOnInit() {}
+    ngOnInit()
+    {
+        
+        
+    }
+
     editFBO(fbo: any) {
         this.router.navigate(['/default-layout/fbos/' + fbo.oid]);
     }
@@ -83,61 +84,32 @@ export class GroupFbosGridComponent implements OnInit {
                     this.searchValue
                 );
 
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.managerGroupId,
-                    this.sharedService.currentUser.groupId
-                );
+                const isSingleSourceFboResponse = this.groupsService.isGroupFboSingleSource(fbo.icao);
+                var isSingleSourceFbo = await lastValueFrom(isSingleSourceFboResponse);
 
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.groupId,
-                    fbo.groupId
-                );
+                var hostName = window.location.hostname;
+                var href = window.location.href;
 
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.impersonatedrole,
-                    UserRole.Primary
-                );
+                if (hostName === 'support.fbolinx.com') {
+                    href = href.replace(hostName, "www.fbolinx.com");
+                }
+                else if (hostName === 'support-qa-app.fbolinx.com') {
+                    href = href.replace(hostName, "qa-app.fbolinx.com");
+                }
+                //else if (hostName === 'st-support.fbolinx.com') {
+                //    href = href.replace(hostName, "st-app.fbolinx.com");
+                //}
 
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.conductorFbo,
-                    true
-                );
+                href = href.replace(window.location.pathname, "/outside-the-gate-layout/auth?token=" + this.sharedService.currentUser.authToken);
 
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.fboId,
-                    fbo.oid
-                );
+                const newUrl = href + "&groupId=" + fbo.groupId + "&fboId=" + fbo.oid + "&accountType=" + fbo.accountType + "&icao=" + fbo.icao + "&isSingleSourceFbo=" + isSingleSourceFbo + "&isNetworkFbo=" + this.isNetworkFbo;
 
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.icao,
-                    fbo.icao
-                );
-
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.accountType,
-                    fbo.accountType
-                );
-
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.isNetworkFbo,
-                    this.isNetworkFbo
-                );
-
-                var isSingleSourceFbo = await this.groupsService
-                    .isGroupFboSingleSource(fbo.icao)
-                    .toPromise();
-
-                this.sharedService.setCurrentUserPropertyValue(
-                    localStorageAccessConstant.isSingleSourceFbo,
-                    isSingleSourceFbo
-                );
-
-                this.sharedService.emitChange(fboChangedEvent);
-                this.sharedService.emitChange(accountTypeChangedEvent);
-
-                this.router.navigate([
-                    '/default-layout/dashboard-fbo-updated/',
-                ]);
+                if (window.location.href !== newUrl) {
+                    this.router.navigate([]).then(result => {
+                        window.open(newUrl, '_blank');
+                    });
+                }
+                //this.router.navigate([]).then(result => { window.open(window.location.href + "?conductor=1&groupId=" + fbo.groupId + "&fboiId=" + fbo.oid + "&accountType=" + fbo.accountType + "&icao=" + fbo.icao + "&isSingleSourceFbo=" + isSingleSourceFbo, '_blank'); });
             });
         }
     }
