@@ -300,6 +300,7 @@ namespace FBOLinx.Web.Controllers
 
                 user.ResetPasswordToken = token;
                 user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
+                _context.Update(user);
                 await _context.SaveChangesAsync();
 
                 await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, HttpUtility.UrlEncode(token));
