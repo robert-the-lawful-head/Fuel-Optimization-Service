@@ -613,7 +613,7 @@ namespace FBOLinx.Web.Controllers
                         Group = p.Group,
                         Product = p.Product,
                         MinVolume = (p.MinGallons ?? 0),
-                        Notes = HttpUtility.HtmlDecode(p.Notes),
+                        Notes = FBOLinx.Core.Utilities.HTML.UseRegularExpression(p.Notes),
                         Default = string.IsNullOrEmpty(p.TailNumbers),
                         Price = (p.AllInPrice ?? 0),
                         TailNumberList = p.TailNumbers,
