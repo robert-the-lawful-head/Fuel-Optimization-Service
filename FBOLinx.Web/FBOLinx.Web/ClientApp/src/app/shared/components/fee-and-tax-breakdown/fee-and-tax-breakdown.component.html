@@ -1,11 +1,13 @@
-<div style="width: 100%">
+<div>
     <!--START DISPLAY MODES 0 and 1 - Standard calculations with name on left and cost on right-->
     <div *ngIf="isPriceTaxBreakdown || isCustomerOmitting" class="container-fluid">
         <div class="row font-weight-bold mb-3 pb-1">
-            <div class="col">
+            <div class="col-1">
                 <div *ngIf="isCustomerOmitting" class="d-inline-block">
                     <div class="ml-n2">Omit</div>
                 </div>
+            </div>
+            <div class="col">
                 <div *ngIf="isCustomerOmitting" class="d-inline-block ml-4 pl-1">
                     Name
                 </div>
