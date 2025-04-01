@@ -403,7 +403,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var customerVisitsData = new List<AirportWatchHistoricalDataResponse>();
 
             customerVisitsData = historicalData
-               .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO, ah.AircraftHexCode, ah.AtcFlightNumber })
+               .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO, ah.AircraftHexCode, ah.TailNumber })
                .Select(g =>
                {
                var latest = g
@@ -459,10 +459,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                                     join landing in landingEvents on new
                                                     {
                                                         parkingEvent.AirportICAO,
-                                                        parkingEvent.AtcFlightNumber,
+                                                        parkingEvent.TailNumber,
                                                         parkingEvent.AircraftHexCode
                                                     } equals
-                                                        new { landing.AirportICAO, landing.AtcFlightNumber, landing.AircraftHexCode }
+                                                        new { landing.AirportICAO, landing.TailNumber, landing.AircraftHexCode }
                                                     where parkingEvent.AircraftPositionDateTimeUtc > landing.AircraftPositionDateTimeUtc &&
                                                           Math.Abs((parkingEvent.AircraftPositionDateTimeUtc - landing.AircraftPositionDateTimeUtc)
                                                               .TotalMinutes) <= 60
@@ -483,7 +483,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
 
             var result = (from h in historicalData
-                          join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
+                          join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.TailNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, TailNumber = cv.TailNumber }
                           into leftJoinedCV
                           from cv in leftJoinedCV.DefaultIfEmpty()
                           join parkingAndLandingAssociation in parkingAndLandingAssociationList on h.AirportWatchHistoricalDataID equals parkingAndLandingAssociation.LandingId
