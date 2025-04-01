@@ -109,11 +109,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
 
     public ngOnInit(): void {
         this.loadPricingTemplates();
-        if (!this.data) {
-            this.loadFeesAndTaxes();
-        } else {
+        if (this.data) 
             this.prepareDataSource();
-        }
     }
 
     public saveChanges(): void {
@@ -142,6 +139,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     }
 
     public feeAndTaxChanged(feeAndTax, avoidRecalculation = false): void {
+        feeAndTax.isOmitted = feeAndTax.whenToApply === FeeCalculationApplyingTypes.PostMargin;
+
         feeAndTax.requiresUpdate = true;
         this.requiresSaving = true;
         if (!avoidRecalculation) {
@@ -176,14 +175,18 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
         this.requiresSaving = true;
     }
 
-    public sampleCalculationChanged(): void {
+    public async sampleCalculationChanged(): Promise<void> {
         if (this.priceBreakdownPreview) {
             // Use a timeout here as the child component won't know of the template change until after the cycle
             const self = this;
             setTimeout(() => {
                 self.priceBreakdownPreview.performRecalculation();
-            });
-        }
+            });        }
+    }
+
+    public async onItpTemplateChange(): Promise<void> {
+        await this.loadFeesAndTaxes(this.sampleCalculation.pricingTemplateId);
+        this.sampleCalculationChanged();
     }
 
     public feeValueChanged(feeAndTax, value) {
@@ -225,13 +228,15 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     }
 
     // Private Methods
-    private loadFeesAndTaxes(): void {
-        this.feesAndTaxesService
-            .getByFbo(this.sharedService.currentUser.fboId)
-            .subscribe((response: any) => {
-                this.data = response;
-                this.prepareDataSource();
-            });
+    private async loadFeesAndTaxes(templateId): Promise<void> {
+        var response = await this.feesAndTaxesService
+            .getByFboAndPricingTemplate(this.sharedService.currentUser.fboId,templateId).toPromise()
+
+        this.data = response.map((item: any) => ({
+            ...item,
+            requiresUpdate: false
+        })) as Array<FeeAndTaxDialogData>;
+        this.prepareDataSource();
     }
 
     private saveFeeAndTax(feeAndTax): void {
@@ -281,6 +286,7 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
                     this.sampleCalculation.pricingTemplateId =
                         this.pricingTemplates[0].oid;
                 }
+                this.loadFeesAndTaxes(this.sampleCalculation.pricingTemplateId);
             });
     }
 }

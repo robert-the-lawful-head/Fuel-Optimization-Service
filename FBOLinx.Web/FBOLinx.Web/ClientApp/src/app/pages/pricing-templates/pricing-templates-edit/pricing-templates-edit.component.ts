@@ -32,13 +32,20 @@ import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-templat
 import { ToolbarSettingsModel } from '@syncfusion/ej2-angular-dropdowns';
 import { DecimalPrecisionPipe } from 'src/app/shared/pipes/decimal/decimal-precision.pipe';
 import { StringHelperService } from 'src/app/helpers/strings/stringHelper.service';
+import { MarginType } from 'src/app/enums/margin-type.enum';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
     fboid: number;
     isDeleting: boolean;
 }
-
+export interface FboFeeAndTaxOmitsByPricingTemplate
+{
+    oid: number;
+    fboFeeAndTaxId: number;
+    pricingTemplateId: number ;
+    isOmitted: boolean | null;
+}
 @Component({
     selector: 'app-pricing-templates-edit',
     styleUrls: ['./pricing-templates-edit.component.scss'],
@@ -174,7 +181,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 this.jetACost = jetACostRecords[0].price;
             }
             if (jetARetailRecords && jetARetailRecords.length > 0) {
-                console.log(jetACostRecords);
                 this.jetARetail = jetARetailRecords[0].price;
 
             }
@@ -539,34 +545,49 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
         this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
     }
-    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
-        if (!feeAndTax.omitsByPricingTemplate) {
-            feeAndTax.omitsByPricingTemplate = [];
+
+    async omitFeeAndTaxCheckChanged(feeAndTax: any): Promise<void> {
+        feeAndTax.omitsByPricingTemplate = feeAndTax.omitsByPricingTemplate ?? [];
+
+        let omitRecord: FboFeeAndTaxOmitsByPricingTemplate = feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid);
+
+        if(this.pricingTemplate.marginType == MarginType.RetailMinus){
+            if(omitRecord){
+                omitRecord.isOmitted = feeAndTax.isOmitted;
+                await this.fboFeeAndTaxOmitsbyPricingTemplateService.update(omitRecord).toPromise();
+            }else{
+                omitRecord = {
+                    fboFeeAndTaxId: feeAndTax.oid,
+                    oid: 0,
+                    pricingTemplateId: this.id,
+                    isOmitted: feeAndTax.isOmitted,
+                };    
+                await this.fboFeeAndTaxOmitsbyPricingTemplateService.add(omitRecord).toPromise();
+            }
+            this.recalculatePriceBreakdown();
+            return;
         }
-        let omitRecord: any = {
-            fboFeeAndTaxId: feeAndTax.oid,
-            oid: 0,
-            pricingTemplateId: this.id,
-        };
-        if (feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid) != undefined) {
-            omitRecord = feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid);
-        } else {
-            feeAndTax.omitsByPricingTemplate.push(omitRecord);
-        }
-        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        
         if (feeAndTax.isOmitted) {
-            omitRecord.oid = 0;
+            omitRecord = {
+                fboFeeAndTaxId: feeAndTax.oid,
+                oid: 0,
+                pricingTemplateId: this.id,
+                isOmitted: feeAndTax.isOmitted,
+            };    
+
             this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;
+                    feeAndTax.omitsByPricingTemplate.push(omitRecord);
                     this.recalculatePriceBreakdown();
                 });
-        } else {
+        }else {
             this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .remove(omitRecord)
                 .subscribe(() => {
-                    feeAndTax.omitsByPricingTemplate = [];
+                    feeAndTax.omitsByPricingTemplate.splice(feeAndTax.omitsByPricingTemplate.indexOf(omitRecord), 1);
                     this.recalculatePriceBreakdown();
                 });
         }
@@ -684,9 +705,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                     if (margins[i].allin) {
                         margins[i].itp = margins[i].allin - this.jetACost;
                     }
-
-                    console.log(i + "   " + margins[i].itp + '   ' + this.jetARetail)
-
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {

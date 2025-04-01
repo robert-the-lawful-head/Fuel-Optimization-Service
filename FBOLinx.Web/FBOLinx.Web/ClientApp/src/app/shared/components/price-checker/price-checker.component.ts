@@ -390,7 +390,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.fboFeesAndTaxesService
             .getByFboAndCustomer(
                 this.sharedService.currentUser.fboId,
-                customerId
+                customerId,
+                this.pricingTemplateId
             )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;

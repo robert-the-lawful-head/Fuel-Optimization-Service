@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web;
-using FBOLinx.Web.Data;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.Logging;
 
@@ -57,17 +53,19 @@ namespace FBOLinx.Web.Controllers
 
         // GET api/<controller>/fbo/5
         [HttpGet("fbo/{fboId}/customer/{customerId}")]
-        public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndCustomer([FromRoute] int fboId, [FromRoute] int customerId)
+        public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndCustomer([FromRoute] int fboId, [FromRoute] int customerId, [FromQuery] int pricingTemplateId)
         {
+            var pricingTemplate = await _context.PricingTemplate.Where(t => t.Oid == pricingTemplateId).FirstOrDefaultAsync();
+            var isRetailMinus = pricingTemplate?.MarginType == Core.Enums.MarginTypes.RetailMinus;
+
             var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId)
                 .Include(x => x.OmitsByCustomer)
                 .Include(x => x.OmitsByPricingTemplate)
                 .ToListAsync();
+
             result.ForEach(x =>
             {
-                x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerId));
-                if (x.IsOmitted)
-                    x.OmittedFor = "C";
+                x.SetIsomittedForCustomer(customerId, isRetailMinus);
             });
             return Ok(result);
         }
@@ -75,16 +73,17 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}/pricing-template/{pricingTemplateId}")]
         public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndPricingTemplate([FromRoute] int fboId, [FromRoute] int pricingTemplateId)
         {
-            var fboFeesAndTaxes = await (from f in _context.FbofeesAndTaxes where f.Fboid == fboId select f).ToListAsync();
+            var fboFeesAndTaxes = await (from f in _context.FbofeesAndTaxes where f.Fboid == fboId select f)
+                .Include(x => x.OmitsByPricingTemplate.Where(y => y.PricingTemplateId == pricingTemplateId))
+                .ToListAsync();
 
-            var fboFeeAndTaxOmitsByPricingTemplate = await (from ot in _context.FboFeeAndTaxOmitsByPricingTemplate where ot.PricingTemplateId == pricingTemplateId select ot).ToListAsync();
+            var template = await (from t in _context.PricingTemplate where t.Oid == pricingTemplateId select t).FirstOrDefaultAsync();
+
+            var isRetailMinus = template.MarginType == Core.Enums.MarginTypes.RetailMinus;
 
             fboFeesAndTaxes.ForEach(x =>
             {
-                x.OmitsByPricingTemplate = fboFeeAndTaxOmitsByPricingTemplate;
-                x.IsOmitted = fboFeeAndTaxOmitsByPricingTemplate.Any(o => o.FboFeeAndTaxId == x.Oid);
-                if (x.IsOmitted)
-                    x.OmittedFor = "P";
+                x.SetIsOmittedForPricing(pricingTemplateId,isRetailMinus);
             });
             return Ok(fboFeesAndTaxes); 
         }

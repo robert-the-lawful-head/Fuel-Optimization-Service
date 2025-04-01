@@ -17,18 +17,13 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import {
-    FeeAndTaxBreakdownComponent,
-    FeeAndTaxBreakdownDisplayModes,
+    FeeAndTaxBreakdownComponent
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { FeeAndTaxBreakDown, FeeAndTaxBreakdownDialogWrapperComponent } from './fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
+import { FeeAndTaxBreakdownDisplayModes, PriceBreakdownDisplayTypes } from 'src/app/enums/price.enum';
 
-export enum PriceBreakdownDisplayTypes {
-    SingleColumnAllFlights = 0,
-    TwoColumnsDomesticInternationalOnly = 1,
-    TwoColumnsApplicableFlightTypesOnly = 2,
-    FourColumnsAllRules = 3,
-}
+
 
 @Component({
     selector: 'price-breakdown',
@@ -187,7 +182,6 @@ export class PriceBreakdownComponent implements OnInit {
         this.feesAndTaxesService
             .getByFbo(this.sharedService.currentUser.fboId)
             .subscribe((response: any) => {
-
                 this.feesAndTaxes = response;
                 this.groupFeesAndTaxes();
                 this.determineDisplayType();
@@ -279,8 +273,6 @@ export class PriceBreakdownComponent implements OnInit {
             this.domesticCommercialPricing = responseList[2];
             this.domesticPrivatePricing = responseList[3];
             const customerInfoByGroup = responseList[4];
-
-            console.log()
 
             //If no result was returned for the customer then this wasn't a customer-level price check so mark it as active.
             //Otherwise check the actual active flag of the customer.
