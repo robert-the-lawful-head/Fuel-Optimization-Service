@@ -592,9 +592,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             OrderDetailsDto orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelerlinxTransactionId, handlerId));
 
             var canSendEmail = false;
-            if (fbo == null || (orderDetails != null && !orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.OrderNotificationsEnabled.HasValue && fbo.Preferences.OrderNotificationsEnabled.Value) || (fbo.Preferences.OrderNotificationsEnabled == null))))
+            if (orderDetails != null && !orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.OrderNotificationsEnabled.HasValue && fbo.Preferences.OrderNotificationsEnabled.Value) || (fbo.Preferences.OrderNotificationsEnabled == null)))
                 canSendEmail = true;
-            else if (fbo == null || (orderDetails != null && orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null))))
+            else if (orderDetails != null && orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null)))
                 canSendEmail = true;
 
             // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
@@ -869,14 +869,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var orderDetails = orderDetailsList.Where(o => o.FboHandlerId == fuelerlinxTransaction.FboHandlerId).FirstOrDefault();
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
 
+            if (fbo == null)
+                return;
+
             if (orderDetails == null && fbo != null && fbo.Oid > 0)
             {
                 if (fuelerlinxTransaction.FuelEstWeight == null || fuelerlinxTransaction.FuelEstWeight == 0)
                     return;
                 else
                 {
-                    // ADD A WAY TO CREATE FBO IF NOT IN SYSTEM? On hold until we come across any scenarios that'd require us to do so
-
                     try
                     {
                         orderDetails = new OrderDetailsDto();
@@ -948,12 +949,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         }
 
                         serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
+
+                        ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                        fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+                        fuelServiceOrderItem.ServiceName = "Fuel: " + fuelerlinxTransaction.FuelEstWeight + " gal" + (fuelerlinxTransaction.FuelEstWeight > 1 ? "s" : "");
+                        fuelServiceOrderItem.IsCompleted = false;
+                        await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
                     }
                 }
             }
-
-            if (fbo == null)
-                return;
 
             var fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
             var sendEmail = false;
