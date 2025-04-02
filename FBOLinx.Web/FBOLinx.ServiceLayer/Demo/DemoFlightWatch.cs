@@ -47,7 +47,7 @@ namespace FBOLinx.ServiceLayer.Demo
                         CustomerId = demoData.FuelOrder.CustomerId,
                         Icao = demoData.FuelOrder.Icao,
                         Fboid = demoData.FuelOrder.Fboid,
-                        CustomerAircraftId = demoData.FuelOrder.CustomerAircraftId,
+                        CustomerAircraftID = demoData.FuelOrder.CustomerAircraftID,
                         TimeStandard = demoData.FuelOrder.TimeStandard,
                         QuotedVolume = demoData.FuelOrder.QuotedVolume,
                         CustomerAircraft = new CustomerAircraftsDto() { TailNumber = demoData.FuelOrder.CustomerAircraft.TailNumber },

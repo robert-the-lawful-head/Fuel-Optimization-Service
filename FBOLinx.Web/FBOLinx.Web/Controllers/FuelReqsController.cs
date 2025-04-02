@@ -778,7 +778,7 @@ namespace FBOLinx.Web.Controllers
                                                                 ? ca.Size
                                                                 : (Core.Enums.AircraftSizes)ac.Size),
                                                                Oid = ca.Oid
-                                                           }) on (f.CustomerAircraftId ?? 0) equals ca.Oid
+                                                           }) on (f.CustomerAircraftID ?? 0) equals ca.Oid
                                                       where f.Fboid == fboId
                                                             && (f.Cancelled == null || f.Cancelled == false) 
                                                             && f.DateCreated >= request.StartDateTime
@@ -1619,6 +1619,7 @@ namespace FBOLinx.Web.Controllers
                         var fuelReq = await fuelReqService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(request.SourceId.GetValueOrDefault(), fbo.Oid));
                         if (request.FuelEstWeight > 0)
                         {
+                            var tailNumber = request.TailNumber.Trim().Replace("-", "").Replace(" ", "");
                             var fuelReqsPt =
                                                     await (from c in context.Customers
                                                            join cg in context.CustomerInfoByGroup on
@@ -1628,13 +1629,13 @@ namespace FBOLinx.Web.Controllers
                                                            join cct in context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                                                            join pt in context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
                                                            join f in context.Fbos on
-                                                                                     new { GroupId = cg.GroupId, FboId = fboId, Active = true }
+                                                                                     new { cg.GroupId, FboId = fboId, Active = true }
                                                                                      equals
-                                                                                     new { GroupId = f.GroupId, FboId = f.Oid, Active = f.Active ?? false }
+                                                                                     new { f.GroupId, FboId = f.Oid, Active = f.Active ?? false }
                                                            join ca in context.CustomerAircrafts on
-                                                       new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
+                                                       new { TailNumber = tailNumber, CustomerId = c.Oid, cg.GroupId }
                                                        equals
-                                                       new { ca.TailNumber, ca.CustomerId, GroupId = ca.GroupId }
+                                                       new { ca.TailNumber, ca.CustomerId, ca.GroupId }
                                                            select new
                                                            {
                                                                Fboid = fboId,
@@ -1667,7 +1668,7 @@ namespace FBOLinx.Web.Controllers
                                 fuelReq = fuelReqsPt.Select(fr => new FuelReqDto
                                 {
                                     Fboid = fr.Fboid,
-                                    CustomerAircraftId = fr.CustomerAircraftId,
+                                    CustomerAircraftID = fr.CustomerAircraftId,
                                     Eta = fr.Eta,
                                     Etd = fr.Etd,
                                     Icao = fr.Icao,

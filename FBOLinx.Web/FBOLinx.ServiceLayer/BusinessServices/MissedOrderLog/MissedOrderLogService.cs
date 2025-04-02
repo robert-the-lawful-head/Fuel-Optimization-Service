@@ -82,7 +82,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
             var groupedAllFboLinxTransactions = allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
             {
                 CustomerId = g.Key,
-                MissedQuoteCount = g.Count(f => f.CustomerAircraftId > 0)
+                MissedQuoteCount = g.Count(f => f.CustomerAircraftID > 0)
             }).ToList();
 
             foreach (var transaction in allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).OrderByDescending(f => f.DateCreated))
@@ -102,7 +102,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.Volume = transaction.QuotedVolume.GetValueOrDefault();
-                    missedQuotesLogViewModel.TailNumber = await _CustomerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftId.GetValueOrDefault());
+                    missedQuotesLogViewModel.TailNumber = await _CustomerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftID.GetValueOrDefault());
                     var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.CustomerId == customer.CustomerId && c.TailNumber != null && c.TailNumber.Replace("-", string.Empty).ToString() == missedQuotesLogViewModel?.TailNumber?.Replace("-", string.Empty)).FirstOrDefault();
                     missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate?.PricingTemplateName;
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
