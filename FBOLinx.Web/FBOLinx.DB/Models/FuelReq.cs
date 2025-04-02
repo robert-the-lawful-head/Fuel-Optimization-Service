@@ -9,7 +9,7 @@ namespace FBOLinx.DB.Models
         public int? CustomerId { get; set; }
         public string Icao { get; set; }
         public int? Fboid { get; set; }
-        public int? CustomerAircraftId { get; set; }
+        public int? CustomerAircraftID { get; set; }
         public DateTime? Eta { get; set; }
         public DateTime? Etd { get; set; }
         public string TimeStandard { get; set; }

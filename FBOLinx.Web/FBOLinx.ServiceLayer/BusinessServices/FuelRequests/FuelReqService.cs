@@ -461,7 +461,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 fuelRequest.Fboid = fboId;
                 fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.").Replace("Manual Price", "Flight Dept.");
                 fuelRequest.CustomerId = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault().CustomerId;
-                fuelRequest.CustomerAircraftId = customerAircrafts.Where(c => c.TailNumber == fuelRequest.TailNumber && c.CustomerId==fuelRequest.CustomerId).FirstOrDefault().Oid;
+                fuelRequest.CustomerAircraftID = customerAircrafts.Where(c => c.TailNumber == fuelRequest.TailNumber && c.CustomerId==fuelRequest.CustomerId).FirstOrDefault().Oid;
                 result = fuelRequest;
             }
 
@@ -629,7 +629,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransactionId, fbo.Oid));
                     if (fuelReq != null)
                     {
-                        customerAircraftId = fuelReq.CustomerAircraftId.GetValueOrDefault();
+                        customerAircraftId = fuelReq.CustomerAircraftID.GetValueOrDefault();
                         arrivalDateTime = fuelReq.Eta.ToString() + " " + (fuelReq.TimeStandard == "L" ? "(Local)" : "(Zulu)");
                         departureDateTime = fuelReq.Etd.ToString() + " " + (fuelReq.TimeStandard == "L" ? "(Local)" : "(Zulu)");
                         quotedVolume = fuelReq.QuotedVolume.GetValueOrDefault();
@@ -835,7 +835,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
         public async Task<FuelReqDto> CreateFuelOrder(FuelReqDto request)
         {
-            var customerAircraft = await _customerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(request.CustomerAircraftId.GetValueOrDefault()));
+            var customerAircraft = await _customerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(request.CustomerAircraftID.GetValueOrDefault()));
             var fbo = await _fboService.GetFbo(request.Fboid.GetValueOrDefault());
             var icao = fbo.FboAirport.Icao;
 
@@ -1137,7 +1137,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     fuelReq.Oid = 0;
                     fuelReq.Cancelled = false;
                     fuelReq.Fboid = fbo.Oid;
-                    fuelReq.CustomerAircraftId = customerAircraft.Oid;
+                    fuelReq.CustomerAircraftID = customerAircraft.Oid;
                     await AddAsync(fuelReq);
                 }
 
