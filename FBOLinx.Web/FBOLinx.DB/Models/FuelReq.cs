@@ -36,7 +36,7 @@ namespace FBOLinx.DB.Models
         [InverseProperty("FuelReqs")]
         public Customers Customer { get; set; }
 
-        [ForeignKey("CustomerAircraftId")]
+        [ForeignKey("CustomerAircraftID")]
         [InverseProperty("FuelReqs")]
         public CustomerAircrafts CustomerAircraft { get; set; }
 
