@@ -64,6 +64,21 @@ namespace FBOLinx.Web.Services
             return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(_securitySettings.TokenExpirationInMinutes), refreshToken.Token, refreshToken.Expired, token.User.Username, token.User.FboId, group.GroupName, token.User.GroupId.Value, token.User.Role, fbo.FboAirport.Icao, fbo.Fbo);
         }
 
+        public AuthTokenResponse CheckAuthToken(string authToken)
+        {
+            var claimsPrincipal = _jwtManager.GetPrincipal(authToken);
+            if (claimsPrincipal == null)
+            {
+                return new AuthTokenResponse(false, "Invalid access token.  Please re-authenticate the user.");
+            }
+
+            var role = Convert.ToInt32(claimsPrincipal.Claims.First(c => c.Type == ClaimTypes.Role).Value);
+            if (role != 3)
+                return new AuthTokenResponse(false, "Invalid access token.  Please re-authenticate the user.");
+
+            return new AuthTokenResponse((Core.Enums.UserRoles) role, authToken);
+        }
+
         public async Task<ExchangeRefreshTokenResponse> ExchangeRefreshToken(ExchangeRefreshTokenRequest request)
         {
             var claimsPrincipal = _jwtManager.GetPrincipal(request.AuthToken);

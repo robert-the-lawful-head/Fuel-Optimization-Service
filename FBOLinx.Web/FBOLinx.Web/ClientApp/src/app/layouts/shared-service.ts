@@ -6,6 +6,8 @@ import { User } from '../models/user';
 import { AuthenticationService } from '../services/security/authentication.service';
 import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
 import { UserRole } from '../enums/user-role';
+import { Router } from '@angular/router';
+import { accountTypeChangedEvent, fboChangedEvent } from '../constants/sharedEvents';
 
 export interface ActiveUser {
     fboId: number;
@@ -39,7 +41,7 @@ export class SharedService {
     changeEmitted$ = this.emitChangeSource.asObservable();
     valueChanged$ = this.valueChangeSource.asObservable();
 
-    constructor(private authenticationService: AuthenticationService) {
+    constructor(private authenticationService: AuthenticationService, private router: Router,) {
         this.authenticationService.currentUser.subscribe(
             (x) => (this.currentUser = x)
         );
@@ -164,5 +166,70 @@ export class SharedService {
     }
     getCurrentUserPropertyValue(property: string): string{
         return (this.currentUser[property]) ? this.currentUser[property] : localStorage.getItem(property);
+    }
+
+    setLocalStorageForImpersonation(groupId, fboId, accountType, icao, isSingleSourceFbo, isNetworkFbo) {
+
+        localStorage.removeItem(localStorageAccessConstant.managerGroupId);
+        localStorage.removeItem(localStorageAccessConstant.groupId);
+        localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
+        localStorage.removeItem(localStorageAccessConstant.conductorFbo);
+        localStorage.removeItem(localStorageAccessConstant.fboId);
+        localStorage.removeItem(localStorageAccessConstant.icao);
+        localStorage.removeItem(localStorageAccessConstant.accountType);
+        localStorage.removeItem(localStorageAccessConstant.isNetworkFbo);
+        localStorage.removeItem(localStorageAccessConstant.isSingleSourceFbo);
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.managerGroupId,
+            this.currentUser.groupId
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.groupId,
+            groupId
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.impersonatedrole,
+            UserRole.Primary
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.conductorFbo,
+            true
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.fboId,
+            fboId
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.icao,
+            icao
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.accountType,
+            accountType
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.isNetworkFbo,
+            isNetworkFbo
+        );
+
+        this.setCurrentUserPropertyValue(
+            localStorageAccessConstant.isSingleSourceFbo,
+            isSingleSourceFbo
+        );
+
+        this.emitChange(fboChangedEvent);
+        this.emitChange(accountTypeChangedEvent);
+
+        this.router.navigate([
+            '/default-layout/dashboard-fbo-updated/',
+        ]);
     }
 }

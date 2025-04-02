@@ -42,8 +42,6 @@ namespace FBOLinx.DB.Models
         [InverseProperty("Users")]
         public Group Group { get; set; }
 
-        public ICollection<AccessTokens> AccessTokens { get; set; }
-        
         public virtual RefreshTokens RefreshToken { get; set; }
 
         public string RoleDescription

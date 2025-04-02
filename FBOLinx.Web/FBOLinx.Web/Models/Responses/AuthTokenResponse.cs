@@ -51,5 +51,11 @@ namespace FBOLinx.Web.Models.Responses
             Icao = icao;
             Fbo = fbo;
         }
+        public AuthTokenResponse(UserRoles role, string authToken)
+        {
+            Success = true;
+            Role = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(role);
+            AuthToken = authToken;
+        }
     }
 }

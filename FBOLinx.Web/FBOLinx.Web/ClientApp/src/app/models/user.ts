@@ -20,4 +20,5 @@ export class User {
     decimalPrecision: number;
     remember: boolean;
     integrationStatus: boolean;
+    authToken?: string;
 }

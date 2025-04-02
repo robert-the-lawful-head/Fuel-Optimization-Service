@@ -25,6 +25,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications;
+using System.Collections.Generic;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -63,20 +64,25 @@ namespace FBOLinx.Web.Controllers
             _IntegrationPartners = integrationPartners;
         }
 
+        [AllowAnonymous]
         [HttpGet("prepare-token-auth")]
-        public async Task<IActionResult> PrepareTokenAuthentication()
+        public async Task<IActionResult> PrepareTokenAuthentication([FromQuery] string token)
         {
-            var user = await _userBusinessService.GetSingleBySpec(new UserByOidSpecification(JwtManager.GetClaimedUserId(_httpContextAccessor)));
-            var fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
-            user.Fbo.Cast(fbo); 
+            SetHttpOnlyCookie(_securitySettings.TokenKey, token, _securitySettings.TokenExpirationInMinutes);
 
-            return Ok(user);
+            //var user = await _userBusinessService.GetSingleBySpec(new UserByOidSpecification(JwtManager.GetClaimedUserId(_httpContextAccessor)));
+            //var fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
+            //user.Fbo.Cast(fbo); 
+
+            return Ok();
         }
 
         [HttpGet("current")]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
-            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
+            var user = await _userBusinessService.GetSingleBySpec(new UserByOidSpecification(JwtManager.GetClaimedUserId(_httpContextAccessor)));
+            var fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
+            user.Fbo=fbo.Adapt<FbosDto>();
 
             return Ok(user);
         }
@@ -106,6 +112,9 @@ namespace FBOLinx.Web.Controllers
 
             var userDto = user.Adapt<UserDTO>();
             userDto.Remember = userParam.Remember;
+
+            if (userDto.Role == UserRoles.Conductor)
+                userDto.AuthToken = user.Token;
 
             return Ok(userDto);
         }
@@ -291,6 +300,7 @@ namespace FBOLinx.Web.Controllers
 
                 user.ResetPasswordToken = token;
                 user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
+                _context.Update(user);
                 await _context.SaveChangesAsync();
 
                 await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, HttpUtility.UrlEncode(token));

@@ -34,7 +34,7 @@ import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-
 import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
-import { accountStatusType, AccountType, userAccountType, UserRole } from 'src/app/enums/user-role';
+import { accountStatusType, userAccountType, UserRole } from 'src/app/enums/user-role';
 import { GroupFboViewModel } from 'src/app/models/groups';
 import {
     animate,
@@ -47,7 +47,7 @@ import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material/table';
 import { GridBase } from 'src/app/services/tables/GridBase';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { GroupFbosGridComponent } from '../group-fbos-grid/group-fbos-grid.component';
 
 const initialColumns: ColumnType[] = [

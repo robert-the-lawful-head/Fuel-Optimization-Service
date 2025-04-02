@@ -970,10 +970,6 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.Expired).HasColumnType("datetime");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.HasOne(e => e.User)
-                    .WithMany(u => u.AccessTokens)
-                    .HasForeignKey(e => e.UserId);
             });
 
             modelBuilder.Entity<FboFeesAndTaxes>(entity =>
