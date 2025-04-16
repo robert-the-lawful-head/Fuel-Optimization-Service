@@ -747,7 +747,7 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.ActualPpg).HasColumnName("ActualPPG");
 
-                entity.Property(e => e.CustomerAircraftId).HasColumnName("CustomerAircraftID");
+                //entity.Property(e => e.CustomerAircraftId).HasColumnName("CustomerAircraftID");
 
                 entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 

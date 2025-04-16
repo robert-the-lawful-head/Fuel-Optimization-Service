@@ -19,6 +19,7 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.ServiceLayer.Dto.Responses;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
@@ -419,6 +420,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
                 //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
                 //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                var isRetailMinus = false;
                 resultsWithFees.ForEach(x =>
                 {
                     x.FeesAndTaxes.ForEach(fee =>
@@ -427,15 +429,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fee.OmitsByPricingTemplate.Any(o =>
                                 o.PricingTemplateId == x.PricingTemplateId))
                         {
-                            fee.IsOmitted = true;
-                            fee.OmittedFor = "P";
+                            isRetailMinus = customerPricingResults.Where(z => z.PricingTemplateId == x.PricingTemplateId).FirstOrDefault().MarginType == MarginTypes.RetailMinus;
+                            fee.SetIsOmittedForPricing((int)x.PricingTemplateId,isRetailMinus);
                         }
 
                         if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
                             o.CustomerId == customerInfoByGroup.CustomerId)))
                         {
-                            fee.IsOmitted = true;
-                            fee.OmittedFor = "C";
+                            isRetailMinus = customerPricingResults.Where(x => x.CustomerId == x.CustomerId).FirstOrDefault().MarginType == MarginTypes.RetailMinus;
+                            fee.SetIsomittedForCustomer(customerInfoByGroup.CustomerId, isRetailMinus);
                         }
                     });
                     

@@ -461,7 +461,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 fuelRequest.Fboid = fboId;
                 fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.").Replace("Manual Price", "Flight Dept.");
                 fuelRequest.CustomerId = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault().CustomerId;
-                fuelRequest.CustomerAircraftId = customerAircrafts.Where(c => c.TailNumber == fuelRequest.TailNumber && c.CustomerId==fuelRequest.CustomerId).FirstOrDefault().Oid;
+                fuelRequest.CustomerAircraftID = customerAircrafts.Where(c => c.TailNumber == fuelRequest.TailNumber && c.CustomerId==fuelRequest.CustomerId).FirstOrDefault().Oid;
                 result = fuelRequest;
             }
 
@@ -592,9 +592,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             OrderDetailsDto orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelerlinxTransactionId, handlerId));
 
             var canSendEmail = false;
-            if (fbo == null || (orderDetails != null && !orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.OrderNotificationsEnabled.HasValue && fbo.Preferences.OrderNotificationsEnabled.Value) || (fbo.Preferences.OrderNotificationsEnabled == null))))
+            if (orderDetails != null && !orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.OrderNotificationsEnabled.HasValue && fbo.Preferences.OrderNotificationsEnabled.Value) || (fbo.Preferences.OrderNotificationsEnabled == null)))
                 canSendEmail = true;
-            else if (fbo == null || (orderDetails != null && orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null))))
+            else if (orderDetails != null && orderDetails.FuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null)))
                 canSendEmail = true;
 
             // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
@@ -629,7 +629,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransactionId, fbo.Oid));
                     if (fuelReq != null)
                     {
-                        customerAircraftId = fuelReq.CustomerAircraftId.GetValueOrDefault();
+                        customerAircraftId = fuelReq.CustomerAircraftID.GetValueOrDefault();
                         arrivalDateTime = fuelReq.Eta.ToString() + " " + (fuelReq.TimeStandard == "L" ? "(Local)" : "(Zulu)");
                         departureDateTime = fuelReq.Etd.ToString() + " " + (fuelReq.TimeStandard == "L" ? "(Local)" : "(Zulu)");
                         quotedVolume = fuelReq.QuotedVolume.GetValueOrDefault();
@@ -835,7 +835,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
         public async Task<FuelReqDto> CreateFuelOrder(FuelReqDto request)
         {
-            var customerAircraft = await _customerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(request.CustomerAircraftId.GetValueOrDefault()));
+            var customerAircraft = await _customerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(request.CustomerAircraftID.GetValueOrDefault()));
             var fbo = await _fboService.GetFbo(request.Fboid.GetValueOrDefault());
             var icao = fbo.FboAirport.Icao;
 
@@ -869,14 +869,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var orderDetails = orderDetailsList.Where(o => o.FboHandlerId == fuelerlinxTransaction.FboHandlerId).FirstOrDefault();
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
 
+            if (fbo == null)
+                return;
+
             if (orderDetails == null && fbo != null && fbo.Oid > 0)
             {
                 if (fuelerlinxTransaction.FuelEstWeight == null || fuelerlinxTransaction.FuelEstWeight == 0)
                     return;
                 else
                 {
-                    // ADD A WAY TO CREATE FBO IF NOT IN SYSTEM? On hold until we come across any scenarios that'd require us to do so
-
                     try
                     {
                         orderDetails = new OrderDetailsDto();
@@ -948,12 +949,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         }
 
                         serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
+
+                        ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                        fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+                        fuelServiceOrderItem.ServiceName = "Fuel: " + fuelerlinxTransaction.FuelEstWeight + " gal" + (fuelerlinxTransaction.FuelEstWeight > 1 ? "s" : "");
+                        fuelServiceOrderItem.IsCompleted = false;
+                        await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
                     }
                 }
             }
-
-            if (fbo == null)
-                return;
 
             var fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
             var sendEmail = false;
@@ -1133,7 +1137,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     fuelReq.Oid = 0;
                     fuelReq.Cancelled = false;
                     fuelReq.Fboid = fbo.Oid;
-                    fuelReq.CustomerAircraftId = customerAircraft.Oid;
+                    fuelReq.CustomerAircraftID = customerAircraft.Oid;
                     await AddAsync(fuelReq);
                 }
 

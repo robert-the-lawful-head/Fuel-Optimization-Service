@@ -15,6 +15,7 @@ namespace FBOLinx.DB.Models
         [Column("CustomerID")]
         [Required]
         public int CustomerId { get; set; }
+        public bool? IsOmitted { get; set; }
 
         #region Relationships
 

@@ -332,7 +332,7 @@
                     <mat-form-field>
                         <mat-label>ITP Template</mat-label>
                         <mat-select
-                            (selectionChange)="sampleCalculationChanged()"
+                            (selectionChange)="onItpTemplateChange()"
                             [(ngModel)]="sampleCalculation.pricingTemplateId"
                             class="font-weight-bold"
                             placeholder="ITP Template"

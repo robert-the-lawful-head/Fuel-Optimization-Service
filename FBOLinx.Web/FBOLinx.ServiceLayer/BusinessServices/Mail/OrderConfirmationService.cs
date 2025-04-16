@@ -89,7 +89,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             {
                 await fuelOrder.PopulateLocalTimes(_airportTimeService);
 
-                TailNumber = await _customerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(fuelOrder.CustomerAircraftId.GetValueOrDefault());
+                TailNumber = await _customerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(fuelOrder.CustomerAircraftID.GetValueOrDefault());
                 Fbo = fbo.Fbo;
                 Icao = fuelOrder.Icao;
                 Eta = fuelOrder.ArrivalDateTimeLocal.ToString();

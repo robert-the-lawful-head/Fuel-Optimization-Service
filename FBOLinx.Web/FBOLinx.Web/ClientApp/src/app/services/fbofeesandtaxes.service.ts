@@ -27,9 +27,10 @@ export class FbofeesandtaxesService {
         });
     }
 
-    public getByFboAndCustomer(fboId, customerId) {
+    public getByFboAndCustomer(fboId: number, customerId: number, pricingTemplateId: number = null) {
+        var url = `${this.accessPointUrl}/fbo/${fboId}/customer/${customerId}${pricingTemplateId ? '?pricingTemplateId=' + pricingTemplateId : ''}`;
         return this.http.get(
-            this.accessPointUrl + '/fbo/' + fboId + '/customer/' + customerId,
+            url,
             {
                 headers: this.headers,
             }
